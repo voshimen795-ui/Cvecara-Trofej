@@ -1,0 +1,128 @@
+import { useState } from 'react';
+import { AnimatePresence, motion } from 'framer-motion';
+import { Menu, Search, ShoppingBag, X } from 'lucide-react';
+import { NAV_LINKS } from '../data/shop.js';
+import { useCart } from '../context/CartContext.jsx';
+
+export default function Navbar({ onSelectCategory }) {
+  const { totalItems, openCart } = useCart();
+  const [mobileOpen, setMobileOpen] = useState(false);
+
+  const handleNavClick = (link) => {
+    setMobileOpen(false);
+    if (link.category && onSelectCategory) onSelectCategory(link.category);
+  };
+
+  return (
+    <header className="sticky top-0 z-40 border-b border-gray-100 bg-brand-surface/90 backdrop-blur-md">
+      <nav className="container-editorial" aria-label="Glavna navigacija">
+        <div className="flex h-20 items-center justify-between gap-4 lg:grid lg:grid-cols-3">
+          {/* Left — desktop links / mobile menu toggle */}
+          <div className="flex items-center lg:justify-start">
+            <button
+              type="button"
+              onClick={() => setMobileOpen((open) => !open)}
+              aria-expanded={mobileOpen}
+              aria-controls="mobile-nav"
+              aria-label={mobileOpen ? 'Zatvori meni' : 'Otvori meni'}
+              className="-ml-2 rounded-lg p-2 text-brand-dark transition hover:bg-gray-100 lg:hidden"
+            >
+              {mobileOpen ? (
+                <X className="h-5 w-5" aria-hidden="true" />
+              ) : (
+                <Menu className="h-5 w-5" aria-hidden="true" />
+              )}
+            </button>
+
+            <ul className="hidden items-center gap-8 lg:flex">
+              {NAV_LINKS.map((link) => (
+                <li key={link.label}>
+                  <a
+                    href={link.href}
+                    onClick={() => handleNavClick(link)}
+                    className="text-sm text-brand-muted transition-colors hover:text-brand-primary"
+                  >
+                    {link.label}
+                  </a>
+                </li>
+              ))}
+            </ul>
+          </div>
+
+          {/* Center — wordmark */}
+          <div className="flex justify-center lg:justify-center">
+            <a
+              href="#top"
+              className="whitespace-nowrap font-serif text-base font-bold tracking-widest text-brand-dark sm:text-lg"
+            >
+              CVEĆARA TROFEJ
+            </a>
+          </div>
+
+          {/* Right — utilities */}
+          <div className="flex items-center justify-end gap-1 sm:gap-2">
+            <button
+              type="button"
+              aria-label="Pretraga"
+              className="rounded-lg p-2.5 text-brand-dark transition hover:bg-gray-100"
+            >
+              <Search className="h-5 w-5" strokeWidth={1.75} aria-hidden="true" />
+            </button>
+
+            <button
+              type="button"
+              onClick={openCart}
+              aria-label={`Korpa, ${totalItems} ${totalItems === 1 ? 'artikal' : 'artikala'}`}
+              className="relative rounded-lg p-2.5 text-brand-dark transition hover:bg-gray-100"
+            >
+              <ShoppingBag className="h-5 w-5" strokeWidth={1.75} aria-hidden="true" />
+              <AnimatePresence>
+                {totalItems > 0 && (
+                  <motion.span
+                    key="badge"
+                    initial={{ scale: 0 }}
+                    animate={{ scale: 1 }}
+                    exit={{ scale: 0 }}
+                    transition={{ type: 'spring', stiffness: 500, damping: 25 }}
+                    className="absolute right-1 top-1 flex h-5 min-w-[1.25rem] items-center justify-center rounded-full bg-brand-rose px-1 text-[10px] font-semibold leading-none text-white"
+                  >
+                    {totalItems > 99 ? '99+' : totalItems}
+                  </motion.span>
+                )}
+              </AnimatePresence>
+            </button>
+          </div>
+        </div>
+      </nav>
+
+      {/* Mobile drawer menu */}
+      <AnimatePresence initial={false}>
+        {mobileOpen && (
+          <motion.div
+            id="mobile-nav"
+            key="mobile-nav"
+            initial={{ height: 0, opacity: 0 }}
+            animate={{ height: 'auto', opacity: 1 }}
+            exit={{ height: 0, opacity: 0 }}
+            transition={{ duration: 0.25, ease: 'easeInOut' }}
+            className="overflow-hidden border-t border-gray-100 bg-brand-surface lg:hidden"
+          >
+            <ul className="container-editorial flex flex-col py-2">
+              {NAV_LINKS.map((link) => (
+                <li key={link.label}>
+                  <a
+                    href={link.href}
+                    onClick={() => handleNavClick(link)}
+                    className="block py-3 text-sm text-brand-dark transition-colors hover:text-brand-primary"
+                  >
+                    {link.label}
+                  </a>
+                </li>
+              ))}
+            </ul>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </header>
+  );
+}
