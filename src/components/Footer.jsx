@@ -1,3 +1,4 @@
+import { Link } from 'react-router-dom';
 import { Facebook, Instagram, Mail, MapPin, Phone } from 'lucide-react';
 import { NAV_LINKS, SHOP } from '../data/shop.js';
 
@@ -6,16 +7,19 @@ const SOCIALS = [
   { label: 'Facebook', href: '#', icon: Facebook },
 ];
 
-export default function Footer({ onSelectCategory }) {
+export default function Footer() {
   return (
     <footer className="bg-brand-surface">
       <div className="container-editorial py-16 lg:py-20">
         <div className="grid grid-cols-1 gap-10 sm:grid-cols-2 lg:grid-cols-4 lg:gap-8">
           {/* 1 — Brand */}
           <div>
-            <p className="font-serif text-base font-bold tracking-widest text-brand-dark">
+            <Link
+              to="/"
+              className="font-serif text-base font-bold tracking-widest text-brand-dark"
+            >
               CVEĆARA TROFEJ
-            </p>
+            </Link>
             <p className="mt-4 text-sm leading-relaxed text-gray-600">
               Buketi, aranžmani i pokloni od svežeg cveća. Ručno komponovano u {SHOP.city}u,
               isporučeno istog dana.
@@ -42,13 +46,12 @@ export default function Footer({ onSelectCategory }) {
             <ul className="mt-4 space-y-3">
               {NAV_LINKS.map((link) => (
                 <li key={link.label}>
-                  <a
-                    href={link.href}
-                    onClick={() => link.category && onSelectCategory?.(link.category)}
+                  <Link
+                    to={link.to}
                     className="text-sm text-gray-600 transition-colors hover:text-brand-primary"
                   >
                     {link.label}
-                  </a>
+                  </Link>
                 </li>
               ))}
             </ul>

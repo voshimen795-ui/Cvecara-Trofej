@@ -1,10 +1,19 @@
 /**
- * Catalog fixtures. Shaped like an API response so this file can be swapped
- * for a `fetch` without touching any component.
+ * Katalog. Oblik odgovara API odgovoru, pa se ovaj fajl može zameniti
+ * `fetch`-om bez diranja komponenti.
  *
- * `image` points at a remote photo; <ProductImage> falls back to a branded
- * SVG placeholder if it fails to load, so a missing asset never breaks the grid.
+ * Fotografije su obrađene skriptom `scripts/process_products.py` — pozadina
+ * uklonjena, kropovano na cveće, 1200x1200 master u `photos/catalog/`, a
+ * ovde se koristi optimizovana WebP verzija.
  */
+
+// Vite mapira slug -> URL slike u build-u; nova slika u folderu se pokupi sama.
+const PHOTOS = import.meta.glob('../assets/products/*.webp', {
+  eager: true,
+  import: 'default',
+});
+
+const photo = (slug) => PHOTOS[`../assets/products/${slug}.webp`];
 
 export const CATEGORIES = [
   { id: 'all', label: 'Svi Buketi' },
@@ -14,7 +23,7 @@ export const CATEGORIES = [
   { id: 'baloni', label: 'Baloni' },
 ];
 
-/** Human-readable tag rendered on the product card. */
+/** Oznaka koja se ispisuje na kartici proizvoda. */
 export const CATEGORY_TAG = {
   buketi: 'Buketi',
   aranzmani: 'Aranžmani',
@@ -23,147 +32,161 @@ export const CATEGORY_TAG = {
   baloni: 'Baloni',
 };
 
+/** Zaglavlja zasebnih stranica po kategoriji. */
+export const CATEGORY_PAGES = {
+  buketi: {
+    slug: 'buketi',
+    title: 'Buketi',
+    lead: 'Ručno komponovani buketi od svežeg cveća — svaki nastaje na dan isporuke.',
+    intro:
+      'Cveće biramo svakog jutra. Ako ne vidite ono što tražite, pozovite nas i komponovaćemo buket po vašoj želji i budžetu.',
+  },
+  aranzmani: {
+    slug: 'aranzmani',
+    title: 'Aranžmani',
+    lead: 'Cveće u kutiji, korpi i vazi — traje duže i ne traži vazu kod kuće.',
+    intro:
+      'Aranžmani su idealni za kancelarije, proslave i poklone koji treba da stoje na stolu. Radimo i po meri prostora.',
+  },
+  pokloni: {
+    slug: 'pokloni',
+    title: 'Pokloni i Dekoracije',
+    lead: 'Sitnice koje upotpunjuju buket — sveće, čestitke i keramika.',
+    intro: 'Sve iz ove kategorije možete dodati uz bilo koji buket ili aranžman.',
+  },
+};
+
 export const PRODUCTS = [
+  // ——— Buketi ———
   {
-    id: 'buket-bela-elegancija',
-    name: 'Bela Elegancija',
+    id: 'prolecna-simfonija',
+    name: 'Prolećna Simfonija',
     category: 'buketi',
     price: 4800,
     badge: 'Bestseler',
-    description: 'Bele ruže i eustoma sa eukaliptusom, upakovano u mat papir.',
-    image:
-      'https://images.unsplash.com/photo-1487070183336-b863922373d4?auto=format&fit=crop&w=800&q=80',
+    description: 'Roze ruže, iris i lila hrizantema u pastelnom papiru.',
+    image: photo('prolecna-simfonija'),
   },
   {
-    id: 'buket-rose-garden',
-    name: 'Rose Garden',
+    id: 'crveni-akcenat',
+    name: 'Crveni Akcenat',
+    category: 'buketi',
+    price: 5200,
+    description: 'Anturijum i bela eustoma sa zelenilom, u kraft papiru.',
+    image: photo('crveni-akcenat'),
+  },
+  {
+    id: 'nezne-lale',
+    name: 'Nežne Lale',
+    category: 'buketi',
+    price: 3400,
+    badge: 'Sezonski',
+    description: 'Lale u nijansama roze i lila, vezane satenskom trakom.',
+    image: photo('nezne-lale'),
+  },
+  {
+    id: 'suncano-jutro',
+    name: 'Sunčano Jutro',
+    category: 'buketi',
+    price: 3900,
+    description: 'Suncokreti i sitno poljsko cveće — buket koji budi prostoriju.',
+    image: photo('suncano-jutro'),
+  },
+  {
+    id: 'ljubicasti-san',
+    name: 'Ljubičasti San',
     category: 'buketi',
     price: 5600,
     badge: 'Novo',
-    description: 'Baštenske ruže u nijansama pudrasto roze, sa mekim zelenilom.',
-    image:
-      'https://images.unsplash.com/photo-1518895949257-7621c3c786d7?auto=format&fit=crop&w=800&q=80',
+    description: 'Ljubičaste hrizanteme i zelenilo u kontrastnom papiru.',
+    image: photo('ljubicasti-san'),
   },
   {
-    id: 'buket-poljsko-cvece',
-    name: 'Poljsko Cveće',
+    id: 'roze-oblak',
+    name: 'Roze Oblak',
     category: 'buketi',
-    price: 3400,
-    description: 'Sezonski miks poljskog cveća — drugačiji svakog jutra.',
-    image:
-      'https://images.unsplash.com/photo-1523694576729-1e00fdd58e15?auto=format&fit=crop&w=800&q=80',
+    price: 5100,
+    description: 'Mekana kombinacija roze i lila tonova sa eukaliptusom.',
+    image: photo('roze-oblak'),
   },
   {
-    id: 'buket-trofej-signature',
-    name: 'Trofej Signature',
+    id: 'livada-u-cvatu',
+    name: 'Livada u Cvatu',
     category: 'buketi',
-    price: 7900,
-    badge: 'Premium',
-    description: 'Naš potpisni buket od 51 ruže, ručno komponovan.',
-    image:
-      'https://images.unsplash.com/photo-1561181286-d3fee7d55364?auto=format&fit=crop&w=800&q=80',
+    price: 4300,
+    description: 'Sitno poljsko cveće u žutom papiru — drugačije svakog dana.',
+    image: photo('livada-u-cvatu'),
   },
   {
-    id: 'aranzman-box-lux',
-    name: 'Flower Box Lux',
+    id: 'lavanda-i-krem',
+    name: 'Lavanda i Krem',
+    category: 'buketi',
+    price: 4900,
+    description: 'Lila levkonija i krem hrizantema, upakovano u novinski papir.',
+    image: photo('lavanda-i-krem'),
+  },
+  {
+    id: 'zlatna-jesen',
+    name: 'Zlatna Jesen',
+    category: 'buketi',
+    price: 4600,
+    description: 'Topli tonovi i suve grančice u okerastom papiru.',
+    image: photo('zlatna-jesen'),
+  },
+
+  // ——— Aranžmani ———
+  {
+    id: 'medveni-zagrljaj',
+    name: 'Medveđi Zagrljaj',
+    category: 'aranzmani',
+    price: 7400,
+    badge: 'Bestseler',
+    description: 'Ruže i plišani medvedići u kutiji — poklon za rođendan.',
+    image: photo('medveni-zagrljaj'),
+  },
+  {
+    id: 'ruzicasti-ljiljan',
+    name: 'Ružičasti Ljiljan',
     category: 'aranzmani',
     price: 6200,
-    badge: 'Bestseler',
-    description: 'Ruže u kutiji sa floralnom penom — traje do deset dana.',
-    image:
-      'https://images.unsplash.com/photo-1519378058457-4c29a0a2efac?auto=format&fit=crop&w=800&q=80',
+    description: 'Ljiljani i ruže u crvenoj kutiji sa floralnom penom.',
+    image: photo('ruzicasti-ljiljan'),
   },
   {
-    id: 'aranzman-stoni',
-    name: 'Stoni Aranžman',
+    id: 'divlja-basta',
+    name: 'Divlja Bašta',
     category: 'aranzmani',
-    price: 5400,
-    description: 'Nizak aranžman za sto — savršen za proslave i venčanja.',
-    image:
-      'https://images.unsplash.com/photo-1526047932273-341f2a7631f9?auto=format&fit=crop&w=800&q=80',
+    price: 5800,
+    description: 'Razgranat aranžman sa poljskim cvećem u lila kutiji.',
+    image: photo('divlja-basta'),
   },
   {
-    id: 'aranzman-korpa',
-    name: 'Korpa Sezone',
+    id: 'strastveni-trenutak',
+    name: 'Strastveni Trenutak',
     category: 'aranzmani',
-    price: 4900,
-    description: 'Pletena korpa sa sezonskim cvećem i suvim dekoracijama.',
-    image:
-      'https://images.unsplash.com/photo-1508610048659-a06b669e3321?auto=format&fit=crop&w=800&q=80',
+    price: 6500,
+    badge: 'Novo',
+    description: 'Ljiljan i sitno cveće u kutiji — jednostavno i upečatljivo.',
+    image: photo('strastveni-trenutak'),
   },
+  {
+    id: 'korpa-iznenadjenja',
+    name: 'Korpa Iznenađenja',
+    category: 'aranzmani',
+    price: 6900,
+    description: 'Pletena korpa sa sezonskim cvećem i dekorativnim grančicama.',
+    image: photo('korpa-iznenadjenja'),
+  },
+
+  // ——— Pokloni, igračke i baloni ———
+  // Za ove artikle još nemamo fotografije; <ProductImage> crta brendiranu
+  // zamenu po kategoriji dok se ne dodaju.
   {
     id: 'poklon-set-svece',
     name: 'Poklon Set sa Svećama',
     category: 'pokloni',
     price: 3900,
-    badge: 'Novo',
     description: 'Mirisne sveće, suvo cveće i ručno pisana čestitka.',
-    image:
-      'https://images.unsplash.com/photo-1602874801006-e26113c58cfa?auto=format&fit=crop&w=800&q=80',
-  },
-  {
-    id: 'poklon-cokoladna-kutija',
-    name: 'Čokoladna Kutija',
-    category: 'pokloni',
-    price: 2800,
-    description: 'Ručno pravljene pralline uz mini buket po izboru.',
-    image:
-      'https://images.unsplash.com/photo-1549007994-cb92caebd54b?auto=format&fit=crop&w=800&q=80',
-  },
-  {
-    id: 'plis-medved-veliki',
-    name: 'Veliki Plišani Medved',
-    category: 'plisane-igracke',
-    price: 4500,
-    description: 'Mekani medved 80 cm — uz buket ili samostalno.',
-    image:
-      'https://images.unsplash.com/photo-1530325553241-4f6e7690cf36?auto=format&fit=crop&w=800&q=80',
-  },
-  {
-    id: 'plis-zeka-mini',
-    name: 'Mini Zeka',
-    category: 'plisane-igracke',
-    price: 1900,
-    description: 'Sitan poklon koji uvek prođe — idealan uz cveće.',
-    image:
-      'https://images.unsplash.com/photo-1558877385-8c1b8e6d0e88?auto=format&fit=crop&w=800&q=80',
-  },
-  {
-    id: 'baloni-rodjendan',
-    name: 'Rođendanski Set Balona',
-    category: 'baloni',
-    price: 2400,
-    description: 'Helijumski baloni u brend nijansama, sa trakama.',
-    image:
-      'https://images.unsplash.com/photo-1530103862676-de8c9debad1d?auto=format&fit=crop&w=800&q=80',
-  },
-  {
-    id: 'baloni-srce',
-    name: 'Balon Srce XXL',
-    category: 'baloni',
-    badge: 'Popularno',
-    price: 1600,
-    description: 'Folijski balon u obliku srca, punjen helijumom.',
-    image:
-      'https://images.unsplash.com/photo-1513151233558-d860c5398176?auto=format&fit=crop&w=800&q=80',
-  },
-  {
-    id: 'aranzman-orhideja',
-    name: 'Orhideja u Kaši',
-    category: 'aranzmani',
-    price: 5900,
-    description: 'Phalaenopsis u keramičkoj saksiji — dugotrajan poklon.',
-    image:
-      'https://images.unsplash.com/photo-1524598171353-ce84a157ba9b?auto=format&fit=crop&w=800&q=80',
-  },
-  {
-    id: 'buket-suvo-cvece',
-    name: 'Suvo Cveće Pampas',
-    category: 'buketi',
-    price: 4200,
-    description: 'Pampas trava i suvi cvetovi — dekoracija koja ne vene.',
-    image:
-      'https://images.unsplash.com/photo-1596438459194-f275f413d6ff?auto=format&fit=crop&w=800&q=80',
   },
   {
     id: 'poklon-vaza-keramika',
@@ -171,12 +194,39 @@ export const PRODUCTS = [
     category: 'pokloni',
     price: 3200,
     description: 'Ručno rađena vaza domaće izrade, mat glazura.',
-    image:
-      'https://images.unsplash.com/photo-1578500494198-246f612d3b3d?auto=format&fit=crop&w=800&q=80',
+  },
+  {
+    id: 'plis-medved-veliki',
+    name: 'Veliki Plišani Medved',
+    category: 'plisane-igracke',
+    price: 4500,
+    description: 'Mekani medved 80 cm — uz buket ili samostalno.',
+  },
+  {
+    id: 'plis-zeka-mini',
+    name: 'Mini Zeka',
+    category: 'plisane-igracke',
+    price: 1900,
+    description: 'Sitan poklon koji uvek prođe — idealan uz cveće.',
+  },
+  {
+    id: 'baloni-rodjendan',
+    name: 'Rođendanski Set Balona',
+    category: 'baloni',
+    price: 2400,
+    description: 'Helijumski baloni u brend nijansama, sa trakama.',
+  },
+  {
+    id: 'baloni-srce',
+    name: 'Balon Srce XXL',
+    category: 'baloni',
+    price: 1600,
+    badge: 'Popularno',
+    description: 'Folijski balon u obliku srca, punjen helijumom.',
   },
 ];
 
-/** `all` is the catch-all tab; every other id matches `product.category`. */
+/** `all` je zbirna kartica; svaki drugi id odgovara `product.category`. */
 export function filterProducts(products, categoryId) {
   if (categoryId === 'all') return products;
   return products.filter((product) => product.category === categoryId);

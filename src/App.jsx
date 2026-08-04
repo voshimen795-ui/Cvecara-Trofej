@@ -1,40 +1,50 @@
-import { useMemo, useState } from 'react';
+import { useEffect } from 'react';
+import { HashRouter, Navigate, Route, Routes, useLocation } from 'react-router-dom';
 import AnnouncementBar from './components/AnnouncementBar.jsx';
 import Navbar from './components/Navbar.jsx';
-import Hero from './components/Hero.jsx';
-import CategoryFilter from './components/CategoryFilter.jsx';
-import ProductGrid from './components/ProductGrid.jsx';
-import AboutSection from './components/AboutSection.jsx';
 import Footer from './components/Footer.jsx';
 import CartDrawer from './components/CartDrawer.jsx';
-import { PRODUCTS, filterProducts } from './data/products.js';
+import HomePage from './pages/HomePage.jsx';
+import CategoryPage from './pages/CategoryPage.jsx';
+import AboutPage from './pages/AboutPage.jsx';
+import NotFoundPage from './pages/NotFoundPage.jsx';
 
+/** Navigating between pages should land at the top, not mid-catalogue. */
+function ScrollToTop() {
+  const { pathname } = useLocation();
+  useEffect(() => {
+    window.scrollTo({ top: 0, behavior: 'instant' in window ? 'instant' : 'auto' });
+  }, [pathname]);
+  return null;
+}
+
+/**
+ * HashRouter rather than BrowserRouter: the site is a static bundle, so
+ * deep links have to resolve without any server-side rewrite rules.
+ */
 export default function App() {
-  const [activeCategory, setActiveCategory] = useState('all');
-
-  const visibleProducts = useMemo(
-    () => filterProducts(PRODUCTS, activeCategory),
-    [activeCategory]
-  );
-
   return (
-    <div className="min-h-screen bg-brand-bg">
-      <AnnouncementBar />
-      <Navbar onSelectCategory={setActiveCategory} />
+    <HashRouter>
+      <ScrollToTop />
+      <div className="flex min-h-screen flex-col bg-brand-bg">
+        <AnnouncementBar />
+        <Navbar />
 
-      <main>
-        <Hero onSelectCategory={setActiveCategory} />
+        <main className="flex-1">
+          <Routes>
+            <Route path="/" element={<HomePage />} />
+            <Route path="/buketi" element={<CategoryPage category="buketi" />} />
+            <Route path="/aranzmani" element={<CategoryPage category="aranzmani" />} />
+            <Route path="/pokloni" element={<CategoryPage category="pokloni" />} />
+            <Route path="/o-nama" element={<AboutPage />} />
+            <Route path="/kolekcija" element={<Navigate to="/" replace />} />
+            <Route path="*" element={<NotFoundPage />} />
+          </Routes>
+        </main>
 
-        <section id="kolekcija" className="container-editorial scroll-mt-24 py-8 lg:py-12">
-          <CategoryFilter active={activeCategory} onChange={setActiveCategory} />
-          <ProductGrid products={visibleProducts} />
-        </section>
-
-        <AboutSection />
-      </main>
-
-      <Footer onSelectCategory={setActiveCategory} />
-      <CartDrawer />
-    </div>
+        <Footer />
+        <CartDrawer />
+      </div>
+    </HashRouter>
   );
 }

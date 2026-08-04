@@ -1,4 +1,5 @@
 import { motion, useReducedMotion } from 'framer-motion';
+import { Link } from 'react-router-dom';
 import { ArrowRight } from 'lucide-react';
 import HeroPetals from './HeroPetals.jsx';
 import { Bloom, Bud, Eucalyptus, Sprig } from './ui/Botanical.jsx';
@@ -52,7 +53,7 @@ const BOTANICALS = [
   },
 ];
 
-export default function Hero({ onSelectCategory }) {
+export default function Hero() {
   const reduceMotion = useReducedMotion();
 
   return (
@@ -147,9 +148,8 @@ export default function Hero({ onSelectCategory }) {
             custom={0.3}
             className="mt-10 flex w-full flex-col items-center justify-center gap-3 sm:w-auto sm:flex-row sm:gap-4"
           >
-            <a
-              href="#kolekcija"
-              onClick={() => onSelectCategory?.('all')}
+            <Link
+              to="/buketi"
               className="group inline-flex w-full items-center justify-center gap-2 rounded-xl bg-white px-8 py-4 font-medium text-brand-deep transition hover:bg-white/90 sm:w-auto"
             >
               Pogledaj kolekciju
@@ -157,14 +157,14 @@ export default function Hero({ onSelectCategory }) {
                 className="h-4 w-4 transition-transform group-hover:translate-x-0.5"
                 aria-hidden="true"
               />
-            </a>
+            </Link>
 
-            <a
-              href="#o-nama"
+            <Link
+              to="/o-nama"
               className="inline-flex w-full items-center justify-center gap-2 rounded-xl border border-dashed border-white/60 px-8 py-4 font-medium text-white transition hover:border-white hover:bg-white/10 sm:w-auto"
             >
               Buket po želji
-            </a>
+            </Link>
           </motion.div>
         </div>
       </div>

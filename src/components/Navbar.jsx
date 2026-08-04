@@ -1,18 +1,16 @@
 import { useState } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
+import { Link, NavLink } from 'react-router-dom';
 import { Menu, Search, ShoppingBag, X } from 'lucide-react';
 import { NAV_LINKS } from '../data/shop.js';
 import { useCart } from '../context/CartContext.jsx';
 import logoDisc from '../assets/logo-trofej.png';
 
-export default function Navbar({ onSelectCategory }) {
+export default function Navbar() {
   const { totalItems, openCart } = useCart();
   const [mobileOpen, setMobileOpen] = useState(false);
 
-  const handleNavClick = (link) => {
-    setMobileOpen(false);
-    if (link.category && onSelectCategory) onSelectCategory(link.category);
-  };
+  const closeMobile = () => setMobileOpen(false);
 
   return (
     <header className="sticky top-0 z-40 border-b border-gray-100 bg-brand-surface/90 backdrop-blur-md">
@@ -38,13 +36,16 @@ export default function Navbar({ onSelectCategory }) {
             <ul className="hidden items-center gap-8 lg:flex">
               {NAV_LINKS.map((link) => (
                 <li key={link.label}>
-                  <a
-                    href={link.href}
-                    onClick={() => handleNavClick(link)}
-                    className="text-sm text-brand-muted transition-colors hover:text-brand-primary"
+                  <NavLink
+                    to={link.to}
+                    className={({ isActive }) =>
+                      `text-sm transition-colors hover:text-brand-primary ${
+                        isActive ? 'text-brand-primary' : 'text-brand-muted'
+                      }`
+                    }
                   >
                     {link.label}
-                  </a>
+                  </NavLink>
                 </li>
               ))}
             </ul>
@@ -52,7 +53,7 @@ export default function Navbar({ onSelectCategory }) {
 
           {/* Center — wordmark + logo disc */}
           <div className="flex justify-center lg:justify-center">
-            <a href="#top" className="flex items-center gap-2.5 sm:gap-3">
+            <Link to="/" onClick={closeMobile} className="flex items-center gap-2.5 sm:gap-3">
               <span className="whitespace-nowrap font-serif text-base font-bold tracking-widest text-brand-dark sm:text-lg">
                 CVEĆARA TROFEJ
               </span>
@@ -62,7 +63,7 @@ export default function Navbar({ onSelectCategory }) {
                 aria-hidden="true"
                 className="h-8 w-8 shrink-0 sm:h-9 sm:w-9"
               />
-            </a>
+            </Link>
           </div>
 
           {/* Right — utilities */}
@@ -116,13 +117,17 @@ export default function Navbar({ onSelectCategory }) {
             <ul className="container-editorial flex flex-col py-2">
               {NAV_LINKS.map((link) => (
                 <li key={link.label}>
-                  <a
-                    href={link.href}
-                    onClick={() => handleNavClick(link)}
-                    className="block py-3 text-sm text-brand-dark transition-colors hover:text-brand-primary"
+                  <NavLink
+                    to={link.to}
+                    onClick={closeMobile}
+                    className={({ isActive }) =>
+                      `block py-3 text-sm transition-colors hover:text-brand-primary ${
+                        isActive ? 'text-brand-primary' : 'text-brand-dark'
+                      }`
+                    }
                   >
                     {link.label}
-                  </a>
+                  </NavLink>
                 </li>
               ))}
             </ul>

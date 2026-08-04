@@ -1,0 +1,10 @@
+[
+  {
+    "slug": "prolecna-simfonija",
+    "category": "buketi",
+    "source": "a1f264b8-10374.jpg",
+    "alpha_matting": false,
+    "model": "birefnet-general",
+    "coverage": 0.4909
+  }
+]

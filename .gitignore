@@ -9,3 +9,8 @@ dist-ssr
 npm-debug.log*
 yarn-error.log*
 .vite
+
+# Python
+__pycache__/
+*.py[cod]
+.venv/

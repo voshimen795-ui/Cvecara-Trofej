@@ -33,11 +33,51 @@ Spacing follows an 8pt rhythm.
 Three shared classes in `src/index.css` keep the system honest: `.container-editorial`
 (horizontal rhythm), `.btn-primary` / `.btn-ghost`, and `.eyebrow`.
 
+## Product photography
+
+`scripts/process_products.py` turns raw shop photos into transparent catalog
+PNGs: rembg removes the background, the result is cropped to the flowers,
+padded and centred on a 1200×1200 RGBA canvas.
+
+```bash
+pip install rembg onnxruntime pillow numpy scipy
+
+python scripts/process_products.py --review --web
+python scripts/process_products.py --only nezne-lale --alpha-matting
+```
+
+| Path | What |
+| --- | --- |
+| `photos/raw/` | untouched source photos |
+| `photos/catalog/` | 1200×1200 PNG masters + `manifest.json` |
+| `photos/catalog/_review.png` | contact sheet on a checkerboard, for eyeballing cut quality |
+| `src/assets/products/` | 800px WebP the site actually ships (`--web`) |
+
+Every photo is an entry in `MANIFEST` inside the script, which is where you
+tune a bad cut without touching the pipeline:
+
+- `model` — `birefnet-general` is the default and holds whole arrangements
+  together; `u2net` is ~5× faster but loses busy shop backgrounds.
+- `alpha_matting` — finer edges on thin stems, at the cost of speed and some
+  softness.
+- `trim_bottom` / `trim_top` — rembg treats the hand holding the bouquet as
+  part of the subject, so the band is cut off deterministically. Person
+  segmentation was tried and rejected: it confuses pink flowers with skin.
+- `drop_dark` — clears a dark sleeve standing beside the flowers, where
+  trimming the bottom would eat the bouquet too.
+
+Run with `--review` after any change and look at the sheet before shipping.
+
 ## Structure
 
 ```
 src/
-├── App.jsx                     # composition + active-category state
+├── App.jsx                     # HashRouter + page routes
+├── pages/
+│   ├── HomePage.jsx            # hero + filterable catalogue + about
+│   ├── CategoryPage.jsx        # /buketi, /aranzmani, /pokloni
+│   ├── AboutPage.jsx           # /o-nama
+│   └── NotFoundPage.jsx
 ├── components/
 │   ├── AnnouncementBar.jsx     # h-10 teal strip
 │   ├── Navbar.jsx              # sticky h-20, 3-col grid, mobile menu

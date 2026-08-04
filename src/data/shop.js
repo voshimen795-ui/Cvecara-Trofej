@@ -21,13 +21,10 @@ export const SHOP = {
   ],
 };
 
-/**
- * Primary navigation — also used by the mobile drawer menu.
- * `category` links scroll to the shop section and preselect that filter pill.
- */
+/** Primary navigation — also used by the mobile drawer menu and the footer. */
 export const NAV_LINKS = [
-  { label: 'Buketi', href: '#kolekcija', category: 'all' },
-  { label: 'Aranžmani', href: '#kolekcija', category: 'aranzmani' },
-  { label: 'Pokloni', href: '#kolekcija', category: 'pokloni' },
-  { label: 'O nama', href: '#o-nama' },
+  { label: 'Buketi', to: '/buketi' },
+  { label: 'Aranžmani', to: '/aranzmani' },
+  { label: 'Pokloni', to: '/pokloni' },
+  { label: 'O nama', to: '/o-nama' },
 ];
