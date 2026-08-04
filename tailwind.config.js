@@ -6,6 +6,8 @@ export default {
       colors: {
         brand: {
           primary: '#4A9B9B', // Soft Mint Teal — primary accent
+          teal: '#55B5B3', // Teal sampled from the logo disc
+          deep: '#0F2726', // Deep teal — hero scrim over photography
           rose: '#E88295', // Soft Rose Pink — badges / subtle highlights
           bg: '#FAFAFA', // Canvas background
           surface: '#FFFFFF', // Card / nav surface
@@ -17,6 +19,8 @@ export default {
       fontFamily: {
         serif: ['"Playfair Display"', 'Cormorant Garamond', 'Georgia', 'serif'],
         sans: ['Inter', '"Plus Jakarta Sans"', 'system-ui', 'sans-serif'],
+        // Matches the logo's "Cvećara" lettering; carries latin-ext for ć/č/ž.
+        script: ['"Dancing Script"', 'cursive'],
       },
       // 8pt spacing scale additions (Tailwind's 4px base already covers 8/16/24/…)
       spacing: {
