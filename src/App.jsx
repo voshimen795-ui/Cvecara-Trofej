@@ -7,6 +7,7 @@ import CartDrawer from './components/CartDrawer.jsx';
 import HomePage from './pages/HomePage.jsx';
 import CategoryPage from './pages/CategoryPage.jsx';
 import AboutPage from './pages/AboutPage.jsx';
+import ProductPage from './pages/ProductPage.jsx';
 import NotFoundPage from './pages/NotFoundPage.jsx';
 
 /** Navigating between pages should land at the top, not mid-catalogue. */
@@ -36,6 +37,12 @@ export default function App() {
             <Route path="/buketi" element={<CategoryPage category="buketi" />} />
             <Route path="/aranzmani" element={<CategoryPage category="aranzmani" />} />
             <Route path="/pokloni" element={<CategoryPage category="pokloni" />} />
+            <Route
+              path="/plisane-igracke"
+              element={<CategoryPage category="plisane-igracke" />}
+            />
+            <Route path="/baloni" element={<CategoryPage category="baloni" />} />
+            <Route path="/proizvod/:id" element={<ProductPage />} />
             <Route path="/o-nama" element={<AboutPage />} />
             <Route path="/kolekcija" element={<Navigate to="/" replace />} />
             <Route path="*" element={<NotFoundPage />} />

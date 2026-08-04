@@ -54,7 +54,36 @@ export const CATEGORY_PAGES = {
     lead: 'Sitnice koje upotpunjuju buket — sveće, čestitke i keramika.',
     intro: 'Sve iz ove kategorije možete dodati uz bilo koji buket ili aranžman.',
   },
+  'plisane-igracke': {
+    slug: 'plisane-igracke',
+    title: 'Plišane Igračke',
+    lead: 'Meki saputnik uz buket — za rođendane i rodilišta.',
+    intro: 'Igračke slažemo uz cveće ili ih šaljemo samostalno, upakovane po želji.',
+  },
+  baloni: {
+    slug: 'baloni',
+    title: 'Baloni',
+    lead: 'Helijumski i folijski baloni za proslave i iznenađenja.',
+    intro: 'Balone punimo na dan isporuke da izdrže što duže.',
+  },
 };
+
+/**
+ * Ručno biran redosled za fan deck na početnoj — najizraženiji buketi i
+ * aranžmani, poređani tako da susedne kartice ne budu iste boje.
+ */
+export const FEATURED_IDS = [
+  'tirkizni-buket',
+  'ljubicasti-san',
+  'zuti-sjaj',
+  'medveni-zagrljaj',
+  'prolecna-simfonija',
+  'purpurna-dalija',
+  'meki-pastel',
+  'korpa-sunca',
+  'ljubicasta-elegancija',
+  'roze-oblak',
+];
 
 export const PRODUCTS = [
   // ——— Buketi ———
@@ -357,6 +386,12 @@ export const PRODUCTS = [
     description: 'Folijski balon u obliku srca, punjen helijumom.',
   },
 ];
+
+export const FEATURED = FEATURED_IDS.map((id) => PRODUCTS.find((p) => p.id === id)).filter(
+  Boolean
+);
+
+export const getProduct = (id) => PRODUCTS.find((product) => product.id === id);
 
 /** `all` je zbirna kartica; svaki drugi id odgovara `product.category`. */
 export function filterProducts(products, categoryId) {

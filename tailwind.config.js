@@ -15,6 +15,7 @@ export default {
           light: '#B8E0DC', // Light teal — body text on dark teal
           forest: '#1A3D3A', // Footer gradient, top
           deep: '#0F2726', // Deep teal — hero scrim, footer gradient bottom
+          gold: '#7E6B2F', // Deep gold — the one warm accent among the teal tiles
           rose: '#E88295', // Soft Rose Pink — badges / subtle highlights
           bg: '#FAFAFA', // Canvas background
           surface: '#FFFFFF', // Card / nav surface

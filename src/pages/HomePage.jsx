@@ -1,27 +1,19 @@
-import { useMemo, useState } from 'react';
 import Hero from '../components/Hero.jsx';
-import CategoryFilter from '../components/CategoryFilter.jsx';
-import ProductGrid from '../components/ProductGrid.jsx';
+import FanDeck from '../components/FanDeck.jsx';
+import CategoryLinks from '../components/CategoryLinks.jsx';
 import AboutSection from '../components/AboutSection.jsx';
-import { PRODUCTS, filterProducts } from '../data/products.js';
 
+/**
+ * The home page sells the shop, not the catalogue — the full grid lives on
+ * the category pages. Here the fan deck teases a rotating handful, and the
+ * category tiles are the next step for anyone ready to browse.
+ */
 export default function HomePage() {
-  const [activeCategory, setActiveCategory] = useState('all');
-
-  const visibleProducts = useMemo(
-    () => filterProducts(PRODUCTS, activeCategory),
-    [activeCategory]
-  );
-
   return (
     <>
       <Hero />
-
-      <section id="kolekcija" className="container-editorial scroll-mt-24 py-8 lg:py-12">
-        <CategoryFilter active={activeCategory} onChange={setActiveCategory} />
-        <ProductGrid products={visibleProducts} />
-      </section>
-
+      <FanDeck />
+      <CategoryLinks />
       <AboutSection />
     </>
   );
