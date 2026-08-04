@@ -39,9 +39,16 @@ export default {
           '0%': { opacity: '0', transform: 'translateY(8px)' },
           '100%': { opacity: '1', transform: 'translateY(0)' },
         },
+        // Slides an oversized gradient across the hero so the teal shifts
+        // toward forest and back without the section ever appearing to move.
+        'gradient-drift': {
+          '0%, 100%': { backgroundPosition: '0% 50%' },
+          '50%': { backgroundPosition: '100% 50%' },
+        },
       },
       animation: {
         'fade-up': 'fade-up 0.5s ease-out both',
+        'gradient-drift': 'gradient-drift 14s ease-in-out infinite',
       },
     },
   },

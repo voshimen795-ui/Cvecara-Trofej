@@ -3,6 +3,7 @@ import { AnimatePresence, motion } from 'framer-motion';
 import { Menu, Search, ShoppingBag, X } from 'lucide-react';
 import { NAV_LINKS } from '../data/shop.js';
 import { useCart } from '../context/CartContext.jsx';
+import logoDisc from '../assets/logo-trofej.png';
 
 export default function Navbar({ onSelectCategory }) {
   const { totalItems, openCart } = useCart();
@@ -49,13 +50,18 @@ export default function Navbar({ onSelectCategory }) {
             </ul>
           </div>
 
-          {/* Center — wordmark */}
+          {/* Center — wordmark + logo disc */}
           <div className="flex justify-center lg:justify-center">
-            <a
-              href="#top"
-              className="whitespace-nowrap font-serif text-base font-bold tracking-widest text-brand-dark sm:text-lg"
-            >
-              CVEĆARA TROFEJ
+            <a href="#top" className="flex items-center gap-2.5 sm:gap-3">
+              <span className="whitespace-nowrap font-serif text-base font-bold tracking-widest text-brand-dark sm:text-lg">
+                CVEĆARA TROFEJ
+              </span>
+              <img
+                src={logoDisc}
+                alt=""
+                aria-hidden="true"
+                className="h-8 w-8 shrink-0 sm:h-9 sm:w-9"
+              />
             </a>
           </div>
 
