@@ -8,6 +8,7 @@ import HomePage from './pages/HomePage.jsx';
 import CategoryPage from './pages/CategoryPage.jsx';
 import AboutPage from './pages/AboutPage.jsx';
 import ProductPage from './pages/ProductPage.jsx';
+import CheckoutPage from './pages/CheckoutPage.jsx';
 import NotFoundPage from './pages/NotFoundPage.jsx';
 
 /** Navigating between pages should land at the top, not mid-catalogue. */
@@ -43,6 +44,7 @@ export default function App() {
             />
             <Route path="/baloni" element={<CategoryPage category="baloni" />} />
             <Route path="/proizvod/:id" element={<ProductPage />} />
+            <Route path="/porudzbina" element={<CheckoutPage />} />
             <Route path="/o-nama" element={<AboutPage />} />
             <Route path="/kolekcija" element={<Navigate to="/" replace />} />
             <Route path="*" element={<NotFoundPage />} />

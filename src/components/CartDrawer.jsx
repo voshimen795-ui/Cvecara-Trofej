@@ -1,5 +1,6 @@
 import { useEffect, useRef } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
+import { Link } from 'react-router-dom';
 import { Minus, Plus, ShoppingBag, Trash2, Truck, X } from 'lucide-react';
 import ProductImage from './ui/ProductImage.jsx';
 import { SHOP } from '../data/shop.js';
@@ -196,12 +197,13 @@ export default function CartDrawer() {
                   </span>
                 </p>
 
-                <button
-                  type="button"
-                  className="mt-4 w-full rounded-xl bg-brand-primary-dark py-4 text-center font-medium text-white transition hover:bg-brand-primary-darker"
+                <Link
+                  to="/porudzbina"
+                  onClick={closeCart}
+                  className="mt-4 block w-full rounded-xl bg-brand-primary-dark py-4 text-center font-medium text-white transition hover:bg-brand-primary-darker"
                 >
                   Nastavi na plaćanje
-                </button>
+                </Link>
 
                 <button
                   type="button"
