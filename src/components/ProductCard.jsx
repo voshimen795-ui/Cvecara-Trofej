@@ -34,6 +34,7 @@ export default function ProductCard({ product }) {
         <ProductImage
           src={product.image}
           alt={product.name}
+          category={product.category}
           sizes="(min-width: 1024px) 25vw, (min-width: 640px) 50vw, 100vw"
           className="h-full w-full object-cover transition duration-500 group-hover:scale-105"
         />
