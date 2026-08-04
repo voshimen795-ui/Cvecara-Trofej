@@ -30,7 +30,9 @@ export default function ProductCard({ product }) {
       transition={{ duration: 0.3, ease: 'easeOut' }}
       className="group flex flex-col rounded-2xl border border-gray-100 bg-brand-surface p-4 transition-all duration-300 hover:shadow-lg"
     >
-      <div className="relative mb-4 aspect-[4/5] overflow-hidden rounded-xl bg-gray-50">
+      {/* Pale teal fading to white — the cutouts are transparent, so this
+          ground shows around every bloom and has to stay on-brand. */}
+      <div className="relative mb-4 aspect-[4/5] overflow-hidden rounded-xl bg-gradient-to-b from-brand-mist to-white">
         <ProductImage
           src={product.image}
           alt={product.name}
@@ -40,14 +42,14 @@ export default function ProductCard({ product }) {
         />
 
         {product.badge && (
-          <span className="absolute left-3 top-3 rounded-full bg-brand-rose px-2.5 py-1 text-[10px] font-semibold uppercase tracking-wide text-white">
+          <span className="absolute left-3 top-3 rounded-full bg-brand-rose px-2.5 py-1 text-[10px] font-bold uppercase tracking-wide text-brand-dark">
             {product.badge}
           </span>
         )}
       </div>
 
       <div className="flex flex-1 flex-col">
-        <p className="text-xs font-medium uppercase tracking-wider text-brand-primary">
+        <p className="text-xs font-medium uppercase tracking-wider text-brand-primary-dark">
           {CATEGORY_TAG[product.category] ?? product.category}
         </p>
 
@@ -60,7 +62,7 @@ export default function ProductCard({ product }) {
         )}
 
         {/* mt-auto keeps prices and buttons aligned across uneven descriptions. */}
-        <p className="mt-auto pt-2 font-semibold text-brand-dark">
+        <p className="mt-auto pt-2 text-lg font-bold text-brand-dark">
           {formatPrice(product.price)}
         </p>
 
@@ -69,7 +71,9 @@ export default function ProductCard({ product }) {
           onClick={handleAdd}
           aria-label={`Dodaj ${product.name} u korpu`}
           className={`mt-4 flex w-full items-center justify-center gap-2 rounded-lg py-2.5 text-sm font-medium text-white transition-colors ${
-            justAdded ? 'bg-brand-primary' : 'bg-gray-900 hover:bg-brand-primary'
+            justAdded
+              ? 'bg-brand-primary-darker'
+              : 'bg-brand-primary-dark hover:bg-brand-primary-darker'
           }`}
         >
           {justAdded ? (

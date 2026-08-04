@@ -9,18 +9,20 @@ const SOCIALS = [
 
 export default function Footer() {
   return (
-    <footer className="bg-brand-surface">
+    // Teal-navy fading to the hero's deep teal — same family as the hero,
+    // a shade deeper so the two bands read as distinct.
+    <footer className="bg-gradient-to-b from-brand-forest to-brand-deep text-brand-light">
       <div className="container-editorial py-16 lg:py-20">
         <div className="grid grid-cols-1 gap-10 sm:grid-cols-2 lg:grid-cols-4 lg:gap-8">
           {/* 1 — Brand */}
           <div>
             <Link
               to="/"
-              className="font-serif text-base font-bold tracking-widest text-brand-dark"
+              className="font-serif text-base font-bold tracking-widest text-white transition-colors hover:text-brand-teal"
             >
               CVEĆARA TROFEJ
             </Link>
-            <p className="mt-4 text-sm leading-relaxed text-gray-600">
+            <p className="mt-4 text-sm leading-relaxed text-brand-light/80">
               Buketi, aranžmani i pokloni od svežeg cveća. Ručno komponovano u {SHOP.city}u,
               isporučeno istog dana.
             </p>
@@ -31,7 +33,7 @@ export default function Footer() {
                   <a
                     href={href}
                     aria-label={label}
-                    className="flex h-9 w-9 items-center justify-center rounded-full border border-brand-border text-brand-dark transition hover:border-brand-primary hover:text-brand-primary"
+                    className="flex h-9 w-9 items-center justify-center rounded-full border border-white/25 text-white transition-all duration-200 hover:scale-110 hover:border-white/60 hover:bg-white/10"
                   >
                     <Icon className="h-4 w-4" strokeWidth={1.75} aria-hidden="true" />
                   </a>
@@ -42,13 +44,13 @@ export default function Footer() {
 
           {/* 2 — Navigation */}
           <nav aria-label="Podnožje — navigacija">
-            <h2 className="text-sm font-semibold text-brand-dark">Ponuda</h2>
+            <h2 className="text-sm font-semibold text-white">Ponuda</h2>
             <ul className="mt-4 space-y-3">
               {NAV_LINKS.map((link) => (
                 <li key={link.label}>
                   <Link
                     to={link.to}
-                    className="text-sm text-gray-600 transition-colors hover:text-brand-primary"
+                    className="text-sm text-brand-light/80 transition-colors hover:text-white"
                   >
                     {link.label}
                   </Link>
@@ -59,12 +61,12 @@ export default function Footer() {
 
           {/* 3 — Working hours */}
           <div>
-            <h2 className="text-sm font-semibold text-brand-dark">Radno vreme</h2>
+            <h2 className="text-sm font-semibold text-white">Radno vreme</h2>
             <dl className="mt-4 space-y-3 text-sm">
               {SHOP.hours.map(({ day, time }) => (
                 <div key={day} className="flex flex-col gap-0.5">
-                  <dt className="text-gray-600">{day}</dt>
-                  <dd className="font-medium text-brand-dark tabular-nums">{time}</dd>
+                  <dt className="text-brand-light/70">{day}</dt>
+                  <dd className="font-medium tabular-nums text-white">{time}</dd>
                 </div>
               ))}
             </dl>
@@ -72,10 +74,10 @@ export default function Footer() {
 
           {/* 4 — Contact */}
           <div>
-            <h2 className="text-sm font-semibold text-brand-dark">Kontakt</h2>
+            <h2 className="text-sm font-semibold text-white">Kontakt</h2>
             <ul className="mt-4 space-y-3 text-sm">
-              <li className="flex items-start gap-2.5 text-gray-600">
-                <MapPin className="mt-0.5 h-4 w-4 shrink-0 text-brand-primary" aria-hidden="true" />
+              <li className="flex items-start gap-2.5 text-brand-light/80">
+                <MapPin className="mt-0.5 h-4 w-4 shrink-0 text-brand-teal" aria-hidden="true" />
                 <span>
                   {SHOP.street}
                   <br />
@@ -85,18 +87,18 @@ export default function Footer() {
               <li>
                 <a
                   href={SHOP.phoneHref}
-                  className="flex items-center gap-2.5 text-gray-600 transition-colors hover:text-brand-primary"
+                  className="flex items-center gap-2.5 text-brand-light/80 transition-colors hover:text-white"
                 >
-                  <Phone className="h-4 w-4 shrink-0 text-brand-primary" aria-hidden="true" />
+                  <Phone className="h-4 w-4 shrink-0 text-brand-teal" aria-hidden="true" />
                   {SHOP.phone}
                 </a>
               </li>
               <li>
                 <a
                   href={`mailto:${SHOP.email}`}
-                  className="flex items-center gap-2.5 break-all text-gray-600 transition-colors hover:text-brand-primary"
+                  className="flex items-center gap-2.5 break-all text-brand-light/80 transition-colors hover:text-white"
                 >
-                  <Mail className="h-4 w-4 shrink-0 text-brand-primary" aria-hidden="true" />
+                  <Mail className="h-4 w-4 shrink-0 text-brand-teal" aria-hidden="true" />
                   {SHOP.email}
                 </a>
               </li>
@@ -104,7 +106,7 @@ export default function Footer() {
           </div>
         </div>
 
-        <div className="mt-12 flex flex-col gap-2 border-t border-gray-100 pt-8 text-xs text-brand-muted sm:flex-row sm:items-center sm:justify-between">
+        <div className="mt-12 flex flex-col gap-2 border-t border-white/[0.12] pt-8 text-xs text-brand-light/65 sm:flex-row sm:items-center sm:justify-between">
           <p>
             © {new Date().getFullYear()} {SHOP.name}. Sva prava zadržana.
           </p>

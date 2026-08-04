@@ -25,15 +25,15 @@
   }
 
   .btn-primary {
-    @apply inline-flex items-center justify-center gap-2 rounded-xl bg-brand-primary px-8 py-4 font-medium text-white transition hover:bg-brand-primary/90;
+    @apply inline-flex items-center justify-center gap-2 rounded-xl bg-brand-primary-dark px-8 py-4 font-medium text-white transition hover:bg-brand-primary-darker;
   }
 
   .btn-ghost {
-    @apply inline-flex items-center justify-center gap-2 rounded-xl border border-brand-border bg-transparent px-8 py-4 font-medium text-brand-dark transition hover:border-brand-primary hover:text-brand-primary;
+    @apply inline-flex items-center justify-center gap-2 rounded-xl border border-brand-border bg-transparent px-8 py-4 font-medium text-brand-dark transition hover:border-brand-primary hover:text-brand-primary-dark;
   }
 
   .eyebrow {
-    @apply text-xs font-medium uppercase tracking-wider text-brand-primary;
+    @apply text-xs font-medium uppercase tracking-wider text-brand-primary-dark;
   }
 }
 

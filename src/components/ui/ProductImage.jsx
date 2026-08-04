@@ -6,11 +6,11 @@ import { Flower2, Gift, Leaf, PartyPopper, Rabbit } from 'lucide-react';
  * looking deliberate instead of showing sixteen identical grey boxes.
  */
 const FALLBACK = {
-  buketi: { icon: Flower2, tint: 'from-brand-primary/15 via-brand-bg to-brand-rose/15' },
-  aranzmani: { icon: Leaf, tint: 'from-brand-primary/20 via-brand-bg to-brand-primary/5' },
-  pokloni: { icon: Gift, tint: 'from-brand-rose/15 via-brand-bg to-brand-primary/10' },
-  'plisane-igracke': { icon: Rabbit, tint: 'from-brand-rose/20 via-brand-bg to-brand-rose/5' },
-  baloni: { icon: PartyPopper, tint: 'from-brand-primary/10 via-brand-bg to-brand-rose/20' },
+  buketi: { icon: Flower2, tint: 'from-brand-mist to-white' },
+  aranzmani: { icon: Leaf, tint: 'from-brand-mist via-brand-mist/60 to-white' },
+  pokloni: { icon: Gift, tint: 'from-brand-teal/20 to-white' },
+  'plisane-igracke': { icon: Rabbit, tint: 'from-brand-primary/15 to-white' },
+  baloni: { icon: PartyPopper, tint: 'from-brand-teal/15 via-brand-mist to-white' },
 };
 
 const DEFAULT_FALLBACK = FALLBACK.buketi;
@@ -29,9 +29,9 @@ export default function ProductImage({ src, alt, category, className = '', sizes
       <div
         role="img"
         aria-label={alt}
-        className={`flex h-full w-full items-center justify-center bg-gradient-to-br ${tint} ${className}`}
+        className={`flex h-full w-full items-center justify-center bg-gradient-to-b ${tint} ${className}`}
       >
-        <Icon className="h-10 w-10 text-brand-primary/40" strokeWidth={1.25} aria-hidden="true" />
+        <Icon className="h-10 w-10 text-brand-primary/45" strokeWidth={1.25} aria-hidden="true" />
       </div>
     );
   }

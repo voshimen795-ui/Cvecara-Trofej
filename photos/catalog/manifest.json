@@ -1,10 +1,26 @@
 [
   {
-    "slug": "prolecna-simfonija",
+    "slug": "nezni-pozdrav",
     "category": "buketi",
-    "source": "a1f264b8-10374.jpg",
+    "source": "110b2e4c-10055.jpg",
     "alpha_matting": false,
     "model": "birefnet-general",
-    "coverage": 0.4909
+    "coverage": 0.4765
+  },
+  {
+    "slug": "meki-pastel",
+    "category": "buketi",
+    "source": "45a242ef-10057.jpg",
+    "alpha_matting": false,
+    "model": "birefnet-general",
+    "coverage": 0.5759
+  },
+  {
+    "slug": "ljiljan-i-ruze",
+    "category": "buketi",
+    "source": "dc356109-10088.jpg",
+    "alpha_matting": false,
+    "model": "birefnet-general",
+    "coverage": 0.3959
   }
 ]

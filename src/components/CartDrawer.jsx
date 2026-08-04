@@ -187,7 +187,7 @@ export default function CartDrawer() {
                   </div>
                 </dl>
 
-                <p className="mt-4 flex items-start gap-2 rounded-xl bg-brand-primary/10 px-3 py-2.5 text-xs leading-relaxed text-brand-primary">
+                <p className="mt-4 flex items-start gap-2 rounded-xl bg-brand-primary/10 px-3 py-2.5 text-xs leading-relaxed text-brand-primary-dark">
                   <Truck className="mt-0.5 h-3.5 w-3.5 shrink-0" aria-hidden="true" />
                   <span>
                     {qualifiesForFreeDelivery
@@ -198,7 +198,7 @@ export default function CartDrawer() {
 
                 <button
                   type="button"
-                  className="mt-4 w-full rounded-xl bg-brand-primary py-4 text-center font-medium text-white transition hover:bg-brand-primary/90"
+                  className="mt-4 w-full rounded-xl bg-brand-primary-dark py-4 text-center font-medium text-white transition hover:bg-brand-primary-darker"
                 >
                   Nastavi na plaćanje
                 </button>

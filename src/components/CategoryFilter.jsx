@@ -29,7 +29,7 @@ export default function CategoryFilter({ active, onChange }) {
               onClick={() => onChange(category.id)}
               className={`shrink-0 snap-start whitespace-nowrap rounded-full px-5 py-2.5 text-sm font-medium transition-colors ${
                 isActive
-                  ? 'bg-brand-primary text-white shadow-sm'
+                  ? 'bg-brand-primary-dark text-white shadow-sm'
                   : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
               }`}
             >

@@ -6,8 +6,15 @@ export default {
       colors: {
         brand: {
           primary: '#4A9B9B', // Soft Mint Teal — primary accent
+          // Dark end of the brand teal range. White clears 4.5:1 here but only
+          // 3.3:1 on the lighter #4A9B9B, so teal fills carrying text use this.
+          'primary-dark': '#3D7A73',
+          'primary-darker': '#2F5F58', // Hover for teal fills
           teal: '#55B5B3', // Teal sampled from the logo disc
-          deep: '#0F2726', // Deep teal — hero scrim over photography
+          mist: '#E0F2F0', // Palest teal — product image ground
+          light: '#B8E0DC', // Light teal — body text on dark teal
+          forest: '#1A3D3A', // Footer gradient, top
+          deep: '#0F2726', // Deep teal — hero scrim, footer gradient bottom
           rose: '#E88295', // Soft Rose Pink — badges / subtle highlights
           bg: '#FAFAFA', // Canvas background
           surface: '#FFFFFF', // Card / nav surface

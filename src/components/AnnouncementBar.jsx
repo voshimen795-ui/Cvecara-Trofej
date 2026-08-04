@@ -7,7 +7,7 @@ import { SHOP } from '../data/shop.js';
  */
 export default function AnnouncementBar() {
   return (
-    <div className="h-10 bg-brand-primary text-white">
+    <div className="h-10 bg-brand-primary-dark text-white">
       <div className="container-editorial flex h-full items-center justify-center">
         <p className="flex items-center gap-2 truncate text-xs sm:gap-3">
           <span className="flex items-center gap-1.5">
