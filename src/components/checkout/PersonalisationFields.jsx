@@ -1,13 +1,28 @@
 import { Sparkles } from 'lucide-react';
+import { useI18n } from '../../i18n/index.jsx';
 
-const OCCASIONS = [
-  'Rođendan',
-  'Godišnjica',
-  'Izvinjenje',
-  'Rodilište',
-  'Sahrana',
-  'Bez povoda',
+/**
+ * The chip stores a key, not a label — the florist's copy of the order has to
+ * say "Rođendan" even when the customer ordered in Russian, so OCCASION_SR is
+ * what goes into the email and the UI only ever translates for display.
+ */
+export const OCCASIONS = [
+  'rodjendan',
+  'godisnjica',
+  'izvinjenje',
+  'rodiliste',
+  'sahrana',
+  'bez-povoda',
 ];
+
+export const OCCASION_SR = {
+  rodjendan: 'Rođendan',
+  godisnjica: 'Godišnjica',
+  izvinjenje: 'Izvinjenje',
+  rodiliste: 'Rodilište',
+  sahrana: 'Sahrana',
+  'bez-povoda': 'Bez povoda',
+};
 
 const CARD_LIMIT = 200;
 
@@ -16,6 +31,7 @@ const CARD_LIMIT = 200;
  * the occasion, what goes on the card, and anything to swap or avoid.
  */
 export default function PersonalisationFields({ value, onChange }) {
+  const { t } = useI18n();
   const set = (field) => (event) => onChange({ ...value, [field]: event.target.value });
   const left = CARD_LIMIT - value.cardMessage.length;
 
@@ -23,14 +39,14 @@ export default function PersonalisationFields({ value, onChange }) {
     <fieldset className="space-y-4">
       <legend className="mb-1 flex items-center gap-2 font-serif text-xl text-brand-dark">
         <Sparkles className="h-5 w-5 text-brand-primary-dark" aria-hidden="true" />
-        Personalizovan buket
+        {t('checkout.personalisation')}
       </legend>
-      <p className="text-sm text-gray-600">
-        Sve je opciono — ali što više znamo, to je buket bliži onome što ste zamislili.
-      </p>
+      <p className="text-sm text-gray-600">{t('checkout.personalisationLead')}</p>
 
       <div>
-        <span className="mb-1.5 block text-sm font-medium text-brand-dark">Povod</span>
+        <span className="mb-1.5 block text-sm font-medium text-brand-dark">
+          {t('checkout.occasion')}
+        </span>
         <div className="flex flex-wrap gap-2">
           {OCCASIONS.map((occasion) => {
             const active = value.occasion === occasion;
@@ -47,7 +63,7 @@ export default function PersonalisationFields({ value, onChange }) {
                     : 'border-brand-border text-brand-muted hover:border-brand-primary'
                 }`}
               >
-                {occasion}
+                {t(`occasions.${occasion}`)}
               </button>
             );
           })}
@@ -56,9 +72,9 @@ export default function PersonalisationFields({ value, onChange }) {
 
       <label className="block">
         <span className="mb-1.5 flex items-baseline justify-between text-sm font-medium text-brand-dark">
-          Poruka na čestitki
+          {t('checkout.cardMessage')}
           <span className={`text-xs font-normal ${left < 20 ? 'text-brand-rose' : 'text-brand-muted'}`}>
-            {left} preostalo
+            {t('checkout.charsLeft', { n: left })}
           </span>
         </span>
         <textarea
@@ -66,18 +82,20 @@ export default function PersonalisationFields({ value, onChange }) {
           maxLength={CARD_LIMIT}
           value={value.cardMessage}
           onChange={set('cardMessage')}
-          placeholder="Sve najbolje! Voli te…"
+          placeholder={t('checkout.cardPlaceholder')}
           className="w-full resize-y rounded-xl border border-brand-border bg-white px-4 py-3 text-brand-dark placeholder:text-gray-400 focus:border-brand-primary-dark"
         />
       </label>
 
       <label className="block">
-        <span className="mb-1.5 block text-sm font-medium text-brand-dark">Posebne želje</span>
+        <span className="mb-1.5 block text-sm font-medium text-brand-dark">
+          {t('checkout.wishes')}
+        </span>
         <textarea
           rows={3}
           value={value.wishes}
           onChange={set('wishes')}
-          placeholder="Bez ljiljana, više zelenila, papir u roze tonovima…"
+          placeholder={t('checkout.wishesPlaceholder')}
           className="w-full resize-y rounded-xl border border-brand-border bg-white px-4 py-3 text-brand-dark placeholder:text-gray-400 focus:border-brand-primary-dark"
         />
       </label>

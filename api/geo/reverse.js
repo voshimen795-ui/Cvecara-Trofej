@@ -21,10 +21,10 @@ export default async function handler(req, res) {
   const lon = Number(req.body?.lon);
 
   if (!Number.isFinite(lat) || !Number.isFinite(lon)) {
-    return res.status(400).json({ error: 'Nedostaju koordinate.' });
+    return res.status(400).json({ error: 'Nedostaju koordinate.', code: 'geoMissing' });
   }
   if (lat < -90 || lat > 90 || lon < -180 || lon > 180) {
-    return res.status(400).json({ error: 'Koordinate su van opsega.' });
+    return res.status(400).json({ error: 'Koordinate su van opsega.', code: 'geoRange' });
   }
 
   const url = `${ENDPOINT}?lat=${lat}&lon=${lon}&format=jsonv2&addressdetails=1&accept-language=sr`;
@@ -49,6 +49,6 @@ export default async function handler(req, res) {
   } catch (err) {
     console.error('geo/reverse failed', err);
     // Not fatal: the caller still has coordinates, which are what Wolt needs.
-    return res.status(502).json({ error: 'Nije uspelo prepoznavanje adrese.' });
+    return res.status(502).json({ error: 'Nije uspelo prepoznavanje adrese.', code: 'geoLookup' });
   }
 }

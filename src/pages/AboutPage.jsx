@@ -4,8 +4,11 @@ import AboutSection from '../components/AboutSection.jsx';
 import FamilySection from '../components/FamilySection.jsx';
 import MapSection from '../components/MapSection.jsx';
 import { HOURS_DISPLAY, SHOP } from '../data/shop.js';
+import { useI18n } from '../i18n/index.jsx';
 
 export default function AboutPage() {
+  const { t } = useI18n();
+
   return (
     <>
       <header className="relative isolate overflow-hidden bg-brand-deep">
@@ -19,25 +22,25 @@ export default function AboutPage() {
         />
 
         <div className="container-editorial relative py-14 text-center sm:py-20">
-          <nav aria-label="Putanja" className="mb-6 flex justify-center">
+          <nav aria-label={t('common.breadcrumb')} className="mb-6 flex justify-center">
             <ol className="flex items-center gap-1.5 text-xs text-white/60">
               <li>
                 <Link to="/" className="transition-colors hover:text-white">
-                  Početna
+                  {t('common.home')}
                 </Link>
               </li>
               <ChevronRight className="h-3.5 w-3.5" aria-hidden="true" />
               <li aria-current="page" className="text-white">
-                O nama
+                {t('nav.onama')}
               </li>
             </ol>
           </nav>
 
           <h1 className="font-serif text-3xl font-bold uppercase tracking-[0.01em] text-white sm:text-5xl">
-            Buket po želji
+            {t('about.heroTitle')}
           </h1>
           <p className="mx-auto mt-5 max-w-xl font-serif text-lg italic text-white/75">
-            Recite nam priliku i budžet — ostalo je na nama.
+            {t('about.heroLead')}
           </p>
         </div>
       </header>
@@ -48,12 +51,16 @@ export default function AboutPage() {
 
       <section className="container-editorial py-14 lg:py-20">
         <div className="mx-auto max-w-3xl text-center">
-          <p className="eyebrow">Kontakt</p>
-          <h2 className="mt-2 font-serif text-3xl text-brand-dark">Javite nam se</h2>
+          <p className="eyebrow">{t('about.contactEyebrow')}</p>
+          <h2 className="mt-2 font-serif text-3xl text-brand-dark">{t('about.contactTitle')}</h2>
           <p className="mx-auto mt-4 max-w-xl text-gray-600">
-            Porudžbine primamo telefonom i u radnji. Radimo{' '}
-            {HOURS_DISPLAY[0].day.toLowerCase()} {HOURS_DISPLAY[0].time}, subotom{' '}
-            {HOURS_DISPLAY[1].time}. Nedeljom ne radimo.
+            {t('about.contactLead', {
+              // Its own key, not `hours.weekdays` lower-cased: "monday —
+              // friday" is wrong in English, and Russian needs a case ending.
+              weekdays: t('hours.weekdaysPhrase'),
+              weekdayHours: HOURS_DISPLAY[0].time,
+              saturdayHours: HOURS_DISPLAY[1].time,
+            })}
           </p>
 
           <ul className="mt-10 grid grid-cols-1 gap-4 sm:grid-cols-3">

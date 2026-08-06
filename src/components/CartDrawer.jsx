@@ -3,13 +3,14 @@ import { AnimatePresence, motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
 import { Minus, Plus, ShoppingBag, Trash2, Truck, X } from 'lucide-react';
 import ProductImage from './ui/ProductImage.jsx';
-import { SHOP } from '../data/shop.js';
 import { formatPrice } from '../utils/format.js';
 import { useCart } from '../context/CartContext.jsx';
 import { useBodyScrollLock } from '../hooks/useBodyScrollLock.js';
 import { useEscapeKey } from '../hooks/useEscapeKey.js';
+import { useI18n } from '../i18n/index.jsx';
 
 export default function CartDrawer() {
+  const { t, tp } = useI18n();
   const {
     items,
     isOpen,
@@ -38,7 +39,7 @@ export default function CartDrawer() {
   return (
     <AnimatePresence>
       {isOpen && (
-        <div className="fixed inset-0 z-50" role="dialog" aria-modal="true" aria-label="Vaša Korpa">
+        <div className="fixed inset-0 z-50" role="dialog" aria-modal="true" aria-label={t('cart.title')}>
           <motion.div
             key="overlay"
             initial={{ opacity: 0 }}
@@ -60,7 +61,7 @@ export default function CartDrawer() {
             {/* Header */}
             <div className="flex items-center justify-between border-b border-gray-100 px-6 py-5">
               <h2 className="font-serif text-xl text-brand-dark">
-                Vaša Korpa
+                {t('cart.title')}
                 {totalItems > 0 && (
                   <span className="ml-2 text-sm font-sans text-brand-muted">({totalItems})</span>
                 )}
@@ -69,7 +70,7 @@ export default function CartDrawer() {
                 ref={closeButtonRef}
                 type="button"
                 onClick={closeCart}
-                aria-label="Zatvori korpu"
+                aria-label={t('cart.close')}
                 className="rounded-lg p-2 text-brand-dark transition hover:bg-gray-100"
               >
                 <X className="h-5 w-5" aria-hidden="true" />
@@ -82,12 +83,10 @@ export default function CartDrawer() {
                 <span className="flex h-16 w-16 items-center justify-center rounded-full bg-brand-primary/10">
                   <ShoppingBag className="h-7 w-7 text-brand-primary" strokeWidth={1.5} aria-hidden="true" />
                 </span>
-                <p className="mt-6 font-serif text-lg text-brand-dark">Korpa je prazna</p>
-                <p className="mt-2 text-sm text-gray-600">
-                  Dodajte buket ili aranžman i vratite se ovde.
-                </p>
+                <p className="mt-6 font-serif text-lg text-brand-dark">{t('cart.empty')}</p>
+                <p className="mt-2 text-sm text-gray-600">{t('cart.emptyLead')}</p>
                 <button type="button" onClick={closeCart} className="btn-primary mt-8">
-                  Nastavi kupovinu
+                  {t('cart.continue')}
                 </button>
               </div>
             ) : (
@@ -106,7 +105,7 @@ export default function CartDrawer() {
                       <div className="h-24 w-20 shrink-0 overflow-hidden rounded-xl bg-gradient-to-b from-brand-mist to-white">
                         <ProductImage
                           src={item.image}
-                          alt={item.name}
+                          alt={tp(item)}
                           category={item.category}
                           className="h-full w-full object-contain p-1"
                         />
@@ -115,12 +114,12 @@ export default function CartDrawer() {
                       <div className="flex min-w-0 flex-1 flex-col">
                         <div className="flex items-start justify-between gap-2">
                           <h3 className="truncate font-serif text-base text-brand-dark">
-                            {item.name}
+                            {tp(item)}
                           </h3>
                           <button
                             type="button"
                             onClick={() => removeItem(item.key)}
-                            aria-label={`Ukloni ${item.name} iz korpe`}
+                            aria-label={t('cart.remove', { name: tp(item) })}
                             className="shrink-0 rounded p-1 text-brand-muted transition hover:text-brand-rose"
                           >
                             <Trash2 className="h-4 w-4" aria-hidden="true" />
@@ -128,8 +127,8 @@ export default function CartDrawer() {
                         </div>
 
                         <p className="mt-0.5 text-xs text-brand-muted">
-                          {item.sizeLabel ? `${item.sizeLabel} · ` : ''}
-                          {formatPrice(item.price)} / kom
+                          {item.sizeId ? `${t(`sizes.${item.sizeId}`)} · ` : ''}
+                          {formatPrice(item.price)} / {t('common.each')}
                         </p>
 
                         <div className="mt-auto flex items-center justify-between pt-3">
@@ -137,7 +136,7 @@ export default function CartDrawer() {
                             <button
                               type="button"
                               onClick={() => decrement(item.key, item.quantity)}
-                              aria-label={`Smanji količinu za ${item.name}`}
+                              aria-label={t('cart.decreaseNamed', { name: tp(item) })}
                               className="rounded-l-lg p-2 text-brand-dark transition hover:bg-gray-50"
                             >
                               <Minus className="h-3.5 w-3.5" aria-hidden="true" />
@@ -151,7 +150,7 @@ export default function CartDrawer() {
                             <button
                               type="button"
                               onClick={() => increment(item.key, item.quantity)}
-                              aria-label={`Povećaj količinu za ${item.name}`}
+                              aria-label={t('cart.increaseNamed', { name: tp(item) })}
                               className="rounded-r-lg p-2 text-brand-dark transition hover:bg-gray-50"
                             >
                               <Plus className="h-3.5 w-3.5" aria-hidden="true" />
@@ -174,17 +173,17 @@ export default function CartDrawer() {
               <div className="border-t border-gray-100 bg-brand-bg px-6 py-6">
                 <dl className="space-y-2 text-sm">
                   <div className="flex justify-between text-gray-600">
-                    <dt>Međuzbir</dt>
+                    <dt>{t('common.subtotal')}</dt>
                     <dd className="font-medium text-brand-dark">{formatPrice(subtotal)}</dd>
                   </div>
                   <div className="flex justify-between text-gray-600">
-                    <dt>Dostava</dt>
+                    <dt>{t('common.delivery')}</dt>
                     <dd className="font-medium text-brand-dark">
-                      {delivery === 0 ? 'Besplatno' : formatPrice(delivery)}
+                      {delivery === 0 ? t('common.free') : formatPrice(delivery)}
                     </dd>
                   </div>
                   <div className="flex justify-between border-t border-brand-border pt-3 text-base">
-                    <dt className="font-medium text-brand-dark">Ukupno</dt>
+                    <dt className="font-medium text-brand-dark">{t('common.total')}</dt>
                     <dd className="font-semibold text-brand-dark">{formatPrice(total)}</dd>
                   </div>
                 </dl>
@@ -193,8 +192,8 @@ export default function CartDrawer() {
                   <Truck className="mt-0.5 h-3.5 w-3.5 shrink-0" aria-hidden="true" />
                   <span>
                     {qualifiesForFreeDelivery
-                      ? `Besplatna dostava na teritoriji ${SHOP.city}a. Porudžbine do 14h isporučujemo istog dana.`
-                      : `Dodajte još ${formatPrice(amountToFreeDelivery)} za besplatnu dostavu. Isporuka istog dana za porudžbine do 14h.`}
+                      ? t('cart.freeDelivery')
+                      : t('cart.addForFree', { amount: formatPrice(amountToFreeDelivery) })}
                   </span>
                 </p>
 
@@ -203,7 +202,7 @@ export default function CartDrawer() {
                   onClick={closeCart}
                   className="mt-4 block w-full rounded-xl bg-brand-primary py-4 text-center font-semibold text-brand-dark transition hover:bg-brand-teal"
                 >
-                  Nastavi na plaćanje
+                  {t('cart.checkout')}
                 </Link>
 
                 <button
@@ -211,7 +210,7 @@ export default function CartDrawer() {
                   onClick={closeCart}
                   className="mt-3 w-full py-1 text-center text-sm text-brand-muted transition hover:text-brand-dark"
                 >
-                  Nastavi kupovinu
+                  {t('cart.continue')}
                 </button>
               </div>
             )}

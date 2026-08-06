@@ -2,22 +2,22 @@ import { Heart } from 'lucide-react';
 import { SHOP } from '../data/shop.js';
 import { Bloom, Sprig } from './ui/Botanical.jsx';
 import logoHeart from '../assets/logo-heart.png';
+import { useI18n } from '../i18n/index.jsx';
 
 /**
  * "Porodično" — the family story.
  *
  * PLACEHOLDER COPY. The owner is writing the final text; these three
  * paragraphs hold the shape (opening hook, how the shop works, the promise)
- * so the layout is settled before the words arrive. Replace PARAGRAPHS below
- * and nothing else needs to change.
+ * so the layout is settled before the words arrive. The words live in
+ * `family.p1`-`p3` in each locale file — replace those and nothing else in
+ * this component changes.
  */
-const PARAGRAPHS = [
-  'Cvećara Trofej nije lanac. Iza tezge stoji porodica koja se cvećem bavi godinama — isti ljudi biraju cveće ujutru, vezuju buket popodne i odgovaraju na telefon kad pozovete.',
-  'Zato svaki buket izgleda kao da je pravljen za nekog konkretnog, a ne po šablonu. Kad nam kažete povod, mi zapravo slušamo: da li je za izvinjenje, za rodilište ili za nekog ko voli samo bele cvetove.',
-  'Radimo u komšiluku, sa ljudima koji nam se vraćaju godinama. To je jedini razlog zašto nam je stalo do svakog buketa koji izađe iz radnje.',
-];
+const PARAGRAPHS = ['family.p1', 'family.p2', 'family.p3'];
 
 export default function FamilySection() {
+  const { t } = useI18n();
+
   return (
     <section
       id="porodicno"
@@ -42,8 +42,10 @@ export default function FamilySection() {
             <Heart className="h-5 w-5 text-brand-primary-dark" strokeWidth={1.75} aria-hidden="true" />
           </span>
 
-          <p className="eyebrow mt-5">O nama</p>
-          <h2 className="mt-2 font-serif text-3xl text-brand-dark sm:text-4xl">Porodično</h2>
+          <p className="eyebrow mt-5">{t('family.eyebrow')}</p>
+          <h2 className="mt-2 font-serif text-3xl text-brand-dark sm:text-4xl">
+            {t('family.title')}
+          </h2>
 
           <img
             src={logoHeart}
@@ -53,16 +55,16 @@ export default function FamilySection() {
           />
 
           <div className="space-y-5 text-left sm:text-center">
-            {PARAGRAPHS.map((paragraph, i) => (
+            {PARAGRAPHS.map((key, i) => (
               <p
-                key={i}
+                key={key}
                 className={
                   i === 0
                     ? 'font-serif text-lg leading-relaxed text-brand-dark sm:text-xl'
                     : 'leading-relaxed text-gray-600'
                 }
               >
-                {paragraph}
+                {t(key)}
               </p>
             ))}
           </div>

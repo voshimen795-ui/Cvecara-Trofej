@@ -4,6 +4,7 @@ import { ArrowRight } from 'lucide-react';
 import HeroPetals from './HeroPetals.jsx';
 import { Bloom, Bud, Eucalyptus, Sprig } from './ui/Botanical.jsx';
 import logoHeart from '../assets/logo-heart.png';
+import { useI18n } from '../i18n/index.jsx';
 
 const fadeUp = {
   hidden: { opacity: 0, y: 16 },
@@ -55,6 +56,7 @@ const BOTANICALS = [
 
 export default function Hero() {
   const reduceMotion = useReducedMotion();
+  const { t } = useI18n();
 
   return (
     <section id="top" className="relative isolate overflow-hidden bg-brand-deep">
@@ -101,7 +103,7 @@ export default function Hero() {
             animate="visible"
             className="inline-flex items-center gap-2 rounded-full border border-dashed border-white/45 bg-white/10 px-4 py-1.5 text-xs font-medium text-white backdrop-blur-sm"
           >
-            Ručno komponovani buketi
+            {t('hero.badge')}
           </motion.span>
 
           <motion.h1
@@ -112,10 +114,10 @@ export default function Hero() {
             className="mt-7 text-balance font-serif text-white"
           >
             <span className="block text-3xl font-bold uppercase leading-[1.1] tracking-[0.01em] sm:text-5xl lg:text-[3.5rem]">
-              Cveće koje govori
+              {t('hero.line1')}
             </span>
             <span className="mt-1 block font-script text-5xl font-bold leading-[1.05] text-brand-teal sm:text-6xl lg:text-7xl">
-              iz srca
+              {t('hero.line2')}
             </span>
           </motion.h1>
 
@@ -138,7 +140,7 @@ export default function Hero() {
             custom={0.22}
             className="font-serif text-lg italic leading-relaxed text-white/75 sm:text-xl"
           >
-            Za trenutke koji zaslužuju više od reči.
+            {t('hero.tagline')}
           </motion.p>
 
           <motion.div
@@ -152,7 +154,7 @@ export default function Hero() {
               to="/buketi"
               className="group inline-flex w-full items-center justify-center gap-2 rounded-xl bg-white px-8 py-4 font-medium text-brand-deep transition hover:bg-white/90 sm:w-auto"
             >
-              Pogledaj kolekciju
+              {t('hero.cta')}
               <ArrowRight
                 className="h-4 w-4 transition-transform group-hover:translate-x-0.5"
                 aria-hidden="true"
@@ -163,7 +165,7 @@ export default function Hero() {
               to="/o-nama"
               className="inline-flex w-full items-center justify-center gap-2 rounded-xl border border-dashed border-white/60 px-8 py-4 font-medium text-white transition hover:border-white hover:bg-white/10 sm:w-auto"
             >
-              Buket po želji
+              {t('hero.custom')}
             </Link>
           </motion.div>
         </div>

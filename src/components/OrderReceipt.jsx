@@ -1,6 +1,7 @@
 import { Printer } from 'lucide-react';
 import { HOURS_DISPLAY, SHOP } from '../data/shop.js';
 import { formatPrice } from '../utils/format.js';
+import { useI18n } from '../i18n/index.jsx';
 
 /**
  * Printable order receipt. `window.print()` on the same page rather than a PDF
@@ -9,6 +10,8 @@ import { formatPrice } from '../utils/format.js';
  * hide the rest of the page.
  */
 export default function OrderReceipt({ reference, customer, schedule, personalisation, items, totals }) {
+  const { t, tp } = useI18n();
+
   return (
     <>
       <button
@@ -17,7 +20,7 @@ export default function OrderReceipt({ reference, customer, schedule, personalis
         className="btn-ghost mt-4 print:hidden"
       >
         <Printer className="h-4 w-4" aria-hidden="true" />
-        Odštampaj porudžbenicu
+        {t('receipt.print')}
       </button>
 
       <div
@@ -34,30 +37,32 @@ export default function OrderReceipt({ reference, customer, schedule, personalis
         </header>
 
         <div className="flex items-baseline justify-between pt-4">
-          <h3 className="font-serif text-lg text-brand-dark">Porudžbenica</h3>
+          <h3 className="font-serif text-lg text-brand-dark">{t('receipt.title')}</h3>
           <p className="font-mono text-sm font-bold text-brand-dark">{reference}</p>
         </div>
 
         <dl className="mt-4 grid grid-cols-2 gap-x-4 gap-y-1.5 text-sm">
-          <dt className="text-brand-muted">Kupac</dt>
+          <dt className="text-brand-muted">{t('receipt.customer')}</dt>
           <dd className="text-brand-dark">{customer.name}</dd>
-          <dt className="text-brand-muted">Telefon</dt>
+          <dt className="text-brand-muted">{t('receipt.phone')}</dt>
           <dd className="tabular-nums text-brand-dark">{customer.phone}</dd>
           {schedule?.mode === 'dostava' && customer.street && (
             <>
-              <dt className="text-brand-muted">Adresa</dt>
+              <dt className="text-brand-muted">{t('receipt.address')}</dt>
               <dd className="text-brand-dark">
                 {customer.street}, {customer.city}
               </dd>
             </>
           )}
-          <dt className="text-brand-muted">Način</dt>
-          <dd className="capitalize text-brand-dark">{schedule?.mode}</dd>
+          <dt className="text-brand-muted">{t('receipt.mode')}</dt>
+          <dd className="text-brand-dark">
+            {schedule?.mode === 'preuzimanje' ? t('receipt.modePickup') : t('receipt.modeDelivery')}
+          </dd>
           {schedule?.date && (
             <>
-              <dt className="text-brand-muted">Termin</dt>
+              <dt className="text-brand-muted">{t('receipt.slot')}</dt>
               <dd className="tabular-nums text-brand-dark">
-                {schedule.date} u {schedule.time}
+                {t('receipt.slotValue', { date: schedule.date, time: schedule.time })}
               </dd>
             </>
           )}
@@ -66,18 +71,18 @@ export default function OrderReceipt({ reference, customer, schedule, personalis
         <table className="mt-5 w-full text-sm">
           <thead>
             <tr className="border-b border-brand-border text-left text-xs uppercase tracking-wide text-brand-muted">
-              <th className="pb-2 font-medium">Artikal</th>
-              <th className="pb-2 text-center font-medium">Kom</th>
-              <th className="pb-2 text-right font-medium">Iznos</th>
+              <th className="pb-2 font-medium">{t('receipt.item')}</th>
+              <th className="pb-2 text-center font-medium">{t('receipt.qty')}</th>
+              <th className="pb-2 text-right font-medium">{t('receipt.amount')}</th>
             </tr>
           </thead>
           <tbody>
             {items.map((item) => (
               <tr key={item.key} className="border-b border-brand-border/60">
                 <td className="py-2 text-brand-dark">
-                  {item.name}
-                  {item.sizeLabel && (
-                    <span className="text-brand-muted"> ({item.sizeLabel})</span>
+                  {tp(item)}
+                  {item.sizeId && (
+                    <span className="text-brand-muted"> ({t(`sizes.${item.sizeId}`)})</span>
                   )}
                 </td>
                 <td className="py-2 text-center tabular-nums text-brand-dark">{item.quantity}</td>
@@ -91,23 +96,23 @@ export default function OrderReceipt({ reference, customer, schedule, personalis
 
         <dl className="mt-4 space-y-1.5 text-sm">
           <div className="flex justify-between">
-            <dt className="text-brand-muted">Međuzbir</dt>
+            <dt className="text-brand-muted">{t('common.subtotal')}</dt>
             <dd className="tabular-nums text-brand-dark">{formatPrice(totals.subtotal)}</dd>
           </div>
           {totals.discount > 0 && (
             <div className="flex justify-between">
-              <dt className="text-brand-muted">Popust</dt>
+              <dt className="text-brand-muted">{t('common.discount')}</dt>
               <dd className="tabular-nums text-brand-dark">−{formatPrice(totals.discount)}</dd>
             </div>
           )}
           <div className="flex justify-between">
-            <dt className="text-brand-muted">Dostava</dt>
+            <dt className="text-brand-muted">{t('common.delivery')}</dt>
             <dd className="tabular-nums text-brand-dark">
-              {totals.delivery ? formatPrice(totals.delivery) : 'Besplatno'}
+              {totals.delivery ? formatPrice(totals.delivery) : t('common.free')}
             </dd>
           </div>
           <div className="flex justify-between border-t border-brand-border pt-2 text-base font-semibold">
-            <dt className="text-brand-dark">Ukupno</dt>
+            <dt className="text-brand-dark">{t('common.total')}</dt>
             <dd className="tabular-nums text-brand-dark">{formatPrice(totals.total)}</dd>
           </div>
         </dl>
@@ -116,21 +121,24 @@ export default function OrderReceipt({ reference, customer, schedule, personalis
           <div className="mt-5 border-t border-brand-border pt-4 text-sm">
             {personalisation.occasion && (
               <p className="text-brand-dark">
-                <span className="text-brand-muted">Povod: </span>
-                {personalisation.occasion}
+                <span className="text-brand-muted">{t('receipt.occasion')} </span>
+                {t(`occasions.${personalisation.occasion}`)}
               </p>
             )}
             {personalisation.cardMessage && (
               <p className="mt-1 text-brand-dark">
-                <span className="text-brand-muted">Čestitka: </span>„{personalisation.cardMessage}"
+                <span className="text-brand-muted">{t('receipt.card')} </span>„
+                {personalisation.cardMessage}"
               </p>
             )}
           </div>
         )}
 
         <p className="mt-5 border-t border-brand-border pt-4 text-xs leading-relaxed text-brand-muted">
-          Nije fiskalni račun. Radno vreme: {HOURS_DISPLAY[0].time} radnim danima, subotom{' '}
-          {HOURS_DISPLAY[1].time}, nedeljom ne radimo.
+          {t('receipt.legal', {
+            weekdayHours: HOURS_DISPLAY[0].time,
+            saturdayHours: HOURS_DISPLAY[1].time,
+          })}
         </p>
       </div>
     </>

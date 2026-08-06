@@ -7,6 +7,7 @@ import { FEATURED } from '../data/products.js';
 import { formatPrice } from '../utils/format.js';
 import { useBreakpoint } from '../hooks/useBreakpoint.js';
 import heroTexture from '../assets/hero-texture.jpg';
+import { useI18n } from '../i18n/index.jsx';
 
 /**
  * Fan geometry per breakpoint. `slots` is how many cards are dealt; each slot
@@ -45,6 +46,7 @@ function place(i, n, cfg) {
 export default function FanDeck() {
   const breakpoint = useBreakpoint();
   const reduceMotion = useReducedMotion();
+  const { t, tp } = useI18n();
   const cfg = LAYOUT[breakpoint];
   const slots = Math.min(cfg.slots, FEATURED.length);
 
@@ -89,11 +91,13 @@ export default function FanDeck() {
       <div className="container-editorial">
         <div className="text-center">
           <p className="text-xs font-medium uppercase tracking-wider text-brand-teal">
-            Istaknuto
+            {t('featured.eyebrow')}
           </p>
-          <h2 className="mt-2 font-serif text-3xl text-white sm:text-4xl">Naši favoriti</h2>
+          <h2 className="mt-2 font-serif text-3xl text-white sm:text-4xl">
+            {t('featured.title')}
+          </h2>
           <p className="mx-auto mt-4 max-w-md font-serif text-base italic text-brand-light/75">
-            Buketi koji najčešće odlaze iz radnje.
+            {t('featured.lead')}
           </p>
         </div>
 
@@ -145,7 +149,7 @@ export default function FanDeck() {
                       >
                         <ProductImage
                           src={product.image}
-                          alt={product.name}
+                          alt={tp(product)}
                           category={product.category}
                           className="h-full w-full object-contain p-3"
                         />
@@ -153,7 +157,7 @@ export default function FanDeck() {
 
                       <div className="border-t border-brand-border/60 bg-white px-3 py-2.5">
                         <p className="truncate font-serif text-sm text-brand-dark">
-                          {product.name}
+                          {tp(product)}
                         </p>
                         <p className="mt-0.5 text-sm font-bold text-brand-primary-dark">
                           {formatPrice(product.price)}
@@ -172,7 +176,7 @@ export default function FanDeck() {
             to="/buketi"
             className="group inline-flex items-center justify-center gap-2 rounded-xl border border-dashed border-white/50 px-8 py-4 font-medium text-white transition hover:border-white hover:bg-white/10"
           >
-            Pogledaj sve bukete
+            {t('featured.cta')}
             <ArrowRight
               className="h-4 w-4 transition-transform group-hover:translate-x-0.5"
               aria-hidden="true"

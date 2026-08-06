@@ -1,5 +1,6 @@
 import { Calendar } from 'lucide-react';
-import { OPENING_HOURS, isOpenOn, slotsFor } from '../../data/shop.js';
+import { isOpenOn, slotsFor } from '../../data/shop.js';
+import { useI18n } from '../../i18n/index.jsx';
 
 const iso = (date) => date.toISOString().slice(0, 10);
 
@@ -9,13 +10,12 @@ const parseISO = (value) => {
   return new Date(y, m - 1, d);
 };
 
-const DAY_LABEL = OPENING_HOURS.map((h) => h.label);
-
 /**
  * Date and time picker for delivery or pickup. Times come from the shop's
  * opening hours, so a customer can never book a slot when the door is locked.
  */
 export default function ScheduleFields({ value, onChange }) {
+  const { t } = useI18n();
   const today = new Date();
   const min = iso(today);
   const max = iso(new Date(today.getTime() + 30 * 24 * 60 * 60 * 1000));
@@ -36,7 +36,7 @@ export default function ScheduleFields({ value, onChange }) {
     <fieldset className="space-y-4">
       <legend className="mb-1 flex items-center gap-2 font-serif text-xl text-brand-dark">
         <Calendar className="h-5 w-5 text-brand-primary-dark" aria-hidden="true" />
-        Zakazivanje
+        {t('checkout.schedule')}
       </legend>
 
       <div className="flex gap-3">
@@ -46,19 +46,21 @@ export default function ScheduleFields({ value, onChange }) {
             type="button"
             onClick={() => onChange({ ...value, mode })}
             aria-pressed={value.mode === mode}
-            className={`flex-1 rounded-xl border px-4 py-3 text-sm font-medium capitalize transition ${
+            className={`flex-1 rounded-xl border px-4 py-3 text-sm font-medium transition ${
               value.mode === mode
                 ? 'border-brand-primary-dark bg-brand-mist text-brand-dark'
                 : 'border-brand-border text-brand-muted hover:border-brand-primary'
             }`}
           >
-            {mode === 'dostava' ? 'Dostava na adresu' : 'Preuzimanje u radnji'}
+            {mode === 'dostava' ? t('checkout.deliveryMode') : t('checkout.pickupMode')}
           </button>
         ))}
       </div>
 
       <label className="block">
-        <span className="mb-1.5 block text-sm font-medium text-brand-dark">Datum</span>
+        <span className="mb-1.5 block text-sm font-medium text-brand-dark">
+          {t('checkout.date')}
+        </span>
         <input
           type="date"
           value={value.date}
@@ -72,19 +74,21 @@ export default function ScheduleFields({ value, onChange }) {
 
       {closed && (
         <p role="alert" className="rounded-xl bg-amber-50 px-4 py-3 text-sm text-amber-900">
-          {DAY_LABEL[chosen.getDay()]}om ne radimo. Izaberite drugi dan.
+          {t('checkout.closedOn', { day: t(`hours.days.${chosen.getDay()}`) })}
         </p>
       )}
 
       {chosen && !closed && usable.length === 0 && (
         <p role="alert" className="rounded-xl bg-amber-50 px-4 py-3 text-sm text-amber-900">
-          Za danas više nema slobodnih termina. Izaberite sutrašnji datum.
+          {t('checkout.noSlots')}
         </p>
       )}
 
       {usable.length > 0 && (
         <div>
-          <span className="mb-1.5 block text-sm font-medium text-brand-dark">Vreme</span>
+          <span className="mb-1.5 block text-sm font-medium text-brand-dark">
+            {t('checkout.time')}
+          </span>
           <div className="flex flex-wrap gap-2">
             {usable.map((slot) => (
               <button

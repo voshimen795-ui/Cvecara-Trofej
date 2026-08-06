@@ -71,18 +71,20 @@ export default function handler(req, res) {
   const code = String(req.body?.code ?? '').trim().toUpperCase();
   const subtotal = Number(req.body?.subtotal);
 
-  if (!code) return res.status(400).json({ error: 'Unesite kod.' });
+  if (!code) return res.status(400).json({ error: 'Unesite kod.', code: 'voucherEmpty' });
   if (!Number.isFinite(subtotal) || subtotal <= 0) {
-    return res.status(400).json({ error: 'Korpa je prazna.' });
+    return res.status(400).json({ error: 'Korpa je prazna.', code: 'cartEmpty' });
   }
 
   const voucher = campaignCodes()[code] ?? verifyLoyalty(code);
   if (!voucher) {
-    return res.status(404).json({ error: 'Kod nije prepoznat. Proverite da li je tačno unet.' });
+    return res.status(404).json({ error: 'Kod nije prepoznat. Proverite da li je tačno unet.', code: 'voucherUnknown' });
   }
   if (subtotal < MIN_SUBTOTAL) {
     return res.status(422).json({
       error: `Kod važi za porudžbine preko ${MIN_SUBTOTAL} RSD.`,
+      code: 'voucherMinimum',
+      vars: { min: MIN_SUBTOTAL },
     });
   }
 

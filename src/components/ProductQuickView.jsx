@@ -3,12 +3,12 @@ import { AnimatePresence, motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
 import { ArrowRight, Check, Minus, Plus, Truck, X } from 'lucide-react';
 import ProductImage from './ui/ProductImage.jsx';
-import { CATEGORY_TAG, defaultSize, isAvailable, priceFor } from '../data/products.js';
-import { SHOP } from '../data/shop.js';
+import { defaultSize, isAvailable, priceFor } from '../data/products.js';
 import { formatPrice } from '../utils/format.js';
 import { useCart } from '../context/CartContext.jsx';
 import { useBodyScrollLock } from '../hooks/useBodyScrollLock.js';
 import { useEscapeKey } from '../hooks/useEscapeKey.js';
+import { useI18n } from '../i18n/index.jsx';
 
 /**
  * Quick view: tap a card and the product opens here, with the size choice in
@@ -17,6 +17,7 @@ import { useEscapeKey } from '../hooks/useEscapeKey.js';
  */
 export default function ProductQuickView({ product, onClose }) {
   const { addItem } = useCart();
+  const { t, tp } = useI18n();
   const [sizeId, setSizeId] = useState(null);
   const [quantity, setQuantity] = useState(1);
   const [added, setAdded] = useState(false);
@@ -51,7 +52,7 @@ export default function ProductQuickView({ product, onClose }) {
           className="fixed inset-0 z-[60] flex items-end justify-center sm:items-center sm:p-6"
           role="dialog"
           aria-modal="true"
-          aria-label={product.name}
+          aria-label={tp(product)}
         >
           <motion.div
             key="scrim"
@@ -75,7 +76,7 @@ export default function ProductQuickView({ product, onClose }) {
               ref={closeRef}
               type="button"
               onClick={onClose}
-              aria-label="Zatvori"
+              aria-label={t('common.close')}
               className="absolute right-4 top-4 z-20 rounded-full bg-white/90 p-2 text-brand-dark shadow-md backdrop-blur transition hover:bg-white"
             >
               <X className="h-5 w-5" aria-hidden="true" />
@@ -91,7 +92,7 @@ export default function ProductQuickView({ product, onClose }) {
               <div className="relative aspect-square w-full bg-gradient-to-b from-brand-mist to-white md:aspect-auto md:h-full md:overflow-hidden">
                 <ProductImage
                   src={product.image}
-                  alt={product.name}
+                  alt={tp(product)}
                   category={product.category}
                   className={`h-full w-full object-contain p-6 ${
                     available ? '' : 'opacity-40 saturate-50'
@@ -101,7 +102,7 @@ export default function ProductQuickView({ product, onClose }) {
                 <div className="absolute left-4 top-4 flex flex-col gap-2">
                   {product.badge && available && (
                     <span className="w-fit rounded-full bg-brand-rose px-3 py-1 text-[10px] font-bold uppercase tracking-wide text-brand-dark">
-                      {product.badge}
+                      {t(`badges.${product.badge}`)}
                     </span>
                   )}
                   <span
@@ -115,23 +116,25 @@ export default function ProductQuickView({ product, onClose }) {
                       }`}
                       aria-hidden="true"
                     />
-                    {available ? 'Trenutno dostupno' : 'Trenutno nije dostupno'}
+                    {available ? t('common.inStock') : t('common.outOfStock')}
                   </span>
                 </div>
               </div>
 
               {/* Detail */}
               <div className="flex flex-col p-6 sm:p-8">
-                <p className="eyebrow">{CATEGORY_TAG[product.category] ?? product.category}</p>
+                <p className="eyebrow">{t(`tags.${product.category}`)}</p>
                 <h2 className="mt-2 font-serif text-2xl text-brand-dark sm:text-3xl">
-                  {product.name}
+                  {tp(product)}
                 </h2>
-                <p className="mt-3 leading-relaxed text-gray-600">{product.description}</p>
+                <p className="mt-3 leading-relaxed text-gray-600">
+                  {tp(product, 'description')}
+                </p>
 
                 {product.sizes && (
                   <fieldset className="mt-6">
                     <legend className="mb-2.5 text-sm font-medium text-brand-dark">
-                      Veličina buketa
+                      {t('sizes.label')}
                     </legend>
                     <div className="grid grid-cols-3 gap-2">
                       {product.sizes.map((size) => {
@@ -149,10 +152,10 @@ export default function ProductQuickView({ product, onClose }) {
                             }`}
                           >
                             <span className="block text-sm font-semibold text-brand-dark">
-                              {size.label}
+                              {t(`sizes.${size.id}`)}
                             </span>
                             <span className="mt-0.5 block text-[11px] leading-tight text-brand-muted">
-                              {size.note}
+                              {t(`sizes.note.${size.id}`)}
                             </span>
                             <span className="mt-1 block text-sm font-bold text-brand-dark">
                               {formatPrice(size.price)}
@@ -165,7 +168,7 @@ export default function ProductQuickView({ product, onClose }) {
                 )}
 
                 <div className="mt-6 flex items-baseline justify-between">
-                  <span className="text-sm text-brand-muted">Ukupno</span>
+                  <span className="text-sm text-brand-muted">{t('common.total')}</span>
                   <span className="text-3xl font-bold text-brand-dark">
                     {formatPrice(price * quantity)}
                   </span>
@@ -176,7 +179,7 @@ export default function ProductQuickView({ product, onClose }) {
                     <button
                       type="button"
                       onClick={() => setQuantity((q) => Math.max(1, q - 1))}
-                      aria-label="Smanji količinu"
+                      aria-label={t('common.decrease')}
                       className="rounded-l-xl p-3 text-brand-dark transition hover:bg-gray-50"
                     >
                       <Minus className="h-4 w-4" aria-hidden="true" />
@@ -187,7 +190,7 @@ export default function ProductQuickView({ product, onClose }) {
                     <button
                       type="button"
                       onClick={() => setQuantity((q) => Math.min(99, q + 1))}
-                      aria-label="Povećaj količinu"
+                      aria-label={t('common.increase')}
                       className="rounded-r-xl p-3 text-brand-dark transition hover:bg-gray-50"
                     >
                       <Plus className="h-4 w-4" aria-hidden="true" />
@@ -203,19 +206,19 @@ export default function ProductQuickView({ product, onClose }) {
                     {added ? (
                       <>
                         <Check className="h-4 w-4" aria-hidden="true" />
-                        Dodato
+                        {t('common.added')}
                       </>
                     ) : available ? (
-                      'Dodaj u korpu'
+                      t('common.addToCart')
                     ) : (
-                      'Nije dostupno'
+                      t('common.unavailable')
                     )}
                   </button>
                 </div>
 
                 <p className="mt-5 flex items-start gap-2 text-xs leading-relaxed text-brand-muted">
                   <Truck className="mt-0.5 h-3.5 w-3.5 shrink-0" aria-hidden="true" />
-                  {SHOP.deliveryArea}. Buket pravimo na dan isporuke.
+                  {t('common.deliveryArea')}. {t('product.madeOnDay')}
                 </p>
 
                 <Link
@@ -223,7 +226,7 @@ export default function ProductQuickView({ product, onClose }) {
                   onClick={onClose}
                   className="mt-auto inline-flex items-center gap-1.5 pt-5 text-sm font-medium text-brand-primary-dark hover:underline"
                 >
-                  Cela stranica proizvoda
+                  {t('product.fullPage')}
                   <ArrowRight className="h-3.5 w-3.5" aria-hidden="true" />
                 </Link>
               </div>

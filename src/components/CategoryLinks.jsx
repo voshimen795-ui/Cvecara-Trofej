@@ -7,6 +7,7 @@ import {
   TeddyMark,
   VaseMark,
 } from './ui/CategoryIcons.jsx';
+import { useI18n } from '../i18n/index.jsx';
 
 /**
  * Each tile stays inside the teal-to-navy spectrum, varying the angle and the
@@ -20,32 +21,32 @@ import {
 const TILES = [
   {
     to: '/buketi',
-    label: 'Buketi',
+    i18n: 'tiles.buketi',
     Mark: BouquetMark,
     gradient: 'bg-[linear-gradient(135deg,#3E7D76_0%,#2F5F58_55%,#12332F_100%)]',
   },
   {
     to: '/aranzmani',
-    label: 'Aranžmani',
+    i18n: 'tiles.aranzmani',
     Mark: VaseMark,
     gradient: 'bg-[linear-gradient(160deg,#35706A_0%,#24504A_55%,#0F2726_100%)]',
   },
   {
     to: '/pokloni',
-    label: 'Pokloni i Dekoracije',
+    i18n: 'tiles.pokloni',
     Mark: GiftMark,
     // The one gold-touched tile — enough to break the run without leaving the palette.
     gradient: 'bg-[linear-gradient(120deg,#3D7A73_0%,#2F5F58_45%,#6E5F2C_86%,#7E6B2F_100%)]',
   },
   {
     to: '/plisane-igracke',
-    label: 'Plišane Igračke',
+    i18n: 'tiles.plisane-igracke',
     Mark: TeddyMark,
     gradient: 'bg-[linear-gradient(200deg,#39746D_0%,#2A574F_50%,#143430_100%)]',
   },
   {
     to: '/baloni',
-    label: 'Baloni',
+    i18n: 'tiles.baloni',
     Mark: BalloonMark,
     gradient: 'bg-[linear-gradient(145deg,#3E7D76_0%,#276059_50%,#0F2726_100%)]',
   },
@@ -53,22 +54,21 @@ const TILES = [
 
 export default function CategoryLinks() {
   const reduceMotion = useReducedMotion();
+  const { t } = useI18n();
 
   return (
     <section className="container-editorial py-20 lg:py-28">
       <div className="text-center">
-        <p className="eyebrow">Kolekcija</p>
+        <p className="eyebrow">{t('categories.eyebrow')}</p>
         <h2 className="mt-2 font-serif text-3xl text-brand-dark sm:text-4xl">
-          Istražite po kategoriji
+          {t('categories.title')}
         </h2>
-        <p className="mx-auto mt-4 max-w-xl text-gray-600">
-          Od buketa do balona — sve što šaljemo, na jednom mestu.
-        </p>
+        <p className="mx-auto mt-4 max-w-xl text-gray-600">{t('categories.lead')}</p>
       </div>
 
       {/* Grid on desktop, a snapping scroll rail on phones. */}
       <ul className="no-scrollbar -mx-4 mt-12 flex snap-x gap-4 overflow-x-auto px-4 sm:mx-0 sm:grid sm:grid-cols-3 sm:overflow-visible sm:px-0 lg:grid-cols-5 lg:gap-6">
-        {TILES.map(({ to, label, Mark, gradient }) => (
+        {TILES.map(({ to, i18n, Mark, gradient }) => (
           <li key={to} className="w-40 shrink-0 snap-start sm:w-auto">
             <motion.div
               whileHover={reduceMotion ? undefined : { scale: 1.05 }}
@@ -89,7 +89,7 @@ export default function CategoryLinks() {
                 </motion.span>
 
                 <span className="font-serif text-base font-semibold leading-snug text-white">
-                  {label}
+                  {t(i18n)}
                 </span>
               </Link>
             </motion.div>

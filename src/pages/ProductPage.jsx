@@ -4,11 +4,11 @@ import { Check, ChevronRight, Minus, Plus, Truck } from 'lucide-react';
 import ProductImage from '../components/ui/ProductImage.jsx';
 import ProductGrid from '../components/ProductGrid.jsx';
 import ReviewsSlider from '../components/ReviewsSlider.jsx';
+import PetalRain from '../components/PetalRain.jsx';
 import { useQuickView } from '../context/QuickViewContext.jsx';
 import NotFoundPage from './NotFoundPage.jsx';
 import {
   CATEGORY_PAGES,
-  CATEGORY_TAG,
   PRODUCTS,
   defaultSize,
   getProduct,
@@ -18,11 +18,13 @@ import {
 import { SHOP } from '../data/shop.js';
 import { formatPrice } from '../utils/format.js';
 import { useCart } from '../context/CartContext.jsx';
+import { useI18n } from '../i18n/index.jsx';
 
 export default function ProductPage() {
   const { id } = useParams();
   const product = getProduct(id);
   const { addItem } = useCart();
+  const { t, tp } = useI18n();
   const [quantity, setQuantity] = useState(1);
   const quickView = useQuickView();
   const [sizeId, setSizeId] = useState(() => defaultSize(product)?.id ?? null);
@@ -39,12 +41,18 @@ export default function ProductPage() {
 
   return (
     <>
+      {/* Line-art blooms drifting behind the product, in the same idiom as the
+          category pages. */}
+      <div className="relative isolate">
+      <PetalRain />
       <div className="container-editorial py-8 lg:py-12">
-        <nav aria-label="Putanja" className="mb-8">
-          <ol className="flex flex-wrap items-center gap-1.5 text-xs text-brand-muted">
+        <nav aria-label={t('common.breadcrumb')} className="mb-8">
+          {/* Opaque: brand-muted has almost no contrast headroom on the bare
+              page background, so no falling petal may pass behind it. */}
+          <ol className="flex flex-wrap items-center gap-1.5 bg-brand-bg text-xs text-brand-muted">
             <li>
               <Link to="/" className="transition-colors hover:text-brand-primary-dark">
-                Početna
+                {t('common.home')}
               </Link>
             </li>
             <ChevronRight className="h-3.5 w-3.5" aria-hidden="true" />
@@ -55,25 +63,25 @@ export default function ProductPage() {
                     to={`/${page.slug}`}
                     className="transition-colors hover:text-brand-primary-dark"
                   >
-                    {page.title}
+                    {t(`pages.${product.category}.title`)}
                   </Link>
                 </li>
                 <ChevronRight className="h-3.5 w-3.5" aria-hidden="true" />
               </>
             )}
             <li aria-current="page" className="text-brand-dark">
-              {product.name}
+              {tp(product)}
             </li>
           </ol>
         </nav>
 
-        <div className="grid grid-cols-12 gap-8 lg:gap-12">
-          <div className="col-span-12 lg:col-span-6">
+        <div className="grid grid-cols-1 gap-8 lg:grid-cols-12 lg:gap-12">
+          <div className="lg:col-span-6">
             <div className="overflow-hidden rounded-3xl bg-gradient-to-b from-brand-mist to-white ring-1 ring-brand-border/70">
               <div className="aspect-square">
                 <ProductImage
                   src={product.image}
-                  alt={product.name}
+                  alt={tp(product)}
                   category={product.category}
                   className="h-full w-full object-contain p-6"
                 />
@@ -81,16 +89,16 @@ export default function ProductPage() {
             </div>
           </div>
 
-          <div className="col-span-12 flex flex-col lg:col-span-6 lg:py-4">
-            <p className="eyebrow">{CATEGORY_TAG[product.category] ?? product.category}</p>
+          <div className="flex flex-col lg:col-span-6 lg:py-4">
+            <p className="eyebrow">{t(`tags.${product.category}`)}</p>
             <h1 className="mt-2 font-serif text-3xl text-brand-dark sm:text-4xl">
-              {product.name}
+              {tp(product)}
             </h1>
 
             <div className="mt-4 flex flex-wrap gap-2">
               {product.badge && available && (
                 <span className="inline-flex w-fit rounded-full bg-brand-rose px-3 py-1 text-[10px] font-bold uppercase tracking-wide text-brand-dark">
-                  {product.badge}
+                  {t(`badges.${product.badge}`)}
                 </span>
               )}
               <span
@@ -106,16 +114,18 @@ export default function ProductPage() {
                   }`}
                   aria-hidden="true"
                 />
-                {available ? 'Trenutno dostupno' : 'Trenutno nije dostupno'}
+                {available ? t('common.inStock') : t('common.outOfStock')}
               </span>
             </div>
 
-            <p className="mt-6 text-lg leading-relaxed text-gray-600">{product.description}</p>
+            <p className="mt-6 text-lg leading-relaxed text-gray-600">
+              {tp(product, 'description')}
+            </p>
 
             {product.sizes && (
               <fieldset className="mt-8">
                 <legend className="mb-2.5 text-sm font-medium text-brand-dark">
-                  Veličina buketa
+                  {t('sizes.label')}
                 </legend>
                 <div className="grid grid-cols-3 gap-2">
                   {product.sizes.map((size) => {
@@ -129,13 +139,15 @@ export default function ProductPage() {
                         className={`rounded-xl border px-3 py-3 text-center transition ${
                           active
                             ? 'border-brand-primary-dark bg-brand-mist'
-                            : 'border-brand-border hover:border-brand-primary'
+                            : 'border-brand-border bg-brand-bg hover:border-brand-primary'
                         }`}
                       >
                         <span className="block text-sm font-semibold text-brand-dark">
-                          {size.label}
+                          {t(`sizes.${size.id}`)}
                         </span>
-                        <span className="mt-0.5 block text-xs text-brand-muted">{size.note}</span>
+                        <span className="mt-0.5 block text-xs text-brand-muted">
+                          {t(`sizes.note.${size.id}`)}
+                        </span>
                         <span className="mt-1 block text-sm font-bold text-brand-dark">
                           {formatPrice(size.price)}
                         </span>
@@ -153,7 +165,7 @@ export default function ProductPage() {
                 <button
                   type="button"
                   onClick={() => setQuantity((q) => Math.max(1, q - 1))}
-                  aria-label="Smanji količinu"
+                  aria-label={t('common.decrease')}
                   className="rounded-l-xl p-3 text-brand-dark transition hover:bg-gray-50"
                 >
                   <Minus className="h-4 w-4" aria-hidden="true" />
@@ -164,7 +176,7 @@ export default function ProductPage() {
                 <button
                   type="button"
                   onClick={() => setQuantity((q) => Math.min(99, q + 1))}
-                  aria-label="Povećaj količinu"
+                  aria-label={t('common.increase')}
                   className="rounded-r-xl p-3 text-brand-dark transition hover:bg-gray-50"
                 >
                   <Plus className="h-4 w-4" aria-hidden="true" />
@@ -177,17 +189,27 @@ export default function ProductPage() {
                 disabled={!available}
                 className="btn-primary flex-1 disabled:cursor-not-allowed disabled:bg-gray-100 disabled:text-brand-muted sm:flex-none"
               >
-                {available ? 'Dodaj u korpu' : 'Trenutno nije dostupno'}
+                {available ? t('common.addToCart') : t('common.outOfStock')}
               </button>
             </div>
 
             {!available && (
               <p className="mt-4 rounded-xl bg-brand-mist px-4 py-3 text-sm text-brand-dark">
-                Ovaj artikal trenutno nemamo. Pozovite nas na{' '}
-                <a href={SHOP.phoneHref} className="font-semibold underline">
-                  {SHOP.phone}
-                </a>{' '}
-                — često ga možemo napraviti po porudžbini.
+                {/* The phone number is a link inside the sentence, so the
+                    template is split on its {phone} placeholder rather than
+                    dumped in as plain text. */}
+                {(() => {
+                  const [before, after] = t('product.callUs').split('{phone}');
+                  return (
+                    <>
+                      {before}
+                      <a href={SHOP.phoneHref} className="font-semibold underline">
+                        {SHOP.phone}
+                      </a>
+                      {after}
+                    </>
+                  );
+                })()}
               </p>
             )}
 
@@ -197,21 +219,21 @@ export default function ProductPage() {
                   className="mt-0.5 h-4 w-4 shrink-0 text-brand-primary-dark"
                   aria-hidden="true"
                 />
-                {SHOP.deliveryArea}. Porudžbine do 14h isporučujemo istog dana.
+                {t('common.deliveryArea')}. {t('product.deliveryNote')}
               </li>
               <li className="flex items-start gap-2.5">
                 <Check
                   className="mt-0.5 h-4 w-4 shrink-0 text-brand-primary-dark"
                   aria-hidden="true"
                 />
-                Besplatna dostava iznad {formatPrice(SHOP.freeDeliveryThreshold)}.
+                {t('product.freeAbove', { amount: formatPrice(SHOP.freeDeliveryThreshold) })}
               </li>
               <li className="flex items-start gap-2.5">
                 <Check
                   className="mt-0.5 h-4 w-4 shrink-0 text-brand-primary-dark"
                   aria-hidden="true"
                 />
-                Buket se pravi na dan isporuke, od svežeg cveća.
+                {t('product.freshNote')}
               </li>
             </ul>
           </div>
@@ -220,10 +242,11 @@ export default function ProductPage() {
 
       {related.length > 0 && (
         <div className="container-editorial pb-16 lg:pb-24">
-          <h2 className="font-serif text-2xl text-brand-dark">Slično iz iste kategorije</h2>
+          <h2 className="font-serif text-2xl text-brand-dark">{t('product.related')}</h2>
           <ProductGrid products={related} onOpen={quickView.open} />
         </div>
       )}
+      </div>
 
       <ReviewsSlider />
     </>

@@ -4,7 +4,7 @@ import { Check, Globe } from 'lucide-react';
 import { LOCALES, useI18n } from '../i18n/index.jsx';
 
 export default function LanguageSwitcher({ className = '' }) {
-  const { locale, setLocale } = useI18n();
+  const { locale, setLocale, t } = useI18n();
   const [open, setOpen] = useState(false);
   const ref = useRef(null);
 
@@ -33,8 +33,8 @@ export default function LanguageSwitcher({ className = '' }) {
         onClick={() => setOpen((o) => !o)}
         aria-haspopup="listbox"
         aria-expanded={open}
-        aria-label={`Jezik: ${current.label}`}
-        className="flex items-center gap-1.5 rounded-lg px-2 py-2.5 text-brand-dark transition hover:bg-gray-100"
+        aria-label={`${t('common.language')}: ${current.label}`}
+        className="flex items-center gap-1 rounded-lg px-1.5 py-2 text-brand-dark transition hover:bg-gray-100 sm:gap-1.5 sm:px-2 sm:py-2.5"
       >
         <Globe className="h-5 w-5" strokeWidth={1.75} aria-hidden="true" />
         <span className="text-xs font-semibold tracking-wide">{current.short}</span>

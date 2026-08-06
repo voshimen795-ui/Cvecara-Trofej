@@ -1,10 +1,11 @@
 import { useCallback, useState } from 'react';
 
-const MESSAGES = {
-  1: 'Pristup lokaciji je odbijen. Možete uneti adresu ručno.',
-  2: 'Lokacija trenutno nije dostupna. Unesite adresu ručno.',
-  3: 'Isteklo je vreme za očitavanje lokacije. Pokušajte ponovo ili unesite adresu.',
-};
+/**
+ * Positions' own error codes, mapped to our translation keys. The hook hands
+ * back a key rather than a sentence — a hook has no locale, and the component
+ * that renders the message does.
+ */
+const CODES = { 1: 'denied', 2: 'unavailable', 3: 'timeout' };
 
 /**
  * Asks for the browser's location on demand — never on page load, so the
@@ -13,19 +14,19 @@ const MESSAGES = {
 export function useGeolocation() {
   const [status, setStatus] = useState('idle'); // idle | asking | granted | error
   const [coords, setCoords] = useState(null);
-  const [error, setError] = useState('');
+  const [errorCode, setErrorCode] = useState('');
 
   const request = useCallback(
     () =>
       new Promise((resolve) => {
         if (!('geolocation' in navigator)) {
           setStatus('error');
-          setError('Vaš pregledač ne podržava geolokaciju.');
+          setErrorCode('unsupported');
           return resolve(null);
         }
 
         setStatus('asking');
-        setError('');
+        setErrorCode('');
 
         navigator.geolocation.getCurrentPosition(
           (position) => {
@@ -40,7 +41,7 @@ export function useGeolocation() {
           },
           (err) => {
             setStatus('error');
-            setError(MESSAGES[err.code] || 'Nije uspelo očitavanje lokacije.');
+            setErrorCode(CODES[err.code] ?? 'location');
             resolve(null);
           },
           { enableHighAccuracy: true, timeout: 10000, maximumAge: 60000 }
@@ -49,5 +50,5 @@ export function useGeolocation() {
     []
   );
 
-  return { status, coords, error, request };
+  return { status, coords, errorCode, request };
 }

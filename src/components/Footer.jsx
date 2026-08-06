@@ -26,8 +26,7 @@ export default function Footer() {
               CVEĆARA TROFEJ
             </Link>
             <p className="mt-4 text-sm leading-relaxed text-brand-light/80">
-              Buketi, aranžmani i pokloni od svežeg cveća. Ručno komponovano u {SHOP.city}u,
-              isporučeno istog dana.
+              {t('footer.about')}
             </p>
 
             <ul className="mt-6 flex gap-3">
@@ -48,7 +47,7 @@ export default function Footer() {
           </div>
 
           {/* 2 — Navigation */}
-          <nav aria-label="Podnožje — navigacija">
+          <nav aria-label={t('nav.footer')}>
             <h2 className="text-sm font-semibold text-white">{t('footer.offer')}</h2>
             <ul className="mt-4 space-y-3">
               {NAV_LINKS.map((link) => (
@@ -68,15 +67,15 @@ export default function Footer() {
           <div>
             <h2 className="text-sm font-semibold text-white">{t('footer.hours')}</h2>
             <dl className="mt-4 space-y-3 text-sm">
-              {HOURS_DISPLAY.map(({ day, time }) => (
-                <div key={day} className="flex flex-col gap-0.5">
-                  <dt className="text-brand-light/70">{day}</dt>
+              {HOURS_DISPLAY.map(({ key, time, closed }) => (
+                <div key={key} className="flex flex-col gap-0.5">
+                  <dt className="text-brand-light/70">{t(`hours.${key}`)}</dt>
                   <dd
                     className={`font-medium ${
-                      time === 'Ne radimo' ? 'text-brand-light/60' : 'tabular-nums text-white'
+                      closed ? 'text-brand-light/60' : 'tabular-nums text-white'
                     }`}
                   >
-                    {time}
+                    {closed ? t('hours.closed') : time}
                   </dd>
                 </div>
               ))}
@@ -121,7 +120,7 @@ export default function Footer() {
           <p>
             © {new Date().getFullYear()} {SHOP.name}. {t('footer.rights')}
           </p>
-          <p>{SHOP.deliveryArea}</p>
+          <p>{t('common.deliveryArea')}</p>
         </div>
       </div>
     </footer>

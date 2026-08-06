@@ -59,6 +59,75 @@
   }
 }
 
+/* Falling doodle blooms (PetalRain). Three nested animations so the fall, the
+   sway and the 3D tumble each keep their own tempo — one combined keyframe
+   would lock them into the same cycle and the field would pulse in unison. */
+@keyframes petal-fall {
+  from {
+    transform: translate3d(0, -22vh, 0);
+  }
+  to {
+    transform: translate3d(0, 118vh, 0);
+  }
+}
+
+@keyframes petal-sway {
+  from {
+    transform: translate3d(calc(var(--petal-drift, 40px) * -1), 0, 0);
+  }
+  to {
+    transform: translate3d(var(--petal-drift, 40px), 0, 0);
+  }
+}
+
+/* Z carries a full turn so the loop closes seamlessly; X and Y only wobble
+   within an amplitude. Full turns on X/Y were the first version and they read
+   badly: a flat shape spends most of a 360° X-rotation edge-on to the camera,
+   so the flowers flickered as slivers instead of tumbling. */
+@keyframes petal-spin {
+  0% {
+    transform: rotateZ(0turn) rotateX(calc(var(--petal-ax, 40deg) * -1))
+      rotateY(calc(var(--petal-ay, 40deg) * -1));
+  }
+  25% {
+    transform: rotateZ(0.25turn) rotateX(var(--petal-ax, 40deg))
+      rotateY(calc(var(--petal-ay, 40deg) * 0.6));
+  }
+  50% {
+    transform: rotateZ(0.5turn) rotateX(calc(var(--petal-ax, 40deg) * -0.5))
+      rotateY(var(--petal-ay, 40deg));
+  }
+  75% {
+    transform: rotateZ(0.75turn) rotateX(var(--petal-ax, 40deg))
+      rotateY(calc(var(--petal-ay, 40deg) * -0.4));
+  }
+  100% {
+    transform: rotateZ(1turn) rotateX(calc(var(--petal-ax, 40deg) * -1))
+      rotateY(calc(var(--petal-ay, 40deg) * -1));
+  }
+}
+
+.petal-fall {
+  animation-name: petal-fall;
+  animation-timing-function: linear;
+  animation-iteration-count: infinite;
+  will-change: transform;
+}
+
+.petal-sway {
+  animation-name: petal-sway;
+  animation-timing-function: ease-in-out;
+  animation-iteration-count: infinite;
+  animation-direction: alternate;
+}
+
+.petal-spin {
+  animation-name: petal-spin;
+  animation-timing-function: linear;
+  animation-iteration-count: infinite;
+  transform-style: preserve-3d;
+}
+
 /* Printing the order: everything but the receipt is chrome. */
 @media print {
   body {
@@ -91,6 +160,14 @@
   }
 
   [style*='reviews-marquee'] {
+    animation: none !important;
+  }
+
+  /* PetalRain returns null under reduced motion, but a print or a stale
+     stylesheet must not leave anything spinning either. */
+  .petal-fall,
+  .petal-sway,
+  .petal-spin {
     animation: none !important;
   }
 }

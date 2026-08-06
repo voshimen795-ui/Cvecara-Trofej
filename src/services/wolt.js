@@ -1,14 +1,31 @@
 /**
  * Browser-side calls to our own serverless functions. The Wolt token lives on
  * the server only — nothing here ever sees it.
+ *
+ * Errors carry a `code` as well as a message. The code is what the UI
+ * translates; the message is the server's Serbian original, kept as the
+ * fallback for anything we haven't given a key yet.
  */
 
+class ServiceError extends Error {
+  constructor(code, message, vars) {
+    super(message);
+    this.code = code;
+    this.vars = vars;
+  }
+}
+
 async function post(path, body) {
-  const res = await fetch(path, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(body),
-  });
+  let res;
+  try {
+    res = await fetch(path, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(body),
+    });
+  } catch {
+    throw new ServiceError('network', 'Greška u komunikaciji sa serverom.');
+  }
 
   let data;
   try {
@@ -16,13 +33,15 @@ async function post(path, body) {
   } catch {
     // A non-JSON body means the /api function isn't there: a static preview,
     // or `npm run dev` instead of `vercel dev`.
-    throw new Error(
-      'Servis za dostavu nije dostupan na ovoj adresi. Radi na Vercel deploy-u ' +
-        '(lokalno: `vercel dev`). Porudžbine možete primiti i telefonom.'
+    throw new ServiceError(
+      'offline',
+      'Servis nije dostupan na ovoj adresi. Radi na objavljenom sajtu.'
     );
   }
 
-  if (!res.ok) throw new Error(data.error || 'Greška u komunikaciji sa Woltom.');
+  if (!res.ok) {
+    throw new ServiceError(data.code ?? 'network', data.error ?? 'Greška.', data.vars);
+  }
   return data;
 }
 

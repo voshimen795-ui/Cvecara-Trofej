@@ -1,5 +1,6 @@
 import { Clock, ExternalLink, MapPin, Navigation, Phone } from 'lucide-react';
 import { HOURS_DISPLAY, SHOP, SHOP_ADDRESS } from '../data/shop.js';
+import { useI18n } from '../i18n/index.jsx';
 
 const query = encodeURIComponent(SHOP_ADDRESS);
 
@@ -17,24 +18,26 @@ const DIRECTIONS_LINK = `https://www.google.com/maps/dir/?api=1&destination=${qu
  * that renders every time; the buttons open the real map.
  */
 export default function MapSection() {
+  const { t } = useI18n();
+
   return (
     <section id="mapa" className="container-editorial scroll-mt-24 py-16 lg:py-24">
       <div className="text-center">
-        <p className="eyebrow">Lokacija</p>
-        <h2 className="mt-2 font-serif text-3xl text-brand-dark sm:text-4xl">Gde smo</h2>
+        <p className="eyebrow">{t('map.eyebrow')}</p>
+        <h2 className="mt-2 font-serif text-3xl text-brand-dark sm:text-4xl">{t('map.title')}</h2>
         <p className="mx-auto mt-4 max-w-xl text-gray-600">
-          {SHOP.street} — u {SHOP.city}u, na Zvezdari. Svratite ili poručite dostavu.
+          {t('map.lead', { street: SHOP.street })}
         </p>
       </div>
 
-      <div className="mt-12 grid grid-cols-12 gap-6 lg:gap-8">
-        <div className="col-span-12 lg:col-span-8">
+      <div className="mt-12 grid grid-cols-1 gap-6 lg:grid-cols-12 lg:gap-8">
+        <div className="lg:col-span-8">
           <div className="relative overflow-hidden rounded-3xl border border-brand-border shadow-sm">
             <a
               href={MAPS_LINK}
               target="_blank"
               rel="noreferrer"
-              aria-label={`Otvori ${SHOP_ADDRESS} u Google Mapama`}
+              aria-label={t('map.openInMaps', { address: SHOP_ADDRESS })}
               className="relative block aspect-[16/11] w-full transition hover:opacity-95 sm:aspect-[16/9]"
             >
               <DrawnMap />
@@ -42,35 +45,33 @@ export default function MapSection() {
           </div>
         </div>
 
-        <div className="col-span-12 lg:col-span-4">
+        <div className="lg:col-span-4">
           <div className="flex h-full flex-col justify-between rounded-3xl border border-brand-border bg-brand-surface p-6">
             <div>
               <h3 className="flex items-center gap-2 font-serif text-lg text-brand-dark">
                 <MapPin className="h-4 w-4 text-brand-primary-dark" aria-hidden="true" />
-                Adresa
+                {t('map.address')}
               </h3>
               <address className="mt-2 not-italic text-sm leading-relaxed text-gray-600">
                 {SHOP.street}
                 <br />
-                {SHOP.city}, Srbija
+                {SHOP.city}, {t('map.country')}
               </address>
 
               <h3 className="mt-6 flex items-center gap-2 font-serif text-lg text-brand-dark">
                 <Clock className="h-4 w-4 text-brand-primary-dark" aria-hidden="true" />
-                Radno vreme
+                {t('map.hours')}
               </h3>
               <dl className="mt-2 space-y-1.5 text-sm">
-                {HOURS_DISPLAY.map(({ day, time }) => (
-                  <div key={day} className="flex justify-between gap-3">
-                    <dt className="text-gray-600">{day}</dt>
+                {HOURS_DISPLAY.map(({ key, time, closed }) => (
+                  <div key={key} className="flex justify-between gap-3">
+                    <dt className="text-gray-600">{t(`hours.${key}`)}</dt>
                     <dd
                       className={
-                        time === 'Ne radimo'
-                          ? 'text-brand-muted'
-                          : 'font-medium tabular-nums text-brand-dark'
+                        closed ? 'text-brand-muted' : 'font-medium tabular-nums text-brand-dark'
                       }
                     >
-                      {time}
+                      {closed ? t('hours.closed') : time}
                     </dd>
                   </div>
                 ))}
@@ -85,10 +86,10 @@ export default function MapSection() {
                 className="btn-primary w-full"
               >
                 <Navigation className="h-4 w-4" aria-hidden="true" />
-                Navigacija do radnje
+                {t('map.directions')}
               </a>
               <a href={MAPS_LINK} target="_blank" rel="noreferrer" className="btn-ghost w-full">
-                Otvori u Google Mapama
+                {t('map.openMaps')}
                 <ExternalLink className="h-4 w-4" aria-hidden="true" />
               </a>
               <a href={SHOP.phoneHref} className="btn-ghost w-full">
