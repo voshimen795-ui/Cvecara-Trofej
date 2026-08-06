@@ -1,0 +1,138 @@
+import { Printer } from 'lucide-react';
+import { HOURS_DISPLAY, SHOP } from '../data/shop.js';
+import { formatPrice } from '../utils/format.js';
+
+/**
+ * Printable order receipt. `window.print()` on the same page rather than a PDF
+ * library: the browser's own dialog already offers "Save as PDF" everywhere,
+ * and it keeps the bundle from growing by ~300 KB. Print rules in index.css
+ * hide the rest of the page.
+ */
+export default function OrderReceipt({ reference, customer, schedule, personalisation, items, totals }) {
+  return (
+    <>
+      <button
+        type="button"
+        onClick={() => window.print()}
+        className="btn-ghost mt-4 print:hidden"
+      >
+        <Printer className="h-4 w-4" aria-hidden="true" />
+        Odštampaj porudžbenicu
+      </button>
+
+      <div
+        id="racun"
+        className="mx-auto mt-8 max-w-lg rounded-2xl border border-brand-border bg-white p-6 text-left print:mt-0 print:max-w-none print:rounded-none print:border-0 print:p-0"
+      >
+        <header className="border-b border-brand-border pb-4">
+          <p className="font-serif text-lg font-bold tracking-widest text-brand-dark">
+            CVEĆARA TROFEJ
+          </p>
+          <p className="mt-1 text-xs text-brand-muted">
+            {SHOP.street}, {SHOP.city} · {SHOP.phone} · {SHOP.email}
+          </p>
+        </header>
+
+        <div className="flex items-baseline justify-between pt-4">
+          <h3 className="font-serif text-lg text-brand-dark">Porudžbenica</h3>
+          <p className="font-mono text-sm font-bold text-brand-dark">{reference}</p>
+        </div>
+
+        <dl className="mt-4 grid grid-cols-2 gap-x-4 gap-y-1.5 text-sm">
+          <dt className="text-brand-muted">Kupac</dt>
+          <dd className="text-brand-dark">{customer.name}</dd>
+          <dt className="text-brand-muted">Telefon</dt>
+          <dd className="tabular-nums text-brand-dark">{customer.phone}</dd>
+          {schedule?.mode === 'dostava' && customer.street && (
+            <>
+              <dt className="text-brand-muted">Adresa</dt>
+              <dd className="text-brand-dark">
+                {customer.street}, {customer.city}
+              </dd>
+            </>
+          )}
+          <dt className="text-brand-muted">Način</dt>
+          <dd className="capitalize text-brand-dark">{schedule?.mode}</dd>
+          {schedule?.date && (
+            <>
+              <dt className="text-brand-muted">Termin</dt>
+              <dd className="tabular-nums text-brand-dark">
+                {schedule.date} u {schedule.time}
+              </dd>
+            </>
+          )}
+        </dl>
+
+        <table className="mt-5 w-full text-sm">
+          <thead>
+            <tr className="border-b border-brand-border text-left text-xs uppercase tracking-wide text-brand-muted">
+              <th className="pb-2 font-medium">Artikal</th>
+              <th className="pb-2 text-center font-medium">Kom</th>
+              <th className="pb-2 text-right font-medium">Iznos</th>
+            </tr>
+          </thead>
+          <tbody>
+            {items.map((item) => (
+              <tr key={item.key} className="border-b border-brand-border/60">
+                <td className="py-2 text-brand-dark">
+                  {item.name}
+                  {item.sizeLabel && (
+                    <span className="text-brand-muted"> ({item.sizeLabel})</span>
+                  )}
+                </td>
+                <td className="py-2 text-center tabular-nums text-brand-dark">{item.quantity}</td>
+                <td className="py-2 text-right tabular-nums text-brand-dark">
+                  {formatPrice(item.price * item.quantity)}
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+
+        <dl className="mt-4 space-y-1.5 text-sm">
+          <div className="flex justify-between">
+            <dt className="text-brand-muted">Međuzbir</dt>
+            <dd className="tabular-nums text-brand-dark">{formatPrice(totals.subtotal)}</dd>
+          </div>
+          {totals.discount > 0 && (
+            <div className="flex justify-between">
+              <dt className="text-brand-muted">Popust</dt>
+              <dd className="tabular-nums text-brand-dark">−{formatPrice(totals.discount)}</dd>
+            </div>
+          )}
+          <div className="flex justify-between">
+            <dt className="text-brand-muted">Dostava</dt>
+            <dd className="tabular-nums text-brand-dark">
+              {totals.delivery ? formatPrice(totals.delivery) : 'Besplatno'}
+            </dd>
+          </div>
+          <div className="flex justify-between border-t border-brand-border pt-2 text-base font-semibold">
+            <dt className="text-brand-dark">Ukupno</dt>
+            <dd className="tabular-nums text-brand-dark">{formatPrice(totals.total)}</dd>
+          </div>
+        </dl>
+
+        {(personalisation?.occasion || personalisation?.cardMessage) && (
+          <div className="mt-5 border-t border-brand-border pt-4 text-sm">
+            {personalisation.occasion && (
+              <p className="text-brand-dark">
+                <span className="text-brand-muted">Povod: </span>
+                {personalisation.occasion}
+              </p>
+            )}
+            {personalisation.cardMessage && (
+              <p className="mt-1 text-brand-dark">
+                <span className="text-brand-muted">Čestitka: </span>„{personalisation.cardMessage}"
+              </p>
+            )}
+          </div>
+        )}
+
+        <p className="mt-5 border-t border-brand-border pt-4 text-xs leading-relaxed text-brand-muted">
+          Nije fiskalni račun. Radno vreme: {HOURS_DISPLAY[0].time} radnim danima, subotom{' '}
+          {HOURS_DISPLAY[1].time}, nedeljom ne radimo.
+        </p>
+      </div>
+    </>
+  );
+}

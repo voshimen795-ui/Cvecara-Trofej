@@ -1,0 +1,29 @@
+{
+  "nav": { "buketi": "Bouquets", "aranzmani": "Arrangements", "pokloni": "Gifts", "onama": "About us" },
+  "common": {
+    "addToCart": "Add to cart", "chooseSize": "Choose a size", "added": "Added",
+    "unavailable": "Unavailable", "inStock": "In stock", "outOfStock": "Currently unavailable",
+    "from": "from", "sizes": "sizes", "total": "Total", "subtotal": "Subtotal",
+    "delivery": "Delivery", "free": "Free", "search": "Search", "cart": "Cart",
+    "openMenu": "Open menu", "closeMenu": "Close menu", "home": "Home", "back": "Back to home"
+  },
+  "hero": { "badge": "Hand-tied bouquets", "line1": "Flowers that speak", "line2": "from the heart",
+    "tagline": "For moments that deserve more than words.", "cta": "See the collection", "custom": "Custom bouquet" },
+  "featured": { "eyebrow": "Featured", "title": "Our favourites", "lead": "The bouquets that leave the shop most often.", "cta": "See all bouquets" },
+  "categories": { "eyebrow": "Collection", "title": "Browse by category", "lead": "From bouquets to balloons — everything we deliver, in one place." },
+  "reviews": { "eyebrow": "Reviews", "title": "What customers say", "onGoogle": "reviews on Google" },
+  "family": { "eyebrow": "About us", "title": "A family shop" },
+  "instagram": { "title": "Follow us", "lead": "Every bouquet that leaves the shop ends up here — the quickest way to see what we have today." },
+  "map": { "eyebrow": "Location", "title": "Find us", "address": "Address", "hours": "Opening hours",
+    "directions": "Directions to the shop", "openMaps": "Open in Google Maps" },
+  "cart": { "title": "Your cart", "empty": "Your cart is empty", "emptyLead": "Add a bouquet or arrangement and come back here.",
+    "continue": "Keep shopping", "checkout": "Go to checkout" },
+  "checkout": { "title": "Checkout", "details": "Delivery details", "name": "Full name", "phone": "Phone",
+    "address": "Address", "city": "City", "note": "Note (optional)", "useLocation": "Use my location",
+    "schedule": "Scheduling", "date": "Date", "time": "Time", "deliveryMode": "Delivery to address",
+    "pickupMode": "Pick up in store", "personalisation": "Personalise the bouquet", "occasion": "Occasion",
+    "cardMessage": "Card message", "wishes": "Special wishes", "voucher": "Voucher or loyalty code",
+    "apply": "Apply", "submit": "Place order", "yourOrder": "Your order",
+    "confirmed": "Order received", "print": "Print the order" },
+  "footer": { "offer": "Shop", "hours": "Opening hours", "contact": "Contact", "rights": "All rights reserved." }
+}

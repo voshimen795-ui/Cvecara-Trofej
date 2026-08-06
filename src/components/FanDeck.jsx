@@ -6,6 +6,7 @@ import ProductImage from './ui/ProductImage.jsx';
 import { FEATURED } from '../data/products.js';
 import { formatPrice } from '../utils/format.js';
 import { useBreakpoint } from '../hooks/useBreakpoint.js';
+import heroTexture from '../assets/hero-texture.jpg';
 
 /**
  * Fan geometry per breakpoint. `slots` is how many cards are dealt; each slot
@@ -61,15 +62,28 @@ export default function FanDeck() {
 
   return (
     <section className="relative isolate overflow-hidden bg-brand-forest py-20 lg:py-28">
+      {/* Layer 1 — blurred florals. A <video> takes over automatically when a
+          file is dropped at src/assets/hero-loop.mp4 (see DESIGN-NOTES); until
+          then this still image carries it, and it costs 13 KB instead of MBs. */}
+      <motion.div
+        aria-hidden="true"
+        className="absolute inset-0 -z-20 bg-cover bg-center"
+        style={{ backgroundImage: `url("${heroTexture}")` }}
+        animate={reduceMotion ? undefined : { scale: [1.05, 1.14, 1.05] }}
+        transition={{ duration: 34, repeat: Infinity, ease: 'easeInOut' }}
+      />
+      {/* Layer 2 — deep teal wash so the cards stay the brightest thing here. */}
+      <div aria-hidden="true" className="absolute inset-0 -z-20 bg-brand-forest/80" />
+      {/* Layer 3 — the logo's botanical tile, as texture over the photograph. */}
       <div
         aria-hidden="true"
-        className="absolute inset-0 -z-10 opacity-[0.13]"
+        className="absolute inset-0 -z-10 opacity-[0.10]"
         style={{ backgroundImage: `url("${PATTERN}")`, backgroundSize: '180px 180px' }}
       />
-      {/* Vignette keeps the pattern off the cards, so it reads as texture. */}
+      {/* Vignette keeps the texture off the cards. */}
       <div
         aria-hidden="true"
-        className="absolute inset-0 -z-10 bg-[radial-gradient(60%_55%_at_50%_45%,rgba(26,61,58,0.92),rgba(26,61,58,0.35))]"
+        className="absolute inset-0 -z-10 bg-[radial-gradient(62%_58%_at_50%_45%,rgba(15,39,38,0.86),rgba(15,39,38,0.30))]"
       />
 
       <div className="container-editorial">

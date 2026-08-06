@@ -61,8 +61,8 @@ export function slotsFor(date) {
 
 /** Primary navigation — also used by the mobile drawer menu and the footer. */
 export const NAV_LINKS = [
-  { label: 'Buketi', to: '/buketi' },
-  { label: 'Aranžmani', to: '/aranzmani' },
-  { label: 'Pokloni', to: '/pokloni' },
-  { label: 'O nama', to: '/o-nama' },
+  { label: 'Buketi', i18n: 'nav.buketi', to: '/buketi' },
+  { label: 'Aranžmani', i18n: 'nav.aranzmani', to: '/aranzmani' },
+  { label: 'Pokloni', i18n: 'nav.pokloni', to: '/pokloni' },
+  { label: 'O nama', i18n: 'nav.onama', to: '/o-nama' },
 ];

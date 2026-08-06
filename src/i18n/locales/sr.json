@@ -1,0 +1,29 @@
+{
+  "nav": { "buketi": "Buketi", "aranzmani": "Aranžmani", "pokloni": "Pokloni", "onama": "O nama" },
+  "common": {
+    "addToCart": "Dodaj u korpu", "chooseSize": "Izaberi veličinu", "added": "Dodato",
+    "unavailable": "Nije dostupno", "inStock": "Trenutno dostupno", "outOfStock": "Trenutno nije dostupno",
+    "from": "od", "sizes": "veličine", "total": "Ukupno", "subtotal": "Međuzbir",
+    "delivery": "Dostava", "free": "Besplatno", "search": "Pretraga", "cart": "Korpa",
+    "openMenu": "Otvori meni", "closeMenu": "Zatvori meni", "home": "Početna", "back": "Nazad na početnu"
+  },
+  "hero": { "badge": "Ručno komponovani buketi", "line1": "Cveće koje govori", "line2": "iz srca",
+    "tagline": "Za trenutke koji zaslužuju više od reči.", "cta": "Pogledaj kolekciju", "custom": "Buket po želji" },
+  "featured": { "eyebrow": "Istaknuto", "title": "Naši favoriti", "lead": "Buketi koji najčešće odlaze iz radnje.", "cta": "Pogledaj sve bukete" },
+  "categories": { "eyebrow": "Kolekcija", "title": "Istražite po kategoriji", "lead": "Od buketa do balona — sve što šaljemo, na jednom mestu." },
+  "reviews": { "eyebrow": "Recenzije", "title": "Šta kažu mušterije", "onGoogle": "recenzija na Google-u" },
+  "family": { "eyebrow": "O nama", "title": "Porodično" },
+  "instagram": { "title": "Pratite nas", "lead": "Svaki buket koji izađe iz radnje završi ovde — najbrži način da vidite šta imamo danas." },
+  "map": { "eyebrow": "Lokacija", "title": "Gde smo", "address": "Adresa", "hours": "Radno vreme",
+    "directions": "Navigacija do radnje", "openMaps": "Otvori u Google Mapama" },
+  "cart": { "title": "Vaša Korpa", "empty": "Korpa je prazna", "emptyLead": "Dodajte buket ili aranžman i vratite se ovde.",
+    "continue": "Nastavi kupovinu", "checkout": "Nastavi na plaćanje" },
+  "checkout": { "title": "Porudžbina", "details": "Podaci za dostavu", "name": "Ime i prezime", "phone": "Telefon",
+    "address": "Adresa", "city": "Grad", "note": "Napomena (opciono)", "useLocation": "Koristi moju lokaciju",
+    "schedule": "Zakazivanje", "date": "Datum", "time": "Vreme", "deliveryMode": "Dostava na adresu",
+    "pickupMode": "Preuzimanje u radnji", "personalisation": "Personalizovan buket", "occasion": "Povod",
+    "cardMessage": "Poruka na čestitki", "wishes": "Posebne želje", "voucher": "Vaučer ili lojalti kod",
+    "apply": "Primeni", "submit": "Potvrdi porudžbinu", "yourOrder": "Vaša porudžbina",
+    "confirmed": "Porudžbina je primljena", "print": "Odštampaj porudžbenicu" },
+  "footer": { "offer": "Ponuda", "hours": "Radno vreme", "contact": "Kontakt", "rights": "Sva prava zadržana." }
+}

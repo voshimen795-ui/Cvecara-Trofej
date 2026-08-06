@@ -5,9 +5,12 @@ import { Menu, Search, ShoppingBag, X } from 'lucide-react';
 import { NAV_LINKS } from '../data/shop.js';
 import { useCart } from '../context/CartContext.jsx';
 import logoDisc from '../assets/logo-trofej.png';
+import LanguageSwitcher from './LanguageSwitcher.jsx';
+import { useI18n } from '../i18n/index.jsx';
 
 export default function Navbar() {
   const { totalItems, openCart } = useCart();
+  const { t } = useI18n();
   const [mobileOpen, setMobileOpen] = useState(false);
 
   const closeMobile = () => setMobileOpen(false);
@@ -23,7 +26,7 @@ export default function Navbar() {
               onClick={() => setMobileOpen((open) => !open)}
               aria-expanded={mobileOpen}
               aria-controls="mobile-nav"
-              aria-label={mobileOpen ? 'Zatvori meni' : 'Otvori meni'}
+              aria-label={mobileOpen ? t('common.closeMenu') : t('common.openMenu')}
               className="-ml-2 rounded-lg p-2 text-brand-dark transition hover:bg-gray-100 lg:hidden"
             >
               {mobileOpen ? (
@@ -44,7 +47,7 @@ export default function Navbar() {
                       }`
                     }
                   >
-                    {link.label}
+                    {t(link.i18n)}
                   </NavLink>
                 </li>
               ))}
@@ -68,9 +71,11 @@ export default function Navbar() {
 
           {/* Right — utilities */}
           <div className="flex items-center justify-end gap-1 sm:gap-2">
+            <LanguageSwitcher />
+
             <button
               type="button"
-              aria-label="Pretraga"
+              aria-label={t("common.search")}
               className="rounded-lg p-2.5 text-brand-dark transition hover:bg-gray-100"
             >
               <Search className="h-5 w-5" strokeWidth={1.75} aria-hidden="true" />
@@ -126,7 +131,7 @@ export default function Navbar() {
                       }`
                     }
                   >
-                    {link.label}
+                    {t(link.i18n)}
                   </NavLink>
                 </li>
               ))}

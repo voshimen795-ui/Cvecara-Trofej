@@ -1,6 +1,7 @@
 import { Link } from 'react-router-dom';
 import { ChevronRight, Mail, MapPin, Phone } from 'lucide-react';
 import AboutSection from '../components/AboutSection.jsx';
+import FamilySection from '../components/FamilySection.jsx';
 import MapSection from '../components/MapSection.jsx';
 import { HOURS_DISPLAY, SHOP } from '../data/shop.js';
 
@@ -41,6 +42,7 @@ export default function AboutPage() {
         </div>
       </header>
 
+      <FamilySection />
       <AboutSection />
       <MapSection />
 

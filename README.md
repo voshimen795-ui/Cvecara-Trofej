@@ -150,6 +150,34 @@ to the florist. Right now a confirmed order dispatches a courier and shows a
 reference number — nothing is stored. Pickup orders can't be submitted at all
 for the same reason.
 
+## Languages
+
+SR / EN / RU, one JSON per language in `src/i18n/locales/`. `useI18n()` gives
+`t('checkout.title')`; the switcher sits in the header and the choice persists.
+A fourth language is a new JSON plus one line in `LOCALES`.
+
+Serbian is the default and the browser's language is deliberately **not**
+sniffed — a Belgrade florist opening in English for anyone with an English
+phone is worse than always opening in Serbian.
+
+Scope is interface copy. Product names, descriptions and reviews stay Serbian.
+
+## Orders
+
+`api/orders/notify.js` emails the shop a finished order via Resend — that's how
+an order reaches the florist while we're on Wolt Drive's **web app** flow (the
+florist books the courier by hand in Wolt's dashboard). Delivery pricing uses
+the shop's own rule, not a Wolt quote, because without the API there is none.
+
+Without `RESEND_API_KEY` the endpoint sends nothing and returns `mock: true`;
+checkout says the mail wasn't sent rather than pretending it was.
+
+The confirmation renders a printable receipt — `window.print()`, not a PDF
+library: the browser dialog already offers "Save as PDF" and a library would
+cost ~300 KB.
+
+See `DESIGN-NOTES.md` for the decision log and everything awaiting the owner.
+
 ## SEO
 
 `index.html` carries the title, description, Serbian keywords, canonical, Open

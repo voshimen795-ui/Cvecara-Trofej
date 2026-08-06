@@ -1,6 +1,7 @@
 import { Link } from 'react-router-dom';
 import { Facebook, Instagram, Mail, MapPin, Phone } from 'lucide-react';
 import { HOURS_DISPLAY, NAV_LINKS, SHOP } from '../data/shop.js';
+import { useI18n } from '../i18n/index.jsx';
 
 const SOCIALS = [
   { label: 'Instagram', href: SHOP.instagram, icon: Instagram },
@@ -8,6 +9,8 @@ const SOCIALS = [
 ];
 
 export default function Footer() {
+  const { t } = useI18n();
+
   return (
     // Teal-navy fading to the hero's deep teal — same family as the hero,
     // a shade deeper so the two bands read as distinct.
@@ -46,7 +49,7 @@ export default function Footer() {
 
           {/* 2 — Navigation */}
           <nav aria-label="Podnožje — navigacija">
-            <h2 className="text-sm font-semibold text-white">Ponuda</h2>
+            <h2 className="text-sm font-semibold text-white">{t('footer.offer')}</h2>
             <ul className="mt-4 space-y-3">
               {NAV_LINKS.map((link) => (
                 <li key={link.label}>
@@ -54,7 +57,7 @@ export default function Footer() {
                     to={link.to}
                     className="text-sm text-brand-light/80 transition-colors hover:text-white"
                   >
-                    {link.label}
+                    {t(link.i18n)}
                   </Link>
                 </li>
               ))}
@@ -63,7 +66,7 @@ export default function Footer() {
 
           {/* 3 — Working hours */}
           <div>
-            <h2 className="text-sm font-semibold text-white">Radno vreme</h2>
+            <h2 className="text-sm font-semibold text-white">{t('footer.hours')}</h2>
             <dl className="mt-4 space-y-3 text-sm">
               {HOURS_DISPLAY.map(({ day, time }) => (
                 <div key={day} className="flex flex-col gap-0.5">
@@ -82,7 +85,7 @@ export default function Footer() {
 
           {/* 4 — Contact */}
           <div>
-            <h2 className="text-sm font-semibold text-white">Kontakt</h2>
+            <h2 className="text-sm font-semibold text-white">{t('footer.contact')}</h2>
             <ul className="mt-4 space-y-3 text-sm">
               <li className="flex items-start gap-2.5 text-brand-light/80">
                 <MapPin className="mt-0.5 h-4 w-4 shrink-0 text-brand-teal" aria-hidden="true" />
@@ -116,7 +119,7 @@ export default function Footer() {
 
         <div className="mt-12 flex flex-col gap-2 border-t border-white/[0.12] pt-8 text-xs text-brand-light/65 sm:flex-row sm:items-center sm:justify-between">
           <p>
-            © {new Date().getFullYear()} {SHOP.name}. Sva prava zadržana.
+            © {new Date().getFullYear()} {SHOP.name}. {t('footer.rights')}
           </p>
           <p>{SHOP.deliveryArea}</p>
         </div>

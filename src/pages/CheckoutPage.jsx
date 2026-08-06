@@ -14,12 +14,8 @@ import ProductImage from '../components/ui/ProductImage.jsx';
 import { SHOP } from '../data/shop.js';
 import { formatPrice } from '../utils/format.js';
 import { useCart } from '../context/CartContext.jsx';
-import {
-  fetchDeliveryQuote,
-  reverseGeocode,
-  submitOrder,
-  validateVoucher,
-} from '../services/wolt.js';
+import OrderReceipt from '../components/OrderReceipt.jsx';
+import { reverseGeocode, sendOrder, validateVoucher } from '../services/wolt.js';
 import ScheduleFields from '../components/checkout/ScheduleFields.jsx';
 import PersonalisationFields from '../components/checkout/PersonalisationFields.jsx';
 import { useGeolocation } from '../hooks/useGeolocation.js';
@@ -42,14 +38,13 @@ function buildComment(form, personalisation, schedule) {
 }
 
 export default function CheckoutPage() {
-  const { items, subtotal, clearCart } = useCart();
+  const { items, subtotal, delivery, clearCart } = useCart();
 
   const [form, setForm] = useState(EMPTY_FORM);
-  const [quote, setQuote] = useState(null);
   const [confirmed, setConfirmed] = useState(null);
   const [schedule, setSchedule] = useState(EMPTY_SCHEDULE);
   const [personalisation, setPersonalisation] = useState(EMPTY_PERSONALISATION);
-  const [busy, setBusy] = useState(null); // 'quote' | 'order' | 'locate'
+  const [busy, setBusy] = useState(null); // 'order' | 'locate' | 'voucher'
   const [error, setError] = useState('');
   const geo = useGeolocation();
   const [lookupFailed, setLookupFailed] = useState(false);
@@ -76,30 +71,6 @@ export default function CheckoutPage() {
 
   const set = (field) => (event) => {
     setForm((f) => ({ ...f, [field]: event.target.value }));
-    // Any address edit invalidates the price Wolt already quoted.
-    if (field === 'street' || field === 'city') setQuote(null);
-  };
-
-  const getQuote = async () => {
-    setError('');
-    setBusy('quote');
-    try {
-      // Coordinates, when we have them, make Wolt's price binding rather than
-      // an estimate — so pass them through whenever geolocation succeeded.
-      setQuote(
-        await fetchDeliveryQuote({
-          street: form.street,
-          city: form.city,
-          lat: geo.coords?.lat,
-          lon: geo.coords?.lon,
-        })
-      );
-    } catch (err) {
-      setError(err.message);
-      setQuote(null);
-    } finally {
-      setBusy(null);
-    }
   };
 
   /** Ask for location, then try to fill the address from it. */
@@ -114,7 +85,6 @@ export default function CheckoutPage() {
       const place = await reverseGeocode(coords);
       if (!place.street) throw new Error('no street');
       setForm((f) => ({ ...f, street: place.street, city: place.city || f.city }));
-      setQuote(null);
     } catch {
       // Address lookup is only a convenience — the coordinates alone already
       // sharpen Wolt's price. Say so plainly instead of leaving the field
@@ -130,19 +100,33 @@ export default function CheckoutPage() {
     setError('');
     setBusy('order');
     try {
-      const result = await submitOrder({
-        promiseId: quote.promiseId,
-        customer: { name: form.name, phone: form.phone, street: form.street, city: form.city },
-        comment: buildComment(form, personalisation, schedule),
-        voucherCode: voucher?.code ?? null,
+      const result = await sendOrder({
+        customer: {
+          name: form.name,
+          phone: form.phone,
+          street: form.street,
+          city: form.city,
+          comment: form.comment,
+        },
+        schedule,
+        personalisation,
         items: items.map((i) => ({
           id: i.id,
           name: i.name,
           size: i.sizeLabel,
+          price: i.price,
           quantity: i.quantity,
         })),
+        totals: {
+          subtotal,
+          discount,
+          delivery: pickup ? 0 : delivery,
+          total,
+          voucherCode: voucher?.code ?? null,
+        },
       });
-      setConfirmed(result);
+      // Snapshot the cart before clearing — the receipt renders from it.
+      setConfirmed({ ...result, loyaltyCode: `TROFEJ-${result.reference.slice(-6)}`, items, totals: { subtotal, discount, delivery: pickup ? 0 : delivery, total } });
       clearCart();
     } catch (err) {
       setError(err.message);
@@ -160,9 +144,18 @@ export default function CheckoutPage() {
         </span>
         <h1 className="mt-6 font-serif text-3xl text-brand-dark">Porudžbina je primljena</h1>
         <p className="mx-auto mt-3 max-w-md text-gray-600">
-          Broj porudžbine <strong className="text-brand-dark">{confirmed.orderReference}</strong>.
+          Broj porudžbine <strong className="text-brand-dark">{confirmed.reference}</strong>.
           Zovemo vas na {form.phone} da potvrdimo detalje.
         </p>
+
+        <OrderReceipt
+          reference={confirmed.reference}
+          customer={form}
+          schedule={schedule}
+          personalisation={personalisation}
+          items={confirmed.items}
+          totals={confirmed.totals}
+        />
 
         {confirmed.loyaltyCode && (
           <div className="mx-auto mt-8 max-w-md rounded-2xl border border-brand-border bg-brand-mist px-6 py-5">
@@ -174,17 +167,14 @@ export default function CheckoutPage() {
           </div>
         )}
 
-        {confirmed.mock && <MockNotice className="mx-auto mt-8 max-w-lg text-left" />}
-
-        {confirmed.trackingUrl && (
-          <a
-            href={confirmed.trackingUrl}
-            target="_blank"
-            rel="noreferrer"
-            className="btn-primary mt-8"
-          >
-            Prati dostavu
-          </a>
+        {confirmed.mock && (
+          <p className="mx-auto mt-8 flex max-w-lg items-start gap-2 rounded-xl border border-amber-300 bg-amber-50 px-4 py-3 text-left text-xs leading-relaxed text-amber-900">
+            <AlertTriangle className="mt-0.5 h-3.5 w-3.5 shrink-0" aria-hidden="true" />
+            <span>
+              <strong>Mejl nije poslat.</strong> RESEND_API_KEY nije podešen, pa porudžbina
+              nije stigla u radnju. Pozovite nas da je potvrdimo.
+            </span>
+          </p>
         )}
 
         <div className="mt-6">
@@ -212,7 +202,7 @@ export default function CheckoutPage() {
   }
 
   const discount = voucher?.discount ?? 0;
-  const total = Math.max(0, subtotal - discount) + (pickup ? 0 : (quote?.price ?? 0));
+  const total = Math.max(0, subtotal - discount) + (pickup ? 0 : delivery);
 
   return (
     <div className="container-editorial py-10 lg:py-14">
@@ -307,26 +297,6 @@ export default function CheckoutPage() {
               <PersonalisationFields value={personalisation} onChange={setPersonalisation} />
             </div>
 
-            {!pickup && (
-            <button
-              type="button"
-              onClick={getQuote}
-              disabled={!form.street || !form.city || busy !== null}
-              className="btn-ghost w-full disabled:cursor-not-allowed disabled:opacity-50 sm:w-auto"
-            >
-              {busy === 'quote' ? (
-                <>
-                  <Loader2 className="h-4 w-4 animate-spin" aria-hidden="true" />
-                  Računam…
-                </>
-              ) : (
-                <>
-                  <Truck className="h-4 w-4" aria-hidden="true" />
-                  {quote ? 'Osveži cenu dostave' : 'Izračunaj dostavu'}
-                </>
-              )}
-            </button>
-            )}
 
             {error && (
               <p role="alert" className="rounded-xl bg-red-50 px-4 py-3 text-sm text-red-800">
@@ -347,7 +317,7 @@ export default function CheckoutPage() {
             ) : (
               <button
                 type="submit"
-                disabled={!quote || !scheduled || busy !== null}
+                disabled={!scheduled || busy !== null}
                 className="btn-primary w-full disabled:cursor-not-allowed disabled:opacity-50"
               >
                 {busy === 'order' ? (
@@ -364,11 +334,7 @@ export default function CheckoutPage() {
             {!scheduled && (
               <p className="text-xs text-brand-muted">Izaberite datum i vreme.</p>
             )}
-            {scheduled && !pickup && !quote && (
-              <p className="text-xs text-brand-muted">
-                Zatim izračunajte dostavu — Wolt daje cenu i vreme za vašu adresu.
-              </p>
-            )}
+
           </fieldset>
         </form>
 
@@ -419,25 +385,23 @@ export default function CheckoutPage() {
               <div className="flex justify-between text-gray-600">
                 <dt>{pickup ? 'Preuzimanje u radnji' : 'Dostava (Wolt)'}</dt>
                 <dd className="font-medium text-brand-dark">
-                  {pickup ? 'Besplatno' : quote ? formatPrice(quote.price) : '—'}
+                  {pickup || delivery === 0 ? 'Besplatno' : formatPrice(delivery)}
                 </dd>
               </div>
               <div className="flex justify-between border-t border-brand-border pt-3 text-base">
                 <dt className="font-medium text-brand-dark">Ukupno</dt>
                 <dd className="font-semibold text-brand-dark">
-                  {pickup || quote
-                    ? formatPrice(total)
-                    : `${formatPrice(Math.max(0, subtotal - discount))} + dostava`}
+                  {formatPrice(total)}
                 </dd>
               </div>
             </dl>
 
-            {quote && (
+            {!pickup && (
               <p className="mt-4 flex items-start gap-2 rounded-xl bg-brand-primary/10 px-3 py-2.5 text-xs leading-relaxed text-brand-primary-dark">
                 <Truck className="mt-0.5 h-3.5 w-3.5 shrink-0" aria-hidden="true" />
                 <span>
-                  Procenjena dostava {quote.etaMinutes} min.
-                  {!quote.binding && ' Cena je okvirna dok kurir ne bude dodeljen.'}
+                  Dostavu vozi Wolt kurir. Besplatna je iznad{' '}
+                  {formatPrice(SHOP.freeDeliveryThreshold)}.
                 </span>
               </p>
             )}
@@ -489,7 +453,6 @@ export default function CheckoutPage() {
               )}
             </form>
 
-            {quote?.mock && <MockNotice className="mt-4" />}
           </div>
         </aside>
       </div>
@@ -506,20 +469,5 @@ function Field({ label, ...props }) {
         className="w-full rounded-xl border border-brand-border bg-white px-4 py-3 text-brand-dark transition placeholder:text-gray-400 focus:border-brand-primary-dark"
       />
     </label>
-  );
-}
-
-/** Loud on purpose: in mock mode no courier is dispatched and nothing is charged. */
-function MockNotice({ className = '' }) {
-  return (
-    <p
-      className={`flex items-start gap-2 rounded-xl border border-amber-300 bg-amber-50 px-3 py-2.5 text-xs leading-relaxed text-amber-900 ${className}`}
-    >
-      <AlertTriangle className="mt-0.5 h-3.5 w-3.5 shrink-0" aria-hidden="true" />
-      <span>
-        <strong>Test režim.</strong> Wolt kredencijali nisu podešeni, pa je ovo simulirana
-        cena i nijedan kurir nije poslat. Porudžbina nije stvarna.
-      </span>
-    </p>
   );
 }

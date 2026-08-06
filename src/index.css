@@ -59,6 +59,32 @@
   }
 }
 
+/* Printing the order: everything but the receipt is chrome. */
+@media print {
+  body {
+    background: #fff;
+  }
+
+  body * {
+    visibility: hidden;
+  }
+
+  #racun,
+  #racun * {
+    visibility: visible;
+  }
+
+  #racun {
+    position: absolute;
+    inset: 0 auto auto 0;
+    width: 100%;
+  }
+
+  @page {
+    margin: 16mm;
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   html {
     scroll-behavior: auto;
