@@ -19,6 +19,10 @@ const LAYOUT = {
   mobile: { slots: 3, spread: 88, angle: 8, drop: 14, card: 'w-36' },
 };
 
+// Botanical tile built from the logo's own line-art bloom — the brand's
+// texture rather than a plain gradient behind the deck.
+const PATTERN = "data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22180%22%20height%3D%22180%22%20viewBox%3D%220%200%20180%20180%22%3E%20%3Cg%20fill%3D%22none%22%20stroke%3D%22%23ffffff%22%20stroke-width%3D%221.1%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%20opacity%3D%220.55%22%3E%20%3Cg%20transform%3D%22translate%2845%2045%29%22%3E%20%3Cpath%20d%3D%22M0%20-7%20C-11%20-15%2C%20-13%20-30%2C%200%20-38%20C13%20-30%2C%2011%20-15%2C%200%20-7%20Z%22%2F%3E%20%3Cg%20transform%3D%22rotate%2872%29%22%3E%3Cpath%20d%3D%22M0%20-7%20C-11%20-15%2C%20-13%20-30%2C%200%20-38%20C13%20-30%2C%2011%20-15%2C%200%20-7%20Z%22%2F%3E%3C%2Fg%3E%20%3Cg%20transform%3D%22rotate%28144%29%22%3E%3Cpath%20d%3D%22M0%20-7%20C-11%20-15%2C%20-13%20-30%2C%200%20-38%20C13%20-30%2C%2011%20-15%2C%200%20-7%20Z%22%2F%3E%3C%2Fg%3E%20%3Cg%20transform%3D%22rotate%28216%29%22%3E%3Cpath%20d%3D%22M0%20-7%20C-11%20-15%2C%20-13%20-30%2C%200%20-38%20C13%20-30%2C%2011%20-15%2C%200%20-7%20Z%22%2F%3E%3C%2Fg%3E%20%3Cg%20transform%3D%22rotate%28288%29%22%3E%3Cpath%20d%3D%22M0%20-7%20C-11%20-15%2C%20-13%20-30%2C%200%20-38%20C13%20-30%2C%2011%20-15%2C%200%20-7%20Z%22%2F%3E%3C%2Fg%3E%20%3Ccircle%20cx%3D%220%22%20cy%3D%220%22%20r%3D%223.5%22%2F%3E%20%3C%2Fg%3E%20%3Cg%20transform%3D%22translate%28135%20135%29%22%3E%20%3Cpath%20d%3D%22M0%2026%20C4%2012%2C%2010%202%2C%2018%20-8%22%2F%3E%20%3Cellipse%20cx%3D%226%22%20cy%3D%2212%22%20rx%3D%228%22%20ry%3D%224.5%22%20transform%3D%22rotate%28-35%206%2012%29%22%2F%3E%20%3Cellipse%20cx%3D%2212%22%20cy%3D%222%22%20rx%3D%228%22%20ry%3D%224.5%22%20transform%3D%22rotate%28-40%2012%202%29%22%2F%3E%20%3Cellipse%20cx%3D%22-2%22%20cy%3D%2218%22%20rx%3D%227%22%20ry%3D%224%22%20transform%3D%22rotate%2820%20-2%2018%29%22%2F%3E%20%3C%2Fg%3E%20%3Cg%20transform%3D%22translate%28135%2040%29%22%3E%3Cellipse%20cx%3D%220%22%20cy%3D%220%22%20rx%3D%229%22%20ry%3D%225%22%20transform%3D%22rotate%28-25%29%22%2F%3E%3Cpath%20d%3D%22M-9%203%20L10%20-4%22%2F%3E%3C%2Fg%3E%20%3Cg%20transform%3D%22translate%2842%20138%29%22%3E%3Cellipse%20cx%3D%220%22%20cy%3D%220%22%20rx%3D%229%22%20ry%3D%225%22%20transform%3D%22rotate%2835%29%22%2F%3E%3Cpath%20d%3D%22M-9%20-3%20L10%204%22%2F%3E%3C%2Fg%3E%20%3C%2Fg%3E%3C%2Fsvg%3E";
+
 const SHUFFLE_MS = 2800;
 const STAGGER_MS = 240;
 // Coprime with FEATURED.length, so every slot changes on each tick and the
@@ -59,7 +63,13 @@ export default function FanDeck() {
     <section className="relative isolate overflow-hidden bg-brand-forest py-20 lg:py-28">
       <div
         aria-hidden="true"
-        className="absolute inset-0 -z-10 bg-[radial-gradient(65%_55%_at_50%_35%,rgba(85,181,179,0.20),transparent_70%)]"
+        className="absolute inset-0 -z-10 opacity-[0.13]"
+        style={{ backgroundImage: `url("${PATTERN}")`, backgroundSize: '180px 180px' }}
+      />
+      {/* Vignette keeps the pattern off the cards, so it reads as texture. */}
+      <div
+        aria-hidden="true"
+        className="absolute inset-0 -z-10 bg-[radial-gradient(60%_55%_at_50%_45%,rgba(26,61,58,0.92),rgba(26,61,58,0.35))]"
       />
 
       <div className="container-editorial">

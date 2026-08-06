@@ -3,6 +3,8 @@ import FanDeck from '../components/FanDeck.jsx';
 import CategoryLinks from '../components/CategoryLinks.jsx';
 import AboutSection from '../components/AboutSection.jsx';
 import MapSection from '../components/MapSection.jsx';
+import ReviewsSlider from '../components/ReviewsSlider.jsx';
+import InstagramSection from '../components/InstagramSection.jsx';
 
 /**
  * The home page sells the shop, not the catalogue — the full grid lives on
@@ -15,7 +17,9 @@ export default function HomePage() {
       <Hero />
       <FanDeck />
       <CategoryLinks />
+      <ReviewsSlider />
       <AboutSection />
+      <InstagramSection />
       <MapSection />
     </>
   );

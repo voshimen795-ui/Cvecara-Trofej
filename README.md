@@ -69,9 +69,41 @@ run both together.
 - **Availability.** Set `available: false` on a product to grey out its card, swap the
   badge for "Trenutno nije dostupno" and disable add-to-cart on both card and product page.
 
+## Quick view
+
+Tapping a card opens `ProductQuickView` — image, description, size, quantity,
+add to cart. It exists because sizes used to live only on the product page, so
+the grid silently added a medium. Cards for products with sizes now say
+"Izaberi veličinu" and route through the modal; sizeless products still
+quick-add. One modal for the whole app, mounted in `QuickViewProvider`.
+
+## Social proof
+
+- `src/data/reviews.js` holds the Google reviews, transcribed verbatim, plus
+  the rating and a link to the listing. They're rendered as native cards in
+  `ReviewsSlider`, not pasted screenshots: screenshots carry Google's dark
+  chrome, don't reflow, and can't be read aloud. The marquee duplicates the
+  list and translates by exactly half the measured track width, so the loop is
+  seamless; hover, focus and reduced-motion all pause it.
+- `InstagramSection` links out rather than embedding. The official embed needs
+  a Meta app and a long-lived token, and third-party widgets want a paid script
+  on every page. Swap in the Basic Display API when there's an app to point at.
+  **The handle in `src/data/shop.js` is a guess — confirm it.**
+
+## Vouchers
+
+`api/vouchers/validate.js` checks two kinds of code: campaign codes from the
+table (override with `VOUCHER_CODES=CODE:percent:10,...`) and loyalty codes,
+`TROFEJ-XXXXXX`, issued on the confirmation screen after an order and verified
+by shape rather than by lookup. Codes never reach the browser.
+
+**No redemption store**, so nothing enforces single use — a valid code keeps
+working. Acceptable while every order is confirmed by phone; first thing to fix
+once orders are persisted.
+
 ## Checkout
 
-Beyond the address, `/porudzbina` collects:
+Beyond the address, `/porudzbina` collects a voucher code and:
 
 - **Scheduling** — date and time, in `ScheduleFields`. Slots come from `OPENING_HOURS` in
   `src/data/shop.js`, so a customer can't book a closed Sunday or a past hour today.
@@ -117,6 +149,26 @@ Still missing for a real shop: order persistence, payment, and a notification
 to the florist. Right now a confirmed order dispatches a courier and shows a
 reference number — nothing is stored. Pickup orders can't be submitted at all
 for the same reason.
+
+## SEO
+
+`index.html` carries the title, description, Serbian keywords, canonical, Open
+Graph tags and a `Florist` JSON-LD block with address, hours and the 5.0
+aggregate rating. Keep the JSON-LD in step with `src/data/shop.js` — Google
+reads it for the knowledge panel, and stale hours there are worse than none.
+
+Keywords target what a Belgrade florist actually competes on: *cvećara Beograd,
+dostava cveća Beograd, buketi Beograd, cveće dostava istog dana, cvetni
+aranžmani, cveće za venčanje, buket ruža, poklon buket, cvećara Zvezdara.*
+
+## Map
+
+`MapSection` draws its own brand-coloured street plan in SVG and fades the live
+Google embed in over it on load. The embed alone left an empty rectangle
+wherever it's blocked — strict CSP, ad blocker, no network — and a blocked
+cross-origin frame neither errors nor loads, so there's no event to catch. The
+drawn plan is a locator, not survey-accurate; the address and the directions
+button carry the precision.
 
 ## Product photography
 

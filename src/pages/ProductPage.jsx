@@ -3,6 +3,8 @@ import { Link, useParams } from 'react-router-dom';
 import { Check, ChevronRight, Minus, Plus, Truck } from 'lucide-react';
 import ProductImage from '../components/ui/ProductImage.jsx';
 import ProductGrid from '../components/ProductGrid.jsx';
+import ReviewsSlider from '../components/ReviewsSlider.jsx';
+import { useQuickView } from '../context/QuickViewContext.jsx';
 import NotFoundPage from './NotFoundPage.jsx';
 import {
   CATEGORY_PAGES,
@@ -22,6 +24,7 @@ export default function ProductPage() {
   const product = getProduct(id);
   const { addItem } = useCart();
   const [quantity, setQuantity] = useState(1);
+  const quickView = useQuickView();
   const [sizeId, setSizeId] = useState(() => defaultSize(product)?.id ?? null);
 
   if (!product) return <NotFoundPage />;
@@ -218,9 +221,11 @@ export default function ProductPage() {
       {related.length > 0 && (
         <div className="container-editorial pb-16 lg:pb-24">
           <h2 className="font-serif text-2xl text-brand-dark">Slično iz iste kategorije</h2>
-          <ProductGrid products={related} />
+          <ProductGrid products={related} onOpen={quickView.open} />
         </div>
       )}
+
+      <ReviewsSlider />
     </>
   );
 }

@@ -1,4 +1,5 @@
 import { createDelivery, isMock, WoltError } from '../_lib/wolt.js';
+import { loyaltyCodeFor } from '../vouchers/validate.js';
 
 /**
  * POST /api/wolt/delivery
@@ -29,7 +30,12 @@ export default async function handler(req, res) {
 
   try {
     const delivery = await createDelivery({ promiseId, customer, orderReference, comment });
-    return res.status(201).json({ ...delivery, orderReference });
+    // Thank-you code for the next order — the loyalty loop.
+    return res.status(201).json({
+      ...delivery,
+      orderReference,
+      loyaltyCode: loyaltyCodeFor(orderReference),
+    });
   } catch (err) {
     if (err instanceof WoltError) {
       // An expired promise is the common case — the quote only holds ~15 min.

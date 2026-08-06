@@ -2,10 +2,12 @@ import { useMemo } from 'react';
 import { Link } from 'react-router-dom';
 import { ChevronRight } from 'lucide-react';
 import ProductGrid from '../components/ProductGrid.jsx';
+import { useQuickView } from '../context/QuickViewContext.jsx';
 import NotFoundPage from './NotFoundPage.jsx';
 import { CATEGORY_PAGES, PRODUCTS, filterProducts } from '../data/products.js';
 
 export default function CategoryPage({ category }) {
+  const quickView = useQuickView();
   const page = CATEGORY_PAGES[category];
 
   const products = useMemo(
@@ -62,7 +64,7 @@ export default function CategoryPage({ category }) {
           </p>
         </div>
 
-        <ProductGrid products={products} />
+        <ProductGrid products={products} onOpen={quickView.open} />
 
         <div className="mt-4 rounded-2xl border border-dashed border-brand-border bg-brand-surface px-6 py-8 text-center">
           <p className="font-serif text-xl text-brand-dark">Ne vidite ono što tražite?</p>

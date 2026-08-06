@@ -1,17 +1,20 @@
 import { useState } from 'react';
-import { Clock, ExternalLink, MapPin, Phone } from 'lucide-react';
+import { Clock, ExternalLink, MapPin, Navigation, Phone } from 'lucide-react';
 import { HOURS_DISPLAY, SHOP, SHOP_ADDRESS } from '../data/shop.js';
 
 const query = encodeURIComponent(SHOP_ADDRESS);
 
-// The `output=embed` form needs no API key. The link opens the full map.
+// `output=embed` needs no API key. The links open the real thing.
 const EMBED_SRC = `https://maps.google.com/maps?q=${query}&z=16&output=embed`;
 const MAPS_LINK = `https://www.google.com/maps/search/?api=1&query=${query}`;
+const DIRECTIONS_LINK = `https://www.google.com/maps/dir/?api=1&destination=${query}`;
 
 /**
- * Shop location. The iframe is blocked wherever a strict CSP forbids external
- * frames (the static preview, for one), so a card with the address, hours and
- * a link out is rendered underneath rather than a blank rectangle.
+ * A drawn locator that always renders, with the live Google map fading in over
+ * it once it loads. Relying on the iframe alone left an empty rectangle
+ * wherever it's blocked — strict CSP, ad blocker, no network — and a blocked
+ * cross-origin frame neither errors nor loads, so there is no event to react
+ * to. Drawing our own means the section is never blank.
  */
 export default function MapSection() {
   const [loaded, setLoaded] = useState(false);
@@ -22,47 +25,27 @@ export default function MapSection() {
         <p className="eyebrow">Lokacija</p>
         <h2 className="mt-2 font-serif text-3xl text-brand-dark sm:text-4xl">Gde smo</h2>
         <p className="mx-auto mt-4 max-w-xl text-gray-600">
-          Nalazimo se u {SHOP.street}. Svratite, ili poručite dostavu na bilo koju adresu u
-          {' '}
-          {SHOP.city}u.
+          {SHOP.street} — u {SHOP.city}u, na Zvezdari. Svratite ili poručite dostavu.
         </p>
       </div>
 
       <div className="mt-12 grid grid-cols-12 gap-6 lg:gap-8">
         <div className="col-span-12 lg:col-span-8">
-          <div className="relative overflow-hidden rounded-3xl border border-brand-border bg-brand-mist">
-            <div className="relative aspect-[16/10] w-full sm:aspect-[16/9]">
-              {/* The placeholder sits behind the frame, and the frame stays
-                  transparent until it actually loads. A blocked cross-origin
-                  iframe (strict CSP, ad blocker, no network) neither fires an
-                  error nor loads — but it still paints over whatever is under
-                  it, so fading it in on load is what keeps this from being an
-                  empty rectangle. */}
-              <div className="absolute inset-0 flex flex-col items-center justify-center gap-3 p-6 text-center">
-                <MapPin
-                  className="h-8 w-8 text-brand-primary-dark"
-                  strokeWidth={1.5}
-                  aria-hidden="true"
-                />
-                <p className="font-serif text-lg text-brand-dark">{SHOP.street}</p>
-                <p className="text-sm text-gray-600">{SHOP.city}</p>
-                <a
-                  href={MAPS_LINK}
-                  target="_blank"
-                  rel="noreferrer"
-                  className="mt-1 text-sm font-medium text-brand-primary-dark underline"
-                >
-                  Otvori mapu
-                </a>
-              </div>
+          <div className="relative overflow-hidden rounded-3xl border border-brand-border shadow-sm">
+            <div className="relative aspect-[16/11] w-full sm:aspect-[16/9]">
+              <DrawnMap />
 
               <iframe
                 title={`Mapa — ${SHOP.name}, ${SHOP_ADDRESS}`}
                 src={EMBED_SRC}
                 loading="lazy"
                 referrerPolicy="no-referrer-when-downgrade"
-                onLoad={() => setLoaded(true)}
-                className={`absolute inset-0 h-full w-full border-0 transition-opacity duration-500 ${
+                onLoad={(e) => {
+                  // A blocked frame can still fire load with an empty document,
+                  // so only reveal it once it has laid-out content.
+                  if (e.currentTarget.clientWidth > 0) setLoaded(true);
+                }}
+                className={`absolute inset-0 h-full w-full border-0 transition-opacity duration-700 ${
                   loaded ? 'opacity-100' : 'pointer-events-none opacity-0'
                 }`}
               />
@@ -106,23 +89,97 @@ export default function MapSection() {
             </div>
 
             <div className="mt-6 flex flex-col gap-2">
-              <a href={SHOP.phoneHref} className="btn-primary w-full">
-                <Phone className="h-4 w-4" aria-hidden="true" />
-                {SHOP.phone}
-              </a>
               <a
-                href={MAPS_LINK}
+                href={DIRECTIONS_LINK}
                 target="_blank"
                 rel="noreferrer"
-                className="btn-ghost w-full"
+                className="btn-primary w-full"
               >
+                <Navigation className="h-4 w-4" aria-hidden="true" />
+                Navigacija do radnje
+              </a>
+              <a href={MAPS_LINK} target="_blank" rel="noreferrer" className="btn-ghost w-full">
                 Otvori u Google Mapama
                 <ExternalLink className="h-4 w-4" aria-hidden="true" />
+              </a>
+              <a href={SHOP.phoneHref} className="btn-ghost w-full">
+                <Phone className="h-4 w-4" aria-hidden="true" />
+                {SHOP.phone}
               </a>
             </div>
           </div>
         </div>
       </div>
     </section>
+  );
+}
+
+/**
+ * Stylised street plan in brand colours. Not survey-accurate — it's a locator,
+ * and the address plus the directions button carry the precision.
+ */
+function DrawnMap() {
+  return (
+    <div className="absolute inset-0 bg-brand-mist">
+      <svg
+        viewBox="0 0 800 450"
+        preserveAspectRatio="xMidYMid slice"
+        className="h-full w-full"
+        aria-hidden="true"
+      >
+        <rect width="800" height="450" fill="#E0F2F0" />
+
+        <g fill="#FFFFFF" opacity="0.75">
+          <rect x="40" y="40" width="240" height="130" rx="6" />
+          <rect x="330" y="30" width="200" height="140" rx="6" />
+          <rect x="580" y="55" width="190" height="115" rx="6" />
+          <rect x="60" y="250" width="210" height="150" rx="6" />
+          <rect x="320" y="265" width="230" height="135" rx="6" />
+          <rect x="600" y="245" width="170" height="160" rx="6" />
+        </g>
+
+        <g stroke="#B8E0DC" strokeWidth="14" strokeLinecap="round">
+          <path d="M300 20 L300 430" />
+          <path d="M560 20 L560 430" />
+        </g>
+
+        {/* Dimitrija Tucovića — the street the shop sits on */}
+        <path d="M0 215 L800 200" stroke="#4A9B9B" strokeWidth="26" strokeLinecap="round" />
+        <path
+          d="M0 215 L800 200"
+          stroke="#FFFFFF"
+          strokeWidth="2.5"
+          strokeDasharray="14 14"
+          opacity="0.85"
+        />
+        <text
+          x="56"
+          y="250"
+          fill="#2F5F58"
+          fontSize="15"
+          fontFamily="Inter, system-ui, sans-serif"
+          letterSpacing="1.5"
+        >
+          DIMITRIJA TUCOVIĆA
+        </text>
+
+        <g transform="translate(400 204)">
+          <ellipse cx="0" cy="34" rx="20" ry="6" fill="#1C2826" opacity="0.18" />
+          <path
+            d="M0 32 C0 32 22 8 22 -8 A22 22 0 1 0 -22 -8 C-22 8 0 32 0 32 Z"
+            fill="#3D7A73"
+            stroke="#FFFFFF"
+            strokeWidth="3"
+          />
+          <circle cx="0" cy="-8" r="7.5" fill="#FFFFFF" />
+        </g>
+      </svg>
+
+      <div className="absolute bottom-4 left-1/2 w-max max-w-[90%] -translate-x-1/2 rounded-2xl bg-white/95 px-4 py-2.5 text-center shadow-md backdrop-blur">
+        <p className="font-serif text-sm text-brand-dark">
+          {SHOP.name} — {SHOP.street}
+        </p>
+      </div>
+    </div>
   );
 }

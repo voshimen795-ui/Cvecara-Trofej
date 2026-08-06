@@ -1,11 +1,25 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { AlertTriangle, Check, ChevronRight, Loader2, MapPin, Truck } from 'lucide-react';
+import {
+  AlertTriangle,
+  Check,
+  ChevronRight,
+  Loader2,
+  MapPin,
+  Tag,
+  Truck,
+  X,
+} from 'lucide-react';
 import ProductImage from '../components/ui/ProductImage.jsx';
 import { SHOP } from '../data/shop.js';
 import { formatPrice } from '../utils/format.js';
 import { useCart } from '../context/CartContext.jsx';
-import { fetchDeliveryQuote, reverseGeocode, submitOrder } from '../services/wolt.js';
+import {
+  fetchDeliveryQuote,
+  reverseGeocode,
+  submitOrder,
+  validateVoucher,
+} from '../services/wolt.js';
 import ScheduleFields from '../components/checkout/ScheduleFields.jsx';
 import PersonalisationFields from '../components/checkout/PersonalisationFields.jsx';
 import { useGeolocation } from '../hooks/useGeolocation.js';
@@ -39,6 +53,23 @@ export default function CheckoutPage() {
   const [error, setError] = useState('');
   const geo = useGeolocation();
   const [lookupFailed, setLookupFailed] = useState(false);
+  const [voucherInput, setVoucherInput] = useState('');
+  const [voucher, setVoucher] = useState(null);
+  const [voucherError, setVoucherError] = useState('');
+
+  const applyVoucher = async (event) => {
+    event.preventDefault();
+    setVoucherError('');
+    setBusy('voucher');
+    try {
+      setVoucher(await validateVoucher({ code: voucherInput, subtotal }));
+    } catch (err) {
+      setVoucher(null);
+      setVoucherError(err.message);
+    } finally {
+      setBusy(null);
+    }
+  };
 
   const pickup = schedule.mode === 'preuzimanje';
   const scheduled = Boolean(schedule.date && schedule.time);
@@ -103,6 +134,7 @@ export default function CheckoutPage() {
         promiseId: quote.promiseId,
         customer: { name: form.name, phone: form.phone, street: form.street, city: form.city },
         comment: buildComment(form, personalisation, schedule),
+        voucherCode: voucher?.code ?? null,
         items: items.map((i) => ({
           id: i.id,
           name: i.name,
@@ -131,6 +163,16 @@ export default function CheckoutPage() {
           Broj porudžbine <strong className="text-brand-dark">{confirmed.orderReference}</strong>.
           Zovemo vas na {form.phone} da potvrdimo detalje.
         </p>
+
+        {confirmed.loyaltyCode && (
+          <div className="mx-auto mt-8 max-w-md rounded-2xl border border-brand-border bg-brand-mist px-6 py-5">
+            <p className="text-sm text-brand-dark">Hvala! Vaš kod za sledeću porudžbinu:</p>
+            <p className="mt-2 font-mono text-xl font-bold tracking-wider text-brand-dark">
+              {confirmed.loyaltyCode}
+            </p>
+            <p className="mt-2 text-xs text-brand-muted">Donosi 10% popusta.</p>
+          </div>
+        )}
 
         {confirmed.mock && <MockNotice className="mx-auto mt-8 max-w-lg text-left" />}
 
@@ -169,7 +211,8 @@ export default function CheckoutPage() {
     );
   }
 
-  const total = subtotal + (pickup ? 0 : (quote?.price ?? 0));
+  const discount = voucher?.discount ?? 0;
+  const total = Math.max(0, subtotal - discount) + (pickup ? 0 : (quote?.price ?? 0));
 
   return (
     <div className="container-editorial py-10 lg:py-14">
@@ -364,6 +407,15 @@ export default function CheckoutPage() {
                 <dt>Međuzbir</dt>
                 <dd className="font-medium text-brand-dark">{formatPrice(subtotal)}</dd>
               </div>
+              {voucher && (
+                <div className="flex justify-between text-brand-primary-dark">
+                  <dt className="flex items-center gap-1.5">
+                    <Tag className="h-3.5 w-3.5" aria-hidden="true" />
+                    {voucher.label}
+                  </dt>
+                  <dd className="font-medium">−{formatPrice(discount)}</dd>
+                </div>
+              )}
               <div className="flex justify-between text-gray-600">
                 <dt>{pickup ? 'Preuzimanje u radnji' : 'Dostava (Wolt)'}</dt>
                 <dd className="font-medium text-brand-dark">
@@ -373,7 +425,9 @@ export default function CheckoutPage() {
               <div className="flex justify-between border-t border-brand-border pt-3 text-base">
                 <dt className="font-medium text-brand-dark">Ukupno</dt>
                 <dd className="font-semibold text-brand-dark">
-                  {pickup || quote ? formatPrice(total) : `${formatPrice(subtotal)} + dostava`}
+                  {pickup || quote
+                    ? formatPrice(total)
+                    : `${formatPrice(Math.max(0, subtotal - discount))} + dostava`}
                 </dd>
               </div>
             </dl>
@@ -387,6 +441,53 @@ export default function CheckoutPage() {
                 </span>
               </p>
             )}
+
+            <form onSubmit={applyVoucher} className="mt-5 border-t border-brand-border pt-5">
+              <label className="mb-2 block text-sm font-medium text-brand-dark" htmlFor="voucher">
+                Vaučer ili lojalti kod
+              </label>
+              {voucher ? (
+                <div className="flex items-center justify-between gap-2 rounded-xl bg-brand-mist px-4 py-3">
+                  <span className="flex min-w-0 items-center gap-2 text-sm text-brand-dark">
+                    <Check className="h-4 w-4 shrink-0 text-brand-primary-dark" aria-hidden="true" />
+                    <span className="truncate font-medium">{voucher.code}</span>
+                  </span>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setVoucher(null);
+                      setVoucherInput('');
+                    }}
+                    aria-label="Ukloni kod"
+                    className="shrink-0 rounded p-1 text-brand-muted transition hover:text-brand-dark"
+                  >
+                    <X className="h-4 w-4" aria-hidden="true" />
+                  </button>
+                </div>
+              ) : (
+                <div className="flex gap-2">
+                  <input
+                    id="voucher"
+                    value={voucherInput}
+                    onChange={(e) => setVoucherInput(e.target.value.toUpperCase())}
+                    placeholder="npr. DOBRODOSLI10"
+                    className="min-w-0 flex-1 rounded-xl border border-brand-border bg-white px-4 py-2.5 text-sm uppercase tracking-wide text-brand-dark placeholder:normal-case placeholder:tracking-normal placeholder:text-gray-400 focus:border-brand-primary-dark"
+                  />
+                  <button
+                    type="submit"
+                    disabled={!voucherInput || busy !== null}
+                    className="shrink-0 rounded-xl border border-brand-border px-4 text-sm font-medium text-brand-dark transition hover:border-brand-primary disabled:opacity-50"
+                  >
+                    {busy === 'voucher' ? '…' : 'Primeni'}
+                  </button>
+                </div>
+              )}
+              {voucherError && (
+                <p role="alert" className="mt-2 text-xs text-red-700">
+                  {voucherError}
+                </p>
+              )}
+            </form>
 
             {quote?.mock && <MockNotice className="mt-4" />}
           </div>

@@ -48,8 +48,23 @@
   }
 }
 
+/* Marquee for the reviews slider. The distance is set inline from the measured
+   track width, so the loop point lands exactly on the duplicate pass. */
+@keyframes reviews-marquee {
+  from {
+    transform: translate3d(0, 0, 0);
+  }
+  to {
+    transform: translate3d(var(--marquee-distance, -50%), 0, 0);
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   html {
     scroll-behavior: auto;
+  }
+
+  [style*='reviews-marquee'] {
+    animation: none !important;
   }
 }

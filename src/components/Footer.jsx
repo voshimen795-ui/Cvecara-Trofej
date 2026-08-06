@@ -3,8 +3,8 @@ import { Facebook, Instagram, Mail, MapPin, Phone } from 'lucide-react';
 import { HOURS_DISPLAY, NAV_LINKS, SHOP } from '../data/shop.js';
 
 const SOCIALS = [
-  { label: 'Instagram', href: '#', icon: Instagram },
-  { label: 'Facebook', href: '#', icon: Facebook },
+  { label: 'Instagram', href: SHOP.instagram, icon: Instagram },
+  { label: 'Facebook', href: SHOP.instagram, icon: Facebook },
 ];
 
 export default function Footer() {
@@ -32,6 +32,8 @@ export default function Footer() {
                 <li key={label}>
                   <a
                     href={href}
+                    target="_blank"
+                    rel="noreferrer"
                     aria-label={label}
                     className="flex h-9 w-9 items-center justify-center rounded-full border border-white/25 text-white transition-all duration-200 hover:scale-110 hover:border-white/60 hover:bg-white/10"
                   >

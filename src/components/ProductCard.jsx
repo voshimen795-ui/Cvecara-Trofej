@@ -6,7 +6,7 @@ import { CATEGORY_TAG, isAvailable } from '../data/products.js';
 import { formatPrice } from '../utils/format.js';
 import { useCart } from '../context/CartContext.jsx';
 
-export default function ProductCard({ product }) {
+export default function ProductCard({ product, onOpen }) {
   const { addItem } = useCart();
   const available = isAvailable(product);
   const [justAdded, setJustAdded] = useState(false);
@@ -15,8 +15,12 @@ export default function ProductCard({ product }) {
   // Clear the pending "added" reset if the card unmounts (e.g. filter change).
   useEffect(() => () => clearTimeout(timeoutRef.current), []);
 
-  const handleAdd = () => {
+  const handleAdd = (event) => {
+    event.stopPropagation();
     if (!available) return;
+    // Anything with sizes goes through the quick view, so the customer picks
+    // one instead of the grid silently choosing a medium for them.
+    if (product.sizes) return onOpen?.(product);
     addItem(product);
     setJustAdded(true);
     clearTimeout(timeoutRef.current);
@@ -30,7 +34,17 @@ export default function ProductCard({ product }) {
       animate={{ opacity: 1, y: 0 }}
       exit={{ opacity: 0, y: -8 }}
       transition={{ duration: 0.3, ease: 'easeOut' }}
-      className="group flex flex-col rounded-2xl border border-gray-100 bg-brand-surface p-4 transition-all duration-300 hover:shadow-lg"
+      onClick={() => onOpen?.(product)}
+      role="button"
+      tabIndex={0}
+      onKeyDown={(e) => {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault();
+          onOpen?.(product);
+        }
+      }}
+      aria-label={`Otvori ${product.name}`}
+      className="group flex cursor-pointer flex-col rounded-2xl border border-gray-100 bg-brand-surface p-4 transition-all duration-300 hover:-translate-y-1 hover:shadow-xl focus-visible:-translate-y-1"
     >
       {/* Pale teal fading to white — the cutouts are transparent, so this
           ground shows around every bloom and has to stay on-brand. */}
@@ -77,7 +91,7 @@ export default function ProductCard({ product }) {
         </p>
         {product.sizes && (
           <p className="mt-0.5 text-xs text-brand-muted">
-            {product.sizes.length} veličine · dodaje se srednji
+            {product.sizes.length} veličine
           </p>
         )}
 
@@ -98,6 +112,8 @@ export default function ProductCard({ product }) {
         >
           {!available ? (
             'Nije dostupno'
+          ) : product.sizes ? (
+            'Izaberi veličinu'
           ) : justAdded ? (
             <>
               <Check className="h-4 w-4" aria-hidden="true" />

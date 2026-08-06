@@ -1,14 +1,35 @@
 <!doctype html>
-<html lang="sr">
+<html lang="sr-RS">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="theme-color" content="#4A9B9B" />
+
+    <title>Cvećara Trofej — buketi i dostava cveća u Beogradu</title>
     <meta
       name="description"
-      content="Cvećara Trofej — buketi, aranžmani i pokloni od svežeg cveća. Dostava na teritoriji Beograda. Dimitrija Tucovića 128."
+      content="Cvećara Trofej, Dimitrija Tucovića 128, Beograd. Sveži buketi, cvetni aranžmani i pokloni uz dostavu cveća po Beogradu istog dana. Ocena 5.0 na Google-u."
     />
-    <title>Cvećara Trofej — Cveće koje govori iz srca</title>
+    <meta
+      name="keywords"
+      content="cvećara Beograd, dostava cveća Beograd, buketi Beograd, cveće dostava istog dana, cvetni aranžmani, cveće za venčanje, buket ruža, poklon buket, cvećara Zvezdara, Dimitrija Tucovića, rođendanski buket, cveće za rodilište, korpa cveća, saksijsko cveće"
+    />
+    <link rel="canonical" href="https://cvecara-trofej.rs/" />
+    <meta name="robots" content="index, follow" />
+    <meta name="geo.region" content="RS-00" />
+    <meta name="geo.placename" content="Beograd" />
+
+    <!-- Open Graph / social sharing -->
+    <meta property="og:type" content="website" />
+    <meta property="og:locale" content="sr_RS" />
+    <meta property="og:site_name" content="Cvećara Trofej" />
+    <meta property="og:title" content="Cvećara Trofej — buketi i dostava cveća u Beogradu" />
+    <meta
+      property="og:description"
+      content="Sveži buketi, aranžmani i pokloni. Dostava po Beogradu istog dana. Dimitrija Tucovića 128."
+    />
+    <meta property="og:url" content="https://cvecara-trofej.rs/" />
+    <meta name="twitter:card" content="summary_large_image" />
 
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -16,6 +37,47 @@
       href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Inter:wght@400;500;600;700&family=Dancing+Script:wght@600;700&display=swap"
       rel="stylesheet"
     />
+
+    <!-- Local business structured data. Google reads this for the knowledge
+         panel and rich results; keep it in step with src/data/shop.js. -->
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "Florist",
+        "name": "Cvećara Trofej",
+        "image": "https://cvecara-trofej.rs/og.jpg",
+        "url": "https://cvecara-trofej.rs/",
+        "telephone": "+381692790074",
+        "email": "cvecaratrofej@gmail.com",
+        "priceRange": "$$",
+        "address": {
+          "@type": "PostalAddress",
+          "streetAddress": "Dimitrija Tucovića 128",
+          "addressLocality": "Beograd",
+          "addressCountry": "RS"
+        },
+        "areaServed": { "@type": "City", "name": "Beograd" },
+        "aggregateRating": {
+          "@type": "AggregateRating",
+          "ratingValue": "5.0",
+          "reviewCount": "10"
+        },
+        "openingHoursSpecification": [
+          {
+            "@type": "OpeningHoursSpecification",
+            "dayOfWeek": ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"],
+            "opens": "10:00",
+            "closes": "20:00"
+          },
+          {
+            "@type": "OpeningHoursSpecification",
+            "dayOfWeek": "Saturday",
+            "opens": "10:00",
+            "closes": "15:00"
+          }
+        ]
+      }
+    </script>
   </head>
   <body>
     <div id="root"></div>

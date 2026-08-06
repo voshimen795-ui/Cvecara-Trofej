@@ -4,6 +4,7 @@ import AnnouncementBar from './components/AnnouncementBar.jsx';
 import Navbar from './components/Navbar.jsx';
 import Footer from './components/Footer.jsx';
 import CartDrawer from './components/CartDrawer.jsx';
+import { QuickViewProvider } from './context/QuickViewContext.jsx';
 import HomePage from './pages/HomePage.jsx';
 import CategoryPage from './pages/CategoryPage.jsx';
 import AboutPage from './pages/AboutPage.jsx';
@@ -28,6 +29,7 @@ export default function App() {
   return (
     <HashRouter>
       <ScrollToTop />
+      <QuickViewProvider>
       <div className="flex min-h-screen flex-col bg-brand-bg">
         <AnnouncementBar />
         <Navbar />
@@ -54,6 +56,7 @@ export default function App() {
         <Footer />
         <CartDrawer />
       </div>
+      </QuickViewProvider>
     </HashRouter>
   );
 }

@@ -10,6 +10,9 @@ export const SHOP = {
   phoneHref: 'tel:+381692790074',
   email: 'cvecaratrofej@gmail.com',
   deliveryArea: 'Dostava na teritoriji Beograda',
+  // TODO: potvrdite tačan handle — pretpostavka na osnovu imena radnje.
+  instagramHandle: '@cvecara_trofej',
+  instagram: 'https://www.instagram.com/cvecara_trofej/',
   /** Free delivery above this amount, in RSD. */
   freeDeliveryThreshold: 4000,
   /** Flat delivery fee below the threshold, in RSD. */
