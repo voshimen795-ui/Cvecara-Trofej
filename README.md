@@ -19,7 +19,10 @@ in components.
 
 | Token           | Value     | Role                          |
 | --------------- | --------- | ----------------------------- |
-| `brand-primary` | `#4A9B9B` | Soft mint teal — primary accent |
+| `brand-primary` | `#4A9B9B` | Soft mint teal — accent fills, with dark text on top |
+| `brand-primary-dark` | `#3D7A73` | Teal **text** on light grounds |
+| `brand-teal` | `#55B5B3` | Logo teal — hover state for fills |
+| `brand-mist` | `#E0F2F0` | Palest teal — product grounds, selected states |
 | `brand-rose`    | `#E88295` | Soft rose — badges, highlights |
 | `brand-bg`      | `#FAFAFA` | Canvas background             |
 | `brand-surface` | `#FFFFFF` | Cards, navbar, drawer         |
@@ -29,6 +32,11 @@ in components.
 
 Type: **Playfair Display** (`font-serif`) for headlines, **Inter** (`font-sans`) for UI/body.
 Spacing follows an 8pt rhythm.
+
+**Which teal goes where.** Teal fills carry **dark** text (`#1C2826` on `#4A9B9B` is
+4.67:1). Teal used *as* text sits on light grounds and must be `brand-primary-dark`
+(`#3D7A73` on white is 4.96:1). White on any teal lighter than `#3D7A73` fails, which
+is why the dark-on-light pairing exists at all — don't swap them back.
 
 Three shared classes in `src/index.css` keep the system honest: `.container-editorial`
 (horizontal rhythm), `.btn-primary` / `.btn-ghost`, and `.eyebrow`.
@@ -51,6 +59,32 @@ runs functions, which rules out GitHub Pages.
 
 Locally, `npm run dev` serves the site but **not** `api/`. Use `vercel dev` to
 run both together.
+
+## Catalogue
+
+- **Sizes.** Bouquets and arrangements carry `sizes` (mali / srednji / veliki), generated
+  by `sizesFrom(base)` in `src/data/products.js` and rounded to 50 RSD. Override any one
+  by editing its `price`. Cards quick-add the medium; the product page has the selector.
+  A cart line is keyed by product **and** size, so one bouquet in two sizes is two lines.
+- **Availability.** Set `available: false` on a product to grey out its card, swap the
+  badge for "Trenutno nije dostupno" and disable add-to-cart on both card and product page.
+
+## Checkout
+
+Beyond the address, `/porudzbina` collects:
+
+- **Scheduling** — date and time, in `ScheduleFields`. Slots come from `OPENING_HOURS` in
+  `src/data/shop.js`, so a customer can't book a closed Sunday or a past hour today.
+  Change the hours there and the picker follows.
+- **Personalisation** — occasion, card message (200 chars) and special wishes. These are
+  folded into the note that reaches the florist and the courier.
+- **Geolocation** — a button, never an on-load prompt. Coordinates make Wolt's price
+  binding rather than an estimate; `api/geo/reverse.js` turns them into a street via
+  Nominatim. If that lookup fails the coordinates are still used and the customer is
+  told to type the street — it degrades, it doesn't break.
+
+Pickup mode skips Wolt and hands off to a phone call, because there is still no order
+store to record a pickup against.
 
 ## Wolt Drive
 
@@ -81,7 +115,8 @@ uncertain is confined to those four functions.
 
 Still missing for a real shop: order persistence, payment, and a notification
 to the florist. Right now a confirmed order dispatches a courier and shows a
-reference number — nothing is stored.
+reference number — nothing is stored. Pickup orders can't be submitted at all
+for the same reason.
 
 ## Product photography
 

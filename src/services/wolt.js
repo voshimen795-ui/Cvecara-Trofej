@@ -28,3 +28,4 @@ async function post(path, body) {
 
 export const fetchDeliveryQuote = (address) => post('/api/wolt/quote', address);
 export const submitOrder = (payload) => post('/api/wolt/delivery', payload);
+export const reverseGeocode = (coords) => post('/api/geo/reverse', coords);

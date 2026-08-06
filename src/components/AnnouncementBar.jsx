@@ -7,7 +7,7 @@ import { SHOP } from '../data/shop.js';
  */
 export default function AnnouncementBar() {
   return (
-    <div className="h-10 bg-brand-primary-dark text-white">
+    <div className="h-10 bg-brand-primary text-brand-dark">
       <div className="container-editorial flex h-full items-center justify-center">
         <p className="flex items-center gap-2 truncate text-xs sm:gap-3">
           <span className="flex items-center gap-1.5">
@@ -15,7 +15,7 @@ export default function AnnouncementBar() {
             {SHOP.deliveryArea}
           </span>
 
-          <span className="hidden text-white/40 sm:inline" aria-hidden="true">
+          <span className="hidden text-brand-dark/40 sm:inline" aria-hidden="true">
             |
           </span>
 
@@ -24,13 +24,13 @@ export default function AnnouncementBar() {
             {SHOP.street}
           </span>
 
-          <span className="text-white/40" aria-hidden="true">
+          <span className="text-brand-dark/40" aria-hidden="true">
             |
           </span>
 
           <a
             href={SHOP.phoneHref}
-            className="flex items-center gap-1.5 rounded transition hover:text-white/80"
+            className="flex items-center gap-1.5 rounded transition hover:text-brand-dark/70"
           >
             <Phone className="h-3.5 w-3.5 shrink-0" aria-hidden="true" />
             {SHOP.phone}

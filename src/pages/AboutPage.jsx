@@ -1,7 +1,8 @@
 import { Link } from 'react-router-dom';
 import { ChevronRight, Mail, MapPin, Phone } from 'lucide-react';
 import AboutSection from '../components/AboutSection.jsx';
-import { SHOP } from '../data/shop.js';
+import MapSection from '../components/MapSection.jsx';
+import { HOURS_DISPLAY, SHOP } from '../data/shop.js';
 
 export default function AboutPage() {
   return (
@@ -41,13 +42,16 @@ export default function AboutPage() {
       </header>
 
       <AboutSection />
+      <MapSection />
 
       <section className="container-editorial py-14 lg:py-20">
         <div className="mx-auto max-w-3xl text-center">
           <p className="eyebrow">Kontakt</p>
           <h2 className="mt-2 font-serif text-3xl text-brand-dark">Javite nam se</h2>
           <p className="mx-auto mt-4 max-w-xl text-gray-600">
-            Porudžbine primamo telefonom i u radnji. Za isporuku istog dana pozovite do 14h.
+            Porudžbine primamo telefonom i u radnji. Radimo{' '}
+            {HOURS_DISPLAY[0].day.toLowerCase()} {HOURS_DISPLAY[0].time}, subotom{' '}
+            {HOURS_DISPLAY[1].time}. Nedeljom ne radimo.
           </p>
 
           <ul className="mt-10 grid grid-cols-1 gap-4 sm:grid-cols-3">

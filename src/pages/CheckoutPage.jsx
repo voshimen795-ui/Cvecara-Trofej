@@ -1,13 +1,31 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { AlertTriangle, Check, ChevronRight, Loader2, Truck } from 'lucide-react';
+import { AlertTriangle, Check, ChevronRight, Loader2, MapPin, Truck } from 'lucide-react';
 import ProductImage from '../components/ui/ProductImage.jsx';
 import { SHOP } from '../data/shop.js';
 import { formatPrice } from '../utils/format.js';
 import { useCart } from '../context/CartContext.jsx';
-import { fetchDeliveryQuote, submitOrder } from '../services/wolt.js';
+import { fetchDeliveryQuote, reverseGeocode, submitOrder } from '../services/wolt.js';
+import ScheduleFields from '../components/checkout/ScheduleFields.jsx';
+import PersonalisationFields from '../components/checkout/PersonalisationFields.jsx';
+import { useGeolocation } from '../hooks/useGeolocation.js';
 
 const EMPTY_FORM = { name: '', phone: '', street: '', city: SHOP.city, comment: '' };
+const EMPTY_SCHEDULE = { mode: 'dostava', date: '', time: '' };
+const EMPTY_PERSONALISATION = { occasion: '', cardMessage: '', wishes: '' };
+
+/** Folds the optional fields into one note for the florist and the courier. */
+function buildComment(form, personalisation, schedule) {
+  return [
+    form.comment,
+    personalisation.occasion && `Povod: ${personalisation.occasion}`,
+    personalisation.cardMessage && `Čestitka: „${personalisation.cardMessage}"`,
+    personalisation.wishes && `Želje: ${personalisation.wishes}`,
+    schedule.date && `Termin: ${schedule.date} u ${schedule.time} (${schedule.mode})`,
+  ]
+    .filter(Boolean)
+    .join(' | ');
+}
 
 export default function CheckoutPage() {
   const { items, subtotal, clearCart } = useCart();
@@ -15,8 +33,15 @@ export default function CheckoutPage() {
   const [form, setForm] = useState(EMPTY_FORM);
   const [quote, setQuote] = useState(null);
   const [confirmed, setConfirmed] = useState(null);
-  const [busy, setBusy] = useState(null); // 'quote' | 'order'
+  const [schedule, setSchedule] = useState(EMPTY_SCHEDULE);
+  const [personalisation, setPersonalisation] = useState(EMPTY_PERSONALISATION);
+  const [busy, setBusy] = useState(null); // 'quote' | 'order' | 'locate'
   const [error, setError] = useState('');
+  const geo = useGeolocation();
+  const [lookupFailed, setLookupFailed] = useState(false);
+
+  const pickup = schedule.mode === 'preuzimanje';
+  const scheduled = Boolean(schedule.date && schedule.time);
 
   const set = (field) => (event) => {
     setForm((f) => ({ ...f, [field]: event.target.value }));
@@ -28,10 +53,42 @@ export default function CheckoutPage() {
     setError('');
     setBusy('quote');
     try {
-      setQuote(await fetchDeliveryQuote({ street: form.street, city: form.city }));
+      // Coordinates, when we have them, make Wolt's price binding rather than
+      // an estimate — so pass them through whenever geolocation succeeded.
+      setQuote(
+        await fetchDeliveryQuote({
+          street: form.street,
+          city: form.city,
+          lat: geo.coords?.lat,
+          lon: geo.coords?.lon,
+        })
+      );
     } catch (err) {
       setError(err.message);
       setQuote(null);
+    } finally {
+      setBusy(null);
+    }
+  };
+
+  /** Ask for location, then try to fill the address from it. */
+  const useMyLocation = async () => {
+    setError('');
+    const coords = await geo.request();
+    if (!coords) return;
+
+    setBusy('locate');
+    setLookupFailed(false);
+    try {
+      const place = await reverseGeocode(coords);
+      if (!place.street) throw new Error('no street');
+      setForm((f) => ({ ...f, street: place.street, city: place.city || f.city }));
+      setQuote(null);
+    } catch {
+      // Address lookup is only a convenience — the coordinates alone already
+      // sharpen Wolt's price. Say so plainly instead of leaving the field
+      // mysteriously empty.
+      setLookupFailed(true);
     } finally {
       setBusy(null);
     }
@@ -45,8 +102,13 @@ export default function CheckoutPage() {
       const result = await submitOrder({
         promiseId: quote.promiseId,
         customer: { name: form.name, phone: form.phone, street: form.street, city: form.city },
-        comment: form.comment,
-        items: items.map((i) => ({ id: i.id, name: i.name, quantity: i.quantity })),
+        comment: buildComment(form, personalisation, schedule),
+        items: items.map((i) => ({
+          id: i.id,
+          name: i.name,
+          size: i.sizeLabel,
+          quantity: i.quantity,
+        })),
       });
       setConfirmed(result);
       clearCart();
@@ -107,7 +169,7 @@ export default function CheckoutPage() {
     );
   }
 
-  const total = subtotal + (quote?.price ?? 0);
+  const total = subtotal + (pickup ? 0 : (quote?.price ?? 0));
 
   return (
     <div className="container-editorial py-10 lg:py-14">
@@ -142,21 +204,67 @@ export default function CheckoutPage() {
               required
               placeholder="06x xxx xxxx"
             />
-            <Field
-              label="Adresa"
-              value={form.street}
-              onChange={set('street')}
-              required
-              placeholder="Ulica i broj"
-            />
-            <Field label="Grad" value={form.city} onChange={set('city')} required />
+            {!pickup && (
+              <>
+                <button
+                  type="button"
+                  onClick={useMyLocation}
+                  className="flex w-full items-center justify-center gap-2 rounded-xl border border-dashed border-brand-primary px-4 py-3 text-sm font-medium text-brand-primary-dark transition hover:bg-brand-mist sm:w-auto"
+                >
+                  {geo.status === 'asking' || busy === 'locate' ? (
+                    <Loader2 className="h-4 w-4 animate-spin" aria-hidden="true" />
+                  ) : (
+                    <MapPin className="h-4 w-4" aria-hidden="true" />
+                  )}
+                  Koristi moju lokaciju
+                </button>
+
+                {geo.error && <p className="text-xs text-brand-muted">{geo.error}</p>}
+                {geo.status === 'granted' && !lookupFailed && (
+                  <p className="text-xs text-brand-primary-dark">
+                    Lokacija je preuzeta — cena dostave će biti preciznija.
+                  </p>
+                )}
+                {geo.status === 'granted' && lookupFailed && (
+                  <p className="text-xs text-brand-muted">
+                    Lokacija je preuzeta i koristimo je za precizniju cenu, ali nismo uspeli
+                    da prepoznamo ulicu — upišite je ručno.
+                  </p>
+                )}
+
+                <Field
+                  label="Adresa"
+                  value={form.street}
+                  onChange={set('street')}
+                  required
+                  placeholder="Ulica i broj"
+                />
+                <Field label="Grad" value={form.city} onChange={set('city')} required />
+              </>
+            )}
+
+            {pickup && (
+              <p className="rounded-xl bg-brand-mist px-4 py-3 text-sm text-brand-dark">
+                Preuzimanje u radnji: {SHOP.street}, {SHOP.city}.
+              </p>
+            )}
+
             <Field
               label="Napomena (opciono)"
               value={form.comment}
               onChange={set('comment')}
-              placeholder="Sprat, interfon, poruka na čestitki…"
+              placeholder="Sprat, interfon, gde da ostavimo…"
             />
 
+            <div className="border-t border-brand-border pt-5">
+              <ScheduleFields value={schedule} onChange={setSchedule} />
+            </div>
+
+            <div className="border-t border-brand-border pt-5">
+              <PersonalisationFields value={personalisation} onChange={setPersonalisation} />
+            </div>
+
+            {!pickup && (
             <button
               type="button"
               onClick={getQuote}
@@ -175,6 +283,7 @@ export default function CheckoutPage() {
                 </>
               )}
             </button>
+            )}
 
             {error && (
               <p role="alert" className="rounded-xl bg-red-50 px-4 py-3 text-sm text-red-800">
@@ -182,24 +291,39 @@ export default function CheckoutPage() {
               </p>
             )}
 
-            <button
-              type="submit"
-              disabled={!quote || busy !== null}
-              className="btn-primary w-full disabled:cursor-not-allowed disabled:opacity-50"
-            >
-              {busy === 'order' ? (
-                <>
-                  <Loader2 className="h-4 w-4 animate-spin" aria-hidden="true" />
-                  Šaljem…
-                </>
-              ) : (
-                'Potvrdi porudžbinu'
-              )}
-            </button>
+            {/* Pickup skips Wolt entirely. There is no order store yet, so
+                rather than fake a submission we hand the customer a phone
+                call — see the README for what's still missing. */}
+            {pickup ? (
+              <a
+                href={SHOP.phoneHref}
+                className={`btn-primary w-full ${scheduled ? '' : 'pointer-events-none opacity-50'}`}
+              >
+                Pozovite nas da potvrdimo termin
+              </a>
+            ) : (
+              <button
+                type="submit"
+                disabled={!quote || !scheduled || busy !== null}
+                className="btn-primary w-full disabled:cursor-not-allowed disabled:opacity-50"
+              >
+                {busy === 'order' ? (
+                  <>
+                    <Loader2 className="h-4 w-4 animate-spin" aria-hidden="true" />
+                    Šaljem…
+                  </>
+                ) : (
+                  'Potvrdi porudžbinu'
+                )}
+              </button>
+            )}
 
-            {!quote && (
+            {!scheduled && (
+              <p className="text-xs text-brand-muted">Izaberite datum i vreme.</p>
+            )}
+            {scheduled && !pickup && !quote && (
               <p className="text-xs text-brand-muted">
-                Prvo izračunajte dostavu — Wolt daje cenu i vreme za vašu adresu.
+                Zatim izračunajte dostavu — Wolt daje cenu i vreme za vašu adresu.
               </p>
             )}
           </fieldset>
@@ -212,7 +336,7 @@ export default function CheckoutPage() {
 
             <ul className="mt-5 divide-y divide-gray-100">
               {items.map((item) => (
-                <li key={item.id} className="flex gap-3 py-3">
+                <li key={item.key} className="flex gap-3 py-3">
                   <div className="h-16 w-14 shrink-0 overflow-hidden rounded-lg bg-gradient-to-b from-brand-mist to-white">
                     <ProductImage
                       src={item.image}
@@ -224,6 +348,7 @@ export default function CheckoutPage() {
                   <div className="min-w-0 flex-1">
                     <p className="truncate font-serif text-sm text-brand-dark">{item.name}</p>
                     <p className="text-xs text-brand-muted">
+                      {item.sizeLabel ? `${item.sizeLabel} · ` : ''}
                       {item.quantity} × {formatPrice(item.price)}
                     </p>
                   </div>
@@ -240,15 +365,15 @@ export default function CheckoutPage() {
                 <dd className="font-medium text-brand-dark">{formatPrice(subtotal)}</dd>
               </div>
               <div className="flex justify-between text-gray-600">
-                <dt>Dostava (Wolt)</dt>
+                <dt>{pickup ? 'Preuzimanje u radnji' : 'Dostava (Wolt)'}</dt>
                 <dd className="font-medium text-brand-dark">
-                  {quote ? formatPrice(quote.price) : '—'}
+                  {pickup ? 'Besplatno' : quote ? formatPrice(quote.price) : '—'}
                 </dd>
               </div>
               <div className="flex justify-between border-t border-brand-border pt-3 text-base">
                 <dt className="font-medium text-brand-dark">Ukupno</dt>
                 <dd className="font-semibold text-brand-dark">
-                  {quote ? formatPrice(total) : formatPrice(subtotal) + ' + dostava'}
+                  {pickup || quote ? formatPrice(total) : `${formatPrice(subtotal)} + dostava`}
                 </dd>
               </div>
             </dl>

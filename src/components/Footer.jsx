@@ -1,6 +1,6 @@
 import { Link } from 'react-router-dom';
 import { Facebook, Instagram, Mail, MapPin, Phone } from 'lucide-react';
-import { NAV_LINKS, SHOP } from '../data/shop.js';
+import { HOURS_DISPLAY, NAV_LINKS, SHOP } from '../data/shop.js';
 
 const SOCIALS = [
   { label: 'Instagram', href: '#', icon: Instagram },
@@ -63,10 +63,16 @@ export default function Footer() {
           <div>
             <h2 className="text-sm font-semibold text-white">Radno vreme</h2>
             <dl className="mt-4 space-y-3 text-sm">
-              {SHOP.hours.map(({ day, time }) => (
+              {HOURS_DISPLAY.map(({ day, time }) => (
                 <div key={day} className="flex flex-col gap-0.5">
                   <dt className="text-brand-light/70">{day}</dt>
-                  <dd className="font-medium tabular-nums text-white">{time}</dd>
+                  <dd
+                    className={`font-medium ${
+                      time === 'Ne radimo' ? 'text-brand-light/60' : 'tabular-nums text-white'
+                    }`}
+                  >
+                    {time}
+                  </dd>
                 </div>
               ))}
             </dl>

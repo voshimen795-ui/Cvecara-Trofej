@@ -4,7 +4,15 @@ import { Check, ChevronRight, Minus, Plus, Truck } from 'lucide-react';
 import ProductImage from '../components/ui/ProductImage.jsx';
 import ProductGrid from '../components/ProductGrid.jsx';
 import NotFoundPage from './NotFoundPage.jsx';
-import { CATEGORY_PAGES, CATEGORY_TAG, PRODUCTS, getProduct } from '../data/products.js';
+import {
+  CATEGORY_PAGES,
+  CATEGORY_TAG,
+  PRODUCTS,
+  defaultSize,
+  getProduct,
+  isAvailable,
+  priceFor,
+} from '../data/products.js';
 import { SHOP } from '../data/shop.js';
 import { formatPrice } from '../utils/format.js';
 import { useCart } from '../context/CartContext.jsx';
@@ -14,8 +22,12 @@ export default function ProductPage() {
   const product = getProduct(id);
   const { addItem } = useCart();
   const [quantity, setQuantity] = useState(1);
+  const [sizeId, setSizeId] = useState(() => defaultSize(product)?.id ?? null);
 
   if (!product) return <NotFoundPage />;
+
+  const available = isAvailable(product);
+  const price = priceFor(product, sizeId);
 
   const page = CATEGORY_PAGES[product.category];
   const related = PRODUCTS.filter(
@@ -72,17 +84,66 @@ export default function ProductPage() {
               {product.name}
             </h1>
 
-            {product.badge && (
-              <span className="mt-4 inline-flex w-fit rounded-full bg-brand-rose px-3 py-1 text-[10px] font-bold uppercase tracking-wide text-brand-dark">
-                {product.badge}
+            <div className="mt-4 flex flex-wrap gap-2">
+              {product.badge && available && (
+                <span className="inline-flex w-fit rounded-full bg-brand-rose px-3 py-1 text-[10px] font-bold uppercase tracking-wide text-brand-dark">
+                  {product.badge}
+                </span>
+              )}
+              <span
+                className={`inline-flex w-fit items-center gap-1.5 rounded-full px-3 py-1 text-[10px] font-bold uppercase tracking-wide ${
+                  available
+                    ? 'bg-brand-primary/20 text-brand-primary-dark'
+                    : 'bg-brand-dark text-white'
+                }`}
+              >
+                <span
+                  className={`h-1.5 w-1.5 rounded-full ${
+                    available ? 'bg-brand-primary-dark' : 'bg-white/70'
+                  }`}
+                  aria-hidden="true"
+                />
+                {available ? 'Trenutno dostupno' : 'Trenutno nije dostupno'}
               </span>
-            )}
+            </div>
 
             <p className="mt-6 text-lg leading-relaxed text-gray-600">{product.description}</p>
 
-            <p className="mt-8 text-3xl font-bold text-brand-dark">
-              {formatPrice(product.price)}
-            </p>
+            {product.sizes && (
+              <fieldset className="mt-8">
+                <legend className="mb-2.5 text-sm font-medium text-brand-dark">
+                  Veličina buketa
+                </legend>
+                <div className="grid grid-cols-3 gap-2">
+                  {product.sizes.map((size) => {
+                    const active = size.id === sizeId;
+                    return (
+                      <button
+                        key={size.id}
+                        type="button"
+                        onClick={() => setSizeId(size.id)}
+                        aria-pressed={active}
+                        className={`rounded-xl border px-3 py-3 text-center transition ${
+                          active
+                            ? 'border-brand-primary-dark bg-brand-mist'
+                            : 'border-brand-border hover:border-brand-primary'
+                        }`}
+                      >
+                        <span className="block text-sm font-semibold text-brand-dark">
+                          {size.label}
+                        </span>
+                        <span className="mt-0.5 block text-xs text-brand-muted">{size.note}</span>
+                        <span className="mt-1 block text-sm font-bold text-brand-dark">
+                          {formatPrice(size.price)}
+                        </span>
+                      </button>
+                    );
+                  })}
+                </div>
+              </fieldset>
+            )}
+
+            <p className="mt-8 text-3xl font-bold text-brand-dark">{formatPrice(price)}</p>
 
             <div className="mt-8 flex flex-col gap-3 sm:flex-row sm:items-center sm:gap-4">
               <div className="flex w-fit items-center rounded-xl border border-brand-border">
@@ -109,12 +170,23 @@ export default function ProductPage() {
 
               <button
                 type="button"
-                onClick={() => addItem(product, quantity)}
-                className="btn-primary flex-1 sm:flex-none"
+                onClick={() => addItem(product, quantity, sizeId)}
+                disabled={!available}
+                className="btn-primary flex-1 disabled:cursor-not-allowed disabled:bg-gray-100 disabled:text-brand-muted sm:flex-none"
               >
-                Dodaj u korpu
+                {available ? 'Dodaj u korpu' : 'Trenutno nije dostupno'}
               </button>
             </div>
+
+            {!available && (
+              <p className="mt-4 rounded-xl bg-brand-mist px-4 py-3 text-sm text-brand-dark">
+                Ovaj artikal trenutno nemamo. Pozovite nas na{' '}
+                <a href={SHOP.phoneHref} className="font-semibold underline">
+                  {SHOP.phone}
+                </a>{' '}
+                — često ga možemo napraviti po porudžbini.
+              </p>
+            )}
 
             <ul className="mt-8 space-y-3 border-t border-brand-border pt-6 text-sm text-gray-600">
               <li className="flex items-start gap-2.5">

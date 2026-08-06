@@ -95,7 +95,7 @@ export default function CartDrawer() {
                 <AnimatePresence initial={false}>
                   {items.map((item) => (
                     <motion.li
-                      key={item.id}
+                      key={item.key}
                       layout
                       initial={{ opacity: 0, height: 0 }}
                       animate={{ opacity: 1, height: 'auto' }}
@@ -103,12 +103,12 @@ export default function CartDrawer() {
                       transition={{ duration: 0.22 }}
                       className="flex gap-4 py-5"
                     >
-                      <div className="h-24 w-20 shrink-0 overflow-hidden rounded-xl bg-gray-50">
+                      <div className="h-24 w-20 shrink-0 overflow-hidden rounded-xl bg-gradient-to-b from-brand-mist to-white">
                         <ProductImage
                           src={item.image}
                           alt={item.name}
                           category={item.category}
-                          className="h-full w-full object-cover"
+                          className="h-full w-full object-contain p-1"
                         />
                       </div>
 
@@ -119,7 +119,7 @@ export default function CartDrawer() {
                           </h3>
                           <button
                             type="button"
-                            onClick={() => removeItem(item.id)}
+                            onClick={() => removeItem(item.key)}
                             aria-label={`Ukloni ${item.name} iz korpe`}
                             className="shrink-0 rounded p-1 text-brand-muted transition hover:text-brand-rose"
                           >
@@ -128,6 +128,7 @@ export default function CartDrawer() {
                         </div>
 
                         <p className="mt-0.5 text-xs text-brand-muted">
+                          {item.sizeLabel ? `${item.sizeLabel} · ` : ''}
                           {formatPrice(item.price)} / kom
                         </p>
 
@@ -135,7 +136,7 @@ export default function CartDrawer() {
                           <div className="flex items-center rounded-lg border border-brand-border">
                             <button
                               type="button"
-                              onClick={() => decrement(item.id, item.quantity)}
+                              onClick={() => decrement(item.key, item.quantity)}
                               aria-label={`Smanji količinu za ${item.name}`}
                               className="rounded-l-lg p-2 text-brand-dark transition hover:bg-gray-50"
                             >
@@ -149,7 +150,7 @@ export default function CartDrawer() {
                             </span>
                             <button
                               type="button"
-                              onClick={() => increment(item.id, item.quantity)}
+                              onClick={() => increment(item.key, item.quantity)}
                               aria-label={`Povećaj količinu za ${item.name}`}
                               className="rounded-r-lg p-2 text-brand-dark transition hover:bg-gray-50"
                             >
@@ -200,7 +201,7 @@ export default function CartDrawer() {
                 <Link
                   to="/porudzbina"
                   onClick={closeCart}
-                  className="mt-4 block w-full rounded-xl bg-brand-primary-dark py-4 text-center font-medium text-white transition hover:bg-brand-primary-darker"
+                  className="mt-4 block w-full rounded-xl bg-brand-primary py-4 text-center font-semibold text-brand-dark transition hover:bg-brand-teal"
                 >
                   Nastavi na plaćanje
                 </Link>

@@ -15,6 +15,32 @@ const PHOTOS = import.meta.glob('../assets/products/*.webp', {
 
 const photo = (slug) => PHOTOS[`../assets/products/${slug}.webp`];
 
+/**
+ * Bouquet sizes. `price` is absolute so the shop can override any single one
+ * by hand; the defaults are derived from the medium price and rounded to 50
+ * RSD so nothing ends in an odd number.
+ */
+const round50 = (n) => Math.round(n / 50) * 50;
+
+export const sizesFrom = (base) => [
+  { id: 'mali', label: 'Mali', price: round50(base * 0.75), note: 'Oko 15 stabljika' },
+  { id: 'srednji', label: 'Srednji', price: base, note: 'Oko 25 stabljika' },
+  { id: 'veliki', label: 'Veliki', price: round50(base * 1.45), note: 'Oko 40 stabljika' },
+];
+
+// All three tolerate a missing product: pages call them before the
+// "not found" guard runs, and an unknown /proizvod/:id must 404, not crash.
+
+/** The size a quick add-to-cart uses when the customer hasn't picked one. */
+export const defaultSize = (product) =>
+  product?.sizes?.find((s) => s.id === 'srednji') ?? product?.sizes?.[0] ?? null;
+
+/** Price for a product at a given size id, falling back to the base price. */
+export const priceFor = (product, sizeId) =>
+  product?.sizes?.find((s) => s.id === sizeId)?.price ?? product?.price ?? 0;
+
+export const isAvailable = (product) => product?.available !== false;
+
 export const CATEGORIES = [
   { id: 'all', label: 'Svi Buketi' },
   { id: 'aranzmani', label: 'Aranžmani' },
@@ -92,6 +118,7 @@ export const PRODUCTS = [
     name: 'Prolećna Simfonija',
     category: 'buketi',
     price: 4800,
+    sizes: sizesFrom(4800),
     badge: 'Bestseler',
     description: 'Roze ruže, iris i lila hrizantema u pastelnom papiru.',
     image: photo('prolecna-simfonija'),
@@ -101,14 +128,17 @@ export const PRODUCTS = [
     name: 'Crveni Akcenat',
     category: 'buketi',
     price: 5200,
+    sizes: sizesFrom(5200),
     description: 'Anturijum i bela eustoma sa zelenilom, u kraft papiru.',
     image: photo('crveni-akcenat'),
   },
   {
     id: 'nezne-lale',
+    available: false,
     name: 'Nežne Lale',
     category: 'buketi',
     price: 3400,
+    sizes: sizesFrom(3400),
     badge: 'Sezonski',
     description: 'Lale u nijansama roze i lila, vezane satenskom trakom.',
     image: photo('nezne-lale'),
@@ -118,6 +148,7 @@ export const PRODUCTS = [
     name: 'Sunčano Jutro',
     category: 'buketi',
     price: 3900,
+    sizes: sizesFrom(3900),
     description: 'Suncokreti i sitno poljsko cveće — buket koji budi prostoriju.',
     image: photo('suncano-jutro'),
   },
@@ -126,6 +157,7 @@ export const PRODUCTS = [
     name: 'Ljubičasti San',
     category: 'buketi',
     price: 5600,
+    sizes: sizesFrom(5600),
     badge: 'Novo',
     description: 'Ljubičaste hrizanteme i zelenilo u kontrastnom papiru.',
     image: photo('ljubicasti-san'),
@@ -135,6 +167,7 @@ export const PRODUCTS = [
     name: 'Roze Oblak',
     category: 'buketi',
     price: 5100,
+    sizes: sizesFrom(5100),
     description: 'Mekana kombinacija roze i lila tonova sa eukaliptusom.',
     image: photo('roze-oblak'),
   },
@@ -143,6 +176,7 @@ export const PRODUCTS = [
     name: 'Livada u Cvatu',
     category: 'buketi',
     price: 4300,
+    sizes: sizesFrom(4300),
     description: 'Sitno poljsko cveće u žutom papiru — drugačije svakog dana.',
     image: photo('livada-u-cvatu'),
   },
@@ -151,6 +185,7 @@ export const PRODUCTS = [
     name: 'Lavanda i Krem',
     category: 'buketi',
     price: 4900,
+    sizes: sizesFrom(4900),
     description: 'Lila levkonija i krem hrizantema, upakovano u novinski papir.',
     image: photo('lavanda-i-krem'),
   },
@@ -159,6 +194,7 @@ export const PRODUCTS = [
     name: 'Zlatna Jesen',
     category: 'buketi',
     price: 4600,
+    sizes: sizesFrom(4600),
     description: 'Topli tonovi i suve grančice u okerastom papiru.',
     image: photo('zlatna-jesen'),
   },
@@ -168,6 +204,7 @@ export const PRODUCTS = [
     name: 'Tirkizni Buket',
     category: 'buketi',
     price: 5900,
+    sizes: sizesFrom(5900),
     badge: 'Novo',
     description: 'Ruže, hrizanteme i sitno cveće u tirkiznom papiru — brend u buketu.',
     image: photo('tirkizni-buket'),
@@ -177,6 +214,7 @@ export const PRODUCTS = [
     name: 'Ljubičasta Elegancija',
     category: 'buketi',
     price: 6100,
+    sizes: sizesFrom(6100),
     description: 'Ljiljani i ljubičasto cveće u kombinaciji zelenog i lila papira.',
     image: photo('ljubicasta-elegancija'),
   },
@@ -185,6 +223,7 @@ export const PRODUCTS = [
     name: 'Ljiljan i Ruže',
     category: 'buketi',
     price: 6300,
+    sizes: sizesFrom(6300),
     description: 'Roze ljiljani sa sitnim cvetovima, u svetlom papiru sa zlatnom ivicom.',
     image: photo('ljiljan-i-ruze'),
   },
@@ -193,6 +232,7 @@ export const PRODUCTS = [
     name: 'Purpurna Dalija',
     category: 'buketi',
     price: 5800,
+    sizes: sizesFrom(5800),
     description: 'Krupne dalije i sezonsko cveće u toplim tonovima.',
     image: photo('purpurna-dalija'),
   },
@@ -201,6 +241,7 @@ export const PRODUCTS = [
     name: 'Bela Elegancija',
     category: 'buketi',
     price: 5500,
+    sizes: sizesFrom(5500),
     description: 'Bele ruže i zelenilo u crnom mat papiru — svečano i suzdržano.',
     image: photo('bela-elegancija'),
   },
@@ -209,6 +250,7 @@ export const PRODUCTS = [
     name: 'Cvetni Vez',
     category: 'buketi',
     price: 5400,
+    sizes: sizesFrom(5400),
     description: 'Ljiljani i karanfili u papiru sa cvetnim dezenom.',
     image: photo('cvetni-vez'),
   },
@@ -217,6 +259,7 @@ export const PRODUCTS = [
     name: 'Meki Pastel',
     category: 'buketi',
     price: 5300,
+    sizes: sizesFrom(5300),
     description: 'Bele ruže i hrizanteme sa plišanim medom u buketu.',
     image: photo('meki-pastel'),
   },
@@ -225,6 +268,7 @@ export const PRODUCTS = [
     name: 'Pastelna Priča',
     category: 'buketi',
     price: 5200,
+    sizes: sizesFrom(5200),
     description: 'Roze ruže, eustoma i eukaliptus u nežnom roze papiru.',
     image: photo('pastelna-prica'),
   },
@@ -233,6 +277,7 @@ export const PRODUCTS = [
     name: 'Roze Romansa',
     category: 'buketi',
     price: 4950,
+    sizes: sizesFrom(4950),
     description: 'Roze papir i mešavina sitnog cveća — klasičan poklon.',
     image: photo('roze-romansa'),
   },
@@ -241,6 +286,7 @@ export const PRODUCTS = [
     name: 'Nežni Pozdrav',
     category: 'buketi',
     price: 4700,
+    sizes: sizesFrom(4700),
     description: 'Pastelni buket sa plišanim medom, u cvetnom papiru.',
     image: photo('nezni-pozdrav'),
   },
@@ -249,6 +295,7 @@ export const PRODUCTS = [
     name: 'Žuti Sjaj',
     category: 'buketi',
     price: 4400,
+    sizes: sizesFrom(4400),
     description: 'Žute ruže i bele rade u žutom papiru — buket za dobro jutro.',
     image: photo('zuti-sjaj'),
   },
@@ -257,6 +304,7 @@ export const PRODUCTS = [
     name: 'Poljski Vez',
     category: 'buketi',
     price: 4100,
+    sizes: sizesFrom(4100),
     description: 'Visok buket sa poljskim cvećem i paprati, u kraft papiru.',
     image: photo('poljski-vez'),
   },
@@ -267,15 +315,18 @@ export const PRODUCTS = [
     name: 'Medveđi Zagrljaj',
     category: 'aranzmani',
     price: 7400,
+    sizes: sizesFrom(7400),
     badge: 'Bestseler',
     description: 'Ruže i plišani medvedići u kutiji — poklon za rođendan.',
     image: photo('medveni-zagrljaj'),
   },
   {
     id: 'ruzicasti-ljiljan',
+    available: false,
     name: 'Ružičasti Ljiljan',
     category: 'aranzmani',
     price: 6200,
+    sizes: sizesFrom(6200),
     description: 'Ljiljani i ruže u crvenoj kutiji sa floralnom penom.',
     image: photo('ruzicasti-ljiljan'),
   },
@@ -284,6 +335,7 @@ export const PRODUCTS = [
     name: 'Divlja Bašta',
     category: 'aranzmani',
     price: 5800,
+    sizes: sizesFrom(5800),
     description: 'Razgranat aranžman sa poljskim cvećem u lila kutiji.',
     image: photo('divlja-basta'),
   },
@@ -292,6 +344,7 @@ export const PRODUCTS = [
     name: 'Strastveni Trenutak',
     category: 'aranzmani',
     price: 6500,
+    sizes: sizesFrom(6500),
     badge: 'Novo',
     description: 'Ljiljan i sitno cveće u kutiji — jednostavno i upečatljivo.',
     image: photo('strastveni-trenutak'),
@@ -301,6 +354,7 @@ export const PRODUCTS = [
     name: 'Korpa Iznenađenja',
     category: 'aranzmani',
     price: 6900,
+    sizes: sizesFrom(6900),
     description: 'Pletena korpa sa sezonskim cvećem i dekorativnim grančicama.',
     image: photo('korpa-iznenadjenja'),
   },
@@ -310,6 +364,7 @@ export const PRODUCTS = [
     name: 'Cvetna Torba',
     category: 'aranzmani',
     price: 7200,
+    sizes: sizesFrom(7200),
     badge: 'Novo',
     description: 'Aranžman u papirnoj torbi sa ručkama — spreman za nošenje.',
     image: photo('cvetna-torba'),
@@ -319,6 +374,7 @@ export const PRODUCTS = [
     name: 'Slatki Pozdrav',
     category: 'aranzmani',
     price: 6800,
+    sizes: sizesFrom(6800),
     description: 'Ruže, karanfili i plišani meda u ukrasnoj kutiji.',
     image: photo('slatki-pozdrav'),
   },
@@ -327,6 +383,7 @@ export const PRODUCTS = [
     name: 'Korpa Sunca',
     category: 'aranzmani',
     price: 6600,
+    sizes: sizesFrom(6600),
     description: 'Pletena korpa sa ružama i gerberima u toplim tonovima.',
     image: photo('korpa-sunca'),
   },
@@ -335,6 +392,7 @@ export const PRODUCTS = [
     name: 'Cvetna Kesa',
     category: 'aranzmani',
     price: 5900,
+    sizes: sizesFrom(5900),
     description: 'Ruže i zelenilo u kraft kesi — mali aranžman, velik utisak.',
     image: photo('cvetna-kesa'),
   },
@@ -379,6 +437,7 @@ export const PRODUCTS = [
   },
   {
     id: 'baloni-srce',
+    available: false,
     name: 'Balon Srce XXL',
     category: 'baloni',
     price: 1600,
