@@ -9,6 +9,8 @@ export const SHOP = {
   phone: '069/279-0074',
   phoneHref: 'tel:+381692790074',
   email: 'cvecaratrofej@gmail.com',
+  // Serbian original. The UI reads `t('common.deliveryArea')`; this stays for
+  // the order email and the structured data, which are always Serbian.
   deliveryArea: 'Dostava na teritoriji Beograda',
   // TODO: potvrdite tačan handle — pretpostavka na osnovu imena radnje.
   instagramHandle: '@cvecara_trofej',
@@ -37,11 +39,17 @@ export const OPENING_HOURS = [
   { day: 6, label: 'Subota', open: 10, close: 15 },
 ];
 
-/** Grouped for display — identical weekdays collapse into one row. */
+/**
+ * Grouped for display — identical weekdays collapse into one row.
+ *
+ * `key` is what the UI translates (`hours.weekdays`, `hours.saturday`…) and
+ * `closed` replaces the old `time === 'Ne radimo'` string comparison, which
+ * silently stopped matching the moment the row was translated.
+ */
 export const HOURS_DISPLAY = [
-  { day: 'Ponedeljak — Petak', time: '10:00 — 20:00' },
-  { day: 'Subota', time: '10:00 — 15:00' },
-  { day: 'Nedelja', time: 'Ne radimo' },
+  { key: 'weekdays', day: 'Ponedeljak — Petak', time: '10:00 — 20:00' },
+  { key: 'saturday', day: 'Subota', time: '10:00 — 15:00' },
+  { key: 'sunday', day: 'Nedelja', time: 'Ne radimo', closed: true },
 ];
 
 export const isOpenOn = (date) => OPENING_HOURS[date.getDay()].open !== null;

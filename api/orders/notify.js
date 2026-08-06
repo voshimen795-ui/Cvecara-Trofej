@@ -83,10 +83,10 @@ export default async function handler(req, res) {
   const { customer, items, schedule, personalisation, totals } = req.body ?? {};
 
   if (!customer?.name || !customer?.phone) {
-    return res.status(400).json({ error: 'Ime i telefon su obavezni.' });
+    return res.status(400).json({ error: 'Ime i telefon su obavezni.', code: 'orderFields' });
   }
   if (!Array.isArray(items) || items.length === 0) {
-    return res.status(400).json({ error: 'Korpa je prazna.' });
+    return res.status(400).json({ error: 'Korpa je prazna.', code: 'cartEmpty' });
   }
 
   const reference = `CT-${Date.now().toString(36).toUpperCase()}`;
@@ -117,6 +117,7 @@ export default async function handler(req, res) {
       console.error('resend failed', upstream.status, detail);
       return res.status(502).json({
         error: 'Porudžbina nije poslata mejlom. Pozovite nas da je potvrdimo.',
+        code: 'mailFailed',
         reference,
       });
     }
@@ -124,6 +125,6 @@ export default async function handler(req, res) {
     return res.status(201).json({ reference, mock: false });
   } catch (err) {
     console.error('orders/notify failed', err);
-    return res.status(500).json({ error: 'Greška pri slanju porudžbine.', reference });
+    return res.status(500).json({ error: 'Greška pri slanju porudžbine.', code: 'orderFailed', reference });
   }
 }

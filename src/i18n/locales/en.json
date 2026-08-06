@@ -1,29 +1,493 @@
 {
-  "nav": { "buketi": "Bouquets", "aranzmani": "Arrangements", "pokloni": "Gifts", "onama": "About us" },
-  "common": {
-    "addToCart": "Add to cart", "chooseSize": "Choose a size", "added": "Added",
-    "unavailable": "Unavailable", "inStock": "In stock", "outOfStock": "Currently unavailable",
-    "from": "from", "sizes": "sizes", "total": "Total", "subtotal": "Subtotal",
-    "delivery": "Delivery", "free": "Free", "search": "Search", "cart": "Cart",
-    "openMenu": "Open menu", "closeMenu": "Close menu", "home": "Home", "back": "Back to home"
+  "nav": {
+    "buketi": "Bouquets",
+    "aranzmani": "Arrangements",
+    "pokloni": "Gifts",
+    "onama": "About us",
+    "main": "Main navigation",
+    "footer": "Footer navigation",
+    "mobile": "Menu"
   },
-  "hero": { "badge": "Hand-tied bouquets", "line1": "Flowers that speak", "line2": "from the heart",
-    "tagline": "For moments that deserve more than words.", "cta": "See the collection", "custom": "Custom bouquet" },
-  "featured": { "eyebrow": "Featured", "title": "Our favourites", "lead": "The bouquets that leave the shop most often.", "cta": "See all bouquets" },
-  "categories": { "eyebrow": "Collection", "title": "Browse by category", "lead": "From bouquets to balloons — everything we deliver, in one place." },
-  "reviews": { "eyebrow": "Reviews", "title": "What customers say", "onGoogle": "reviews on Google" },
-  "family": { "eyebrow": "About us", "title": "A family shop" },
-  "instagram": { "title": "Follow us", "lead": "Every bouquet that leaves the shop ends up here — the quickest way to see what we have today." },
-  "map": { "eyebrow": "Location", "title": "Find us", "address": "Address", "hours": "Opening hours",
-    "directions": "Directions to the shop", "openMaps": "Open in Google Maps" },
-  "cart": { "title": "Your cart", "empty": "Your cart is empty", "emptyLead": "Add a bouquet or arrangement and come back here.",
-    "continue": "Keep shopping", "checkout": "Go to checkout" },
-  "checkout": { "title": "Checkout", "details": "Delivery details", "name": "Full name", "phone": "Phone",
-    "address": "Address", "city": "City", "note": "Note (optional)", "useLocation": "Use my location",
-    "schedule": "Scheduling", "date": "Date", "time": "Time", "deliveryMode": "Delivery to address",
-    "pickupMode": "Pick up in store", "personalisation": "Personalise the bouquet", "occasion": "Occasion",
-    "cardMessage": "Card message", "wishes": "Special wishes", "voucher": "Voucher or loyalty code",
-    "apply": "Apply", "submit": "Place order", "yourOrder": "Your order",
-    "confirmed": "Order received", "print": "Print the order" },
-  "footer": { "offer": "Shop", "hours": "Opening hours", "contact": "Contact", "rights": "All rights reserved." }
+  "common": {
+    "addToCart": "Add to cart",
+    "chooseSize": "Choose a size",
+    "added": "Added",
+    "unavailable": "Unavailable",
+    "inStock": "In stock",
+    "outOfStock": "Out of stock",
+    "from": "from",
+    "each": "each",
+    "total": "Total",
+    "subtotal": "Subtotal",
+    "discount": "Discount",
+    "delivery": "Delivery",
+    "free": "Free",
+    "search": "Search",
+    "cart": "Cart",
+    "openMenu": "Open menu",
+    "closeMenu": "Close menu",
+    "close": "Close",
+    "home": "Home",
+    "back": "Back to home",
+    "breadcrumb": "Breadcrumb",
+    "language": "Language",
+    "decrease": "Decrease quantity",
+    "increase": "Increase quantity",
+    "deliveryArea": "Delivery across Belgrade",
+    "cartCount": {
+      "one": "Cart, {n} item",
+      "other": "Cart, {n} items"
+    },
+    "sizeCount": {
+      "one": "{n} size",
+      "other": "{n} sizes"
+    },
+    "itemCount": {
+      "one": "{n} item",
+      "other": "{n} items"
+    }
+  },
+  "hero": {
+    "badge": "Hand-tied bouquets",
+    "line1": "Flowers that speak",
+    "line2": "from the heart",
+    "tagline": "For moments that deserve more than words.",
+    "cta": "See the collection",
+    "custom": "Bouquet to order"
+  },
+  "featured": {
+    "eyebrow": "Featured",
+    "title": "Our favourites",
+    "lead": "The bouquets that leave the shop most often.",
+    "cta": "See all bouquets"
+  },
+  "categories": {
+    "eyebrow": "Collection",
+    "title": "Browse by category",
+    "lead": "From bouquets to balloons — everything we send, in one place.",
+    "filterTitle": "Find the perfect gift",
+    "filterLead": "From classic bouquets to decorations for special occasions — everything is made to order, on the day of delivery.",
+    "filterLabel": "Category filter"
+  },
+  "tiles": {
+    "buketi": "Bouquets",
+    "aranzmani": "Arrangements",
+    "pokloni": "Gifts & Decorations",
+    "plisane-igracke": "Plush Toys",
+    "baloni": "Balloons",
+    "all": "All Bouquets"
+  },
+  "tags": {
+    "buketi": "Bouquets",
+    "aranzmani": "Arrangements",
+    "pokloni": "Gifts",
+    "plisane-igracke": "Plush toys",
+    "baloni": "Balloons"
+  },
+  "pages": {
+    "buketi": {
+      "title": "Bouquets",
+      "lead": "Hand-tied bouquets of fresh flowers — each one made on the day it is delivered.",
+      "intro": "We pick the flowers every morning. If you don't see what you're after, call us and we'll compose a bouquet to your taste and budget."
+    },
+    "aranzmani": {
+      "title": "Arrangements",
+      "lead": "Flowers in a box, a basket or a vase — they last longer and need no vase at home.",
+      "intro": "Arrangements suit offices, celebrations and gifts that are meant to sit on a table. We also make them to fit a space."
+    },
+    "pokloni": {
+      "title": "Gifts & Decorations",
+      "lead": "The small things that complete a bouquet — candles, cards and ceramics.",
+      "intro": "Anything in this category can be added to any bouquet or arrangement."
+    },
+    "plisane-igracke": {
+      "title": "Plush Toys",
+      "lead": "A soft companion for a bouquet — for birthdays and new babies.",
+      "intro": "We tuck the toys in with the flowers or send them on their own, wrapped as you like."
+    },
+    "baloni": {
+      "title": "Balloons",
+      "lead": "Helium and foil balloons for celebrations and surprises.",
+      "intro": "We fill the balloons on the day of delivery so they last as long as possible."
+    }
+  },
+  "category": {
+    "notSeeing": "Not seeing what you want?",
+    "notSeeingLead": "We compose bouquets to order — tell us the occasion and the budget.",
+    "empty": "There are no items in this category right now",
+    "emptyLead": "Call us — we also make bouquets to order."
+  },
+  "sizes": {
+    "label": "Bouquet size",
+    "mali": "Small",
+    "srednji": "Medium",
+    "veliki": "Large",
+    "note": {
+      "mali": "About 15 stems",
+      "srednji": "About 25 stems",
+      "veliki": "About 40 stems"
+    }
+  },
+  "badges": {
+    "bestseler": "Bestseller",
+    "novo": "New",
+    "sezonski": "Seasonal",
+    "popularno": "Popular"
+  },
+  "product": {
+    "open": "Open {name}",
+    "addNamed": "Add {name} to the cart",
+    "unavailableNamed": "{name} is currently unavailable",
+    "deliveryNote": "Orders placed by 2 pm are delivered the same day.",
+    "freeAbove": "Free delivery over {amount}.",
+    "freshNote": "The bouquet is made on the day of delivery, from fresh flowers.",
+    "madeOnDay": "We make the bouquet on the day of delivery.",
+    "related": "More from the same category",
+    "callUs": "We don't have this item right now. Call us on {phone} — we can often make it to order.",
+    "fullPage": "Full product page"
+  },
+  "reviews": {
+    "eyebrow": "Reviews",
+    "title": "What customers say",
+    "onGoogle": "{n} reviews on Google",
+    "stars": "{n} out of 5 stars",
+    "translated": "Translated from Serbian",
+    "when": {
+      "month1": "a month ago",
+      "months2": "2 months ago",
+      "months3": "3 months ago"
+    },
+    "items": {
+      "nikolina": "Beautiful flowers and even lovelier people! Always kind, smiling and ready to help you choose. I warmly recommend them — you can tell they do their work with a lot of love 💕",
+      "ljubica": "Cvećara Trofej is a real treat! A beautiful florist with an exceptionally wide choice of fresh, quality flowers. Everything is carefully arranged and the staff are extremely kind and happy to help. A wonderful place for anyone who loves flowers! I warmly recommend it to everyone!",
+      "boba": "I'm delighted! The flowers are beautiful, the arrangements lovelier still, and the service is wonderful. You can tell it is done with pure love! All my recommendations for Cvećara Trofej! 💐",
+      "natasa": "The floral arrangements this shop turns out are stunning. Professional and ready to meet any wish — they will put together a fantastic bouquet for you on the spot 🌸",
+      "ivana": "Great choice, fresh flowers, fair prices, kind staff ❣️ beautiful, up-to-date bouquets, and I had one made exactly the way I wanted. Thank you 💗 all my recommendations 😊",
+      "jelena-2": "An excellent florist with beautiful, fresh flowers and very kind staff. The arrangements are always made with care and taste. Warmly recommended! 🌸",
+      "mia": "The bouquets are beautiful, the flowers are fresh, and the lady of the house is lovelier still — the service is excellent!!! ❤️",
+      "maja": "Pleasant atmosphere, kind staff. Beautiful floral arrangements. See you again soon 😍",
+      "dragana": "A beautiful florist with a big choice of lovely bouquets and potted plants 🪴 Highly recommended 🌹",
+      "luka": "Fair prices, Jelena is a great salesperson — every recommendation!"
+    }
+  },
+  "family": {
+    "eyebrow": "About us",
+    "title": "A family shop",
+    "p1": "Cvećara Trofej is not a chain. Behind the counter is a family that has worked with flowers for years — the same people choose the flowers in the morning, tie the bouquet in the afternoon and answer the phone when you call.",
+    "p2": "That is why every bouquet looks like it was made for one particular person, not off a template. When you tell us the occasion, we actually listen: whether it is an apology, a new baby, or someone who only likes white blooms.",
+    "p3": "We work in our own neighbourhood, with people who have been coming back for years. That is the only reason we care about every bouquet that leaves the shop."
+  },
+  "about": {
+    "eyebrow": "About us",
+    "title": "A small florist with a high standard",
+    "lead": "Cvećara Trofej has been at {street} for years. We don't make bouquets in advance — each one is made once we know who it is for and why.",
+    "pillar1Title": "Fresh from the market",
+    "pillar1Body": "We choose the flowers every morning. Whatever doesn't sell the same day never goes into tomorrow's bouquet.",
+    "pillar2Title": "Bouquet to order",
+    "pillar2Body": "Tell us the occasion and the budget — we'll compose an arrangement that suits that particular person.",
+    "pillar3Title": "Same-day delivery",
+    "pillar3Body": "Orders received by 2 pm are delivered the same day across Belgrade.",
+    "heroTitle": "Bouquet to order",
+    "heroLead": "Tell us the occasion and the budget — the rest is up to us.",
+    "contactEyebrow": "Contact",
+    "contactTitle": "Get in touch",
+    "contactLead": "We take orders by phone and in the shop. We are open {weekdays} {weekdayHours}, Saturdays {saturdayHours}. Closed on Sundays."
+  },
+  "instagram": {
+    "title": "Follow us",
+    "lead": "Every bouquet that leaves the shop ends up here — the quickest way to see what we have today."
+  },
+  "map": {
+    "eyebrow": "Location",
+    "title": "Find us",
+    "lead": "{street} — in Belgrade, in Zvezdara. Drop by, or order a delivery.",
+    "address": "Address",
+    "country": "Serbia",
+    "hours": "Opening hours",
+    "directions": "Directions to the shop",
+    "openMaps": "Open in Google Maps",
+    "openInMaps": "Open {address} in Google Maps"
+  },
+  "hours": {
+    "weekdays": "Monday — Friday",
+    "weekdaysPhrase": "Monday to Friday",
+    "saturday": "Saturday",
+    "sunday": "Sunday",
+    "closed": "Closed",
+    "days": {
+      "0": "Sunday",
+      "1": "Monday",
+      "2": "Tuesday",
+      "3": "Wednesday",
+      "4": "Thursday",
+      "5": "Friday",
+      "6": "Saturday"
+    }
+  },
+  "cart": {
+    "title": "Your Cart",
+    "close": "Close the cart",
+    "empty": "Your cart is empty",
+    "emptyLead": "Add a bouquet or an arrangement and come back here.",
+    "continue": "Keep shopping",
+    "checkout": "Go to checkout",
+    "remove": "Remove {name} from the cart",
+    "decreaseNamed": "Decrease the quantity of {name}",
+    "increaseNamed": "Increase the quantity of {name}",
+    "freeDelivery": "Free delivery across Belgrade. Orders placed by 2 pm are delivered the same day.",
+    "addForFree": "Add {amount} more for free delivery. Same-day delivery for orders placed by 2 pm."
+  },
+  "checkout": {
+    "title": "Checkout",
+    "details": "Delivery details",
+    "name": "Full name",
+    "phone": "Phone",
+    "phonePlaceholder": "06x xxx xxxx",
+    "address": "Address",
+    "addressPlaceholder": "Street and number",
+    "city": "City",
+    "note": "Note (optional)",
+    "notePlaceholder": "Floor, intercom, where to leave it…",
+    "useLocation": "Use my location",
+    "locationOk": "Location received — the delivery price will be more precise.",
+    "locationNoStreet": "We have your location and use it for a more precise price, but we couldn't work out the street — please type it in.",
+    "pickupAt": "Pick up in store: {street}, {city}.",
+    "schedule": "Scheduling",
+    "date": "Date",
+    "time": "Time",
+    "deliveryMode": "Delivery to address",
+    "pickupMode": "Pick up in store",
+    "closedOn": "We are closed on {day}. Please choose another day.",
+    "noSlots": "There are no slots left for today. Please choose tomorrow's date.",
+    "personalisation": "Personalise the bouquet",
+    "personalisationLead": "All of this is optional — but the more we know, the closer the bouquet is to what you pictured.",
+    "occasion": "Occasion",
+    "cardMessage": "Card message",
+    "cardPlaceholder": "All the best! Love…",
+    "charsLeft": "{n} left",
+    "wishes": "Special wishes",
+    "wishesPlaceholder": "No lilies, more greenery, paper in pink tones…",
+    "voucher": "Voucher or loyalty code",
+    "voucherPlaceholder": "e.g. DOBRODOSLI10",
+    "removeVoucher": "Remove the code",
+    "apply": "Apply",
+    "submit": "Place order",
+    "sending": "Sending…",
+    "pickupCall": "Call us to confirm the time",
+    "pickCombo": "Please choose a date and a time.",
+    "yourOrder": "Your order",
+    "deliveryWolt": "Delivery (Wolt)",
+    "woltNote": "A Wolt courier drives the delivery. It is free over {amount}.",
+    "emptyTitle": "Your cart is empty",
+    "emptyLead": "Add a bouquet or an arrangement, then come back to checkout.",
+    "emptyCta": "See the bouquets",
+    "confirmed": "Order received",
+    "confirmedLead": "Order number {reference}. We will call you on {phone} to confirm the details.",
+    "loyaltyLead": "Thank you! Your code for the next order:",
+    "loyaltyNote": "It is worth 10% off.",
+    "mockTitle": "The email was not sent.",
+    "mockBody": "RESEND_API_KEY is not configured, so the order did not reach the shop. Please call us to confirm it."
+  },
+  "occasions": {
+    "rodjendan": "Birthday",
+    "godisnjica": "Anniversary",
+    "izvinjenje": "An apology",
+    "rodiliste": "New baby",
+    "sahrana": "Funeral",
+    "bez-povoda": "No occasion"
+  },
+  "receipt": {
+    "print": "Print the order",
+    "title": "Order sheet",
+    "customer": "Customer",
+    "phone": "Phone",
+    "address": "Address",
+    "mode": "Method",
+    "modeDelivery": "Delivery",
+    "modePickup": "Pickup",
+    "slot": "Time",
+    "slotValue": "{date} at {time}",
+    "item": "Item",
+    "qty": "Qty",
+    "amount": "Amount",
+    "occasion": "Occasion:",
+    "card": "Card:",
+    "legal": "This is not a fiscal receipt. Opening hours: {weekdayHours} on weekdays, {saturdayHours} on Saturdays, closed on Sundays."
+  },
+  "notfound": {
+    "title": "This page doesn't exist",
+    "lead": "The link may be out of date. Have a look at what we offer, or give us a call."
+  },
+  "footer": {
+    "about": "Bouquets, arrangements and gifts made of fresh flowers. Hand-tied in Belgrade, delivered the same day.",
+    "offer": "Shop",
+    "hours": "Opening hours",
+    "contact": "Contact",
+    "rights": "All rights reserved."
+  },
+  "errors": {
+    "unsupported": "Your browser doesn't support geolocation.",
+    "denied": "Access to your location was denied. You can type the address in instead.",
+    "unavailable": "Your location isn't available right now. Please type the address in.",
+    "timeout": "Reading your location timed out. Try again, or type the address in.",
+    "location": "We couldn't read your location.",
+    "offline": "The delivery service isn't available at this address. It works on the published site. You can also place the order by phone.",
+    "network": "Something went wrong talking to the server. Please try again.",
+    "voucherEmpty": "Please enter a code.",
+    "cartEmpty": "Your cart is empty.",
+    "voucherUnknown": "We don't recognise that code. Please check it is typed correctly.",
+    "voucherMinimum": "The code applies to orders over {min} RSD.",
+    "orderFields": "A name and a phone number are required.",
+    "mailFailed": "The order wasn't sent by email. Please call us to confirm it.",
+    "orderFailed": "Something went wrong sending the order.",
+    "geoMissing": "The coordinates are missing.",
+    "geoRange": "The coordinates are out of range.",
+    "geoLookup": "We couldn't work out the address."
+  },
+  "products": {
+    "prolecna-simfonija": {
+      "name": "Spring Symphony",
+      "description": "Pink roses, iris and lilac chrysanthemum in pastel paper."
+    },
+    "crveni-akcenat": {
+      "name": "Red Accent",
+      "description": "Anthurium and white lisianthus with greenery, in kraft paper."
+    },
+    "nezne-lale": {
+      "name": "Gentle Tulips",
+      "description": "Tulips in shades of pink and lilac, tied with a satin ribbon."
+    },
+    "suncano-jutro": {
+      "name": "Sunny Morning",
+      "description": "Sunflowers and small meadow flowers — a bouquet that wakes a room up."
+    },
+    "ljubicasti-san": {
+      "name": "Purple Dream",
+      "description": "Purple chrysanthemums and greenery in contrasting paper."
+    },
+    "roze-oblak": {
+      "name": "Pink Cloud",
+      "description": "A soft blend of pink and lilac tones with eucalyptus."
+    },
+    "livada-u-cvatu": {
+      "name": "Meadow in Bloom",
+      "description": "Small meadow flowers in yellow paper — different every day."
+    },
+    "lavanda-i-krem": {
+      "name": "Lavender and Cream",
+      "description": "Lilac stock and cream chrysanthemum, wrapped in newsprint."
+    },
+    "zlatna-jesen": {
+      "name": "Golden Autumn",
+      "description": "Warm tones and dried twigs in ochre paper."
+    },
+    "tirkizni-buket": {
+      "name": "Turquoise Bouquet",
+      "description": "Roses, chrysanthemums and small blooms in turquoise paper — the brand in a bouquet."
+    },
+    "ljubicasta-elegancija": {
+      "name": "Purple Elegance",
+      "description": "Lilies and purple flowers wrapped in green and lilac paper."
+    },
+    "ljiljan-i-ruze": {
+      "name": "Lily and Roses",
+      "description": "Pink lilies with small blooms, in light paper with a gold edge."
+    },
+    "purpurna-dalija": {
+      "name": "Purple Dahlia",
+      "description": "Large dahlias and seasonal flowers in warm tones."
+    },
+    "bela-elegancija": {
+      "name": "White Elegance",
+      "description": "White roses and greenery in matte black paper — formal and restrained."
+    },
+    "cvetni-vez": {
+      "name": "Floral Embroidery",
+      "description": "Lilies and carnations in paper with a floral pattern."
+    },
+    "meki-pastel": {
+      "name": "Soft Pastel",
+      "description": "White roses and chrysanthemums with a plush bear tucked into the bouquet."
+    },
+    "pastelna-prica": {
+      "name": "Pastel Story",
+      "description": "Pink roses, lisianthus and eucalyptus in soft pink paper."
+    },
+    "roze-romansa": {
+      "name": "Pink Romance",
+      "description": "Pink paper and a mix of small blooms — a classic gift."
+    },
+    "nezni-pozdrav": {
+      "name": "Gentle Greeting",
+      "description": "A pastel bouquet with a plush bear, in floral paper."
+    },
+    "zuti-sjaj": {
+      "name": "Yellow Glow",
+      "description": "Yellow roses and white daisies in yellow paper — a good-morning bouquet."
+    },
+    "poljski-vez": {
+      "name": "Meadow Weave",
+      "description": "A tall bouquet of meadow flowers and fern, in kraft paper."
+    },
+    "medveni-zagrljaj": {
+      "name": "Bear Hug",
+      "description": "Roses and plush bears in a box — a birthday gift."
+    },
+    "ruzicasti-ljiljan": {
+      "name": "Pink Lily",
+      "description": "Lilies and roses in a red box with floral foam."
+    },
+    "divlja-basta": {
+      "name": "Wild Garden",
+      "description": "A sprawling arrangement of meadow flowers in a lilac box."
+    },
+    "strastveni-trenutak": {
+      "name": "A Passionate Moment",
+      "description": "A lily and small blooms in a box — simple and striking."
+    },
+    "korpa-iznenadjenja": {
+      "name": "Basket of Surprises",
+      "description": "A woven basket with seasonal flowers and decorative twigs."
+    },
+    "cvetna-torba": {
+      "name": "Flower Tote",
+      "description": "An arrangement in a paper bag with handles — ready to carry."
+    },
+    "slatki-pozdrav": {
+      "name": "Sweet Greeting",
+      "description": "Roses, carnations and a plush bear in a decorative box."
+    },
+    "korpa-sunca": {
+      "name": "Basket of Sunshine",
+      "description": "A woven basket with roses and gerberas in warm tones."
+    },
+    "cvetna-kesa": {
+      "name": "Flower Bag",
+      "description": "Roses and greenery in a kraft bag — a small arrangement, a big impression."
+    },
+    "poklon-set-svece": {
+      "name": "Candle Gift Set",
+      "description": "Scented candles, dried flowers and a hand-written card."
+    },
+    "poklon-vaza-keramika": {
+      "name": "Ceramic Vase",
+      "description": "A hand-made local vase with a matte glaze."
+    },
+    "plis-medved-veliki": {
+      "name": "Large Plush Bear",
+      "description": "A soft 80 cm bear — with a bouquet or on its own."
+    },
+    "plis-zeka-mini": {
+      "name": "Mini Bunny",
+      "description": "A small gift that always lands — ideal alongside flowers."
+    },
+    "baloni-rodjendan": {
+      "name": "Birthday Balloon Set",
+      "description": "Helium balloons in the brand's shades, with ribbons."
+    },
+    "baloni-srce": {
+      "name": "XXL Heart Balloon",
+      "description": "A heart-shaped foil balloon, filled with helium."
+    }
+  }
 }

@@ -17,18 +17,26 @@ import { useCart } from '../context/CartContext.jsx';
 import OrderReceipt from '../components/OrderReceipt.jsx';
 import { reverseGeocode, sendOrder, validateVoucher } from '../services/wolt.js';
 import ScheduleFields from '../components/checkout/ScheduleFields.jsx';
-import PersonalisationFields from '../components/checkout/PersonalisationFields.jsx';
+import PersonalisationFields, {
+  OCCASION_SR,
+} from '../components/checkout/PersonalisationFields.jsx';
 import { useGeolocation } from '../hooks/useGeolocation.js';
+import { useI18n } from '../i18n/index.jsx';
 
 const EMPTY_FORM = { name: '', phone: '', street: '', city: SHOP.city, comment: '' };
 const EMPTY_SCHEDULE = { mode: 'dostava', date: '', time: '' };
 const EMPTY_PERSONALISATION = { occasion: '', cardMessage: '', wishes: '' };
 
-/** Folds the optional fields into one note for the florist and the courier. */
+/**
+ * Folds the optional fields into one note for the florist and the courier.
+ * Deliberately always Serbian: this is read in the shop, not by the customer,
+ * so an order placed in Russian must still arrive readable behind the counter.
+ */
 function buildComment(form, personalisation, schedule) {
   return [
     form.comment,
-    personalisation.occasion && `Povod: ${personalisation.occasion}`,
+    personalisation.occasion &&
+      `Povod: ${OCCASION_SR[personalisation.occasion] ?? personalisation.occasion}`,
     personalisation.cardMessage && `Čestitka: „${personalisation.cardMessage}"`,
     personalisation.wishes && `Želje: ${personalisation.wishes}`,
     schedule.date && `Termin: ${schedule.date} u ${schedule.time} (${schedule.mode})`,
@@ -39,28 +47,37 @@ function buildComment(form, personalisation, schedule) {
 
 export default function CheckoutPage() {
   const { items, subtotal, delivery, clearCart } = useCart();
+  const { t, tp } = useI18n();
 
   const [form, setForm] = useState(EMPTY_FORM);
   const [confirmed, setConfirmed] = useState(null);
   const [schedule, setSchedule] = useState(EMPTY_SCHEDULE);
   const [personalisation, setPersonalisation] = useState(EMPTY_PERSONALISATION);
   const [busy, setBusy] = useState(null); // 'order' | 'locate' | 'voucher'
-  const [error, setError] = useState('');
+  const [error, setError] = useState(null);
   const geo = useGeolocation();
   const [lookupFailed, setLookupFailed] = useState(false);
   const [voucherInput, setVoucherInput] = useState('');
   const [voucher, setVoucher] = useState(null);
-  const [voucherError, setVoucherError] = useState('');
+  const [voucherError, setVoucherError] = useState(null);
+
+  /**
+   * Errors travel as a code plus the server's Serbian text. Translate the
+   * code when we have a key for it, and fall back to the original so a new
+   * server-side message is never swallowed into a blank alert.
+   */
+  const errorText = (err) =>
+    err?.code ? t(`errors.${err.code}`, err.vars) : err?.message ?? '';
 
   const applyVoucher = async (event) => {
     event.preventDefault();
-    setVoucherError('');
+    setVoucherError(null);
     setBusy('voucher');
     try {
       setVoucher(await validateVoucher({ code: voucherInput, subtotal }));
     } catch (err) {
       setVoucher(null);
-      setVoucherError(err.message);
+      setVoucherError(err);
     } finally {
       setBusy(null);
     }
@@ -75,7 +92,7 @@ export default function CheckoutPage() {
 
   /** Ask for location, then try to fill the address from it. */
   const useMyLocation = async () => {
-    setError('');
+    setError(null);
     const coords = await geo.request();
     if (!coords) return;
 
@@ -97,7 +114,7 @@ export default function CheckoutPage() {
 
   const placeOrder = async (event) => {
     event.preventDefault();
-    setError('');
+    setError(null);
     setBusy('order');
     try {
       const result = await sendOrder({
@@ -129,7 +146,7 @@ export default function CheckoutPage() {
       setConfirmed({ ...result, loyaltyCode: `TROFEJ-${result.reference.slice(-6)}`, items, totals: { subtotal, discount, delivery: pickup ? 0 : delivery, total } });
       clearCart();
     } catch (err) {
-      setError(err.message);
+      setError(err);
     } finally {
       setBusy(null);
     }
@@ -142,10 +159,9 @@ export default function CheckoutPage() {
         <span className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-brand-primary/10">
           <Check className="h-7 w-7 text-brand-primary-dark" aria-hidden="true" />
         </span>
-        <h1 className="mt-6 font-serif text-3xl text-brand-dark">Porudžbina je primljena</h1>
+        <h1 className="mt-6 font-serif text-3xl text-brand-dark">{t('checkout.confirmed')}</h1>
         <p className="mx-auto mt-3 max-w-md text-gray-600">
-          Broj porudžbine <strong className="text-brand-dark">{confirmed.reference}</strong>.
-          Zovemo vas na {form.phone} da potvrdimo detalje.
+          {t('checkout.confirmedLead', { reference: confirmed.reference, phone: form.phone })}
         </p>
 
         <OrderReceipt
@@ -159,11 +175,11 @@ export default function CheckoutPage() {
 
         {confirmed.loyaltyCode && (
           <div className="mx-auto mt-8 max-w-md rounded-2xl border border-brand-border bg-brand-mist px-6 py-5">
-            <p className="text-sm text-brand-dark">Hvala! Vaš kod za sledeću porudžbinu:</p>
+            <p className="text-sm text-brand-dark">{t('checkout.loyaltyLead')}</p>
             <p className="mt-2 font-mono text-xl font-bold tracking-wider text-brand-dark">
               {confirmed.loyaltyCode}
             </p>
-            <p className="mt-2 text-xs text-brand-muted">Donosi 10% popusta.</p>
+            <p className="mt-2 text-xs text-brand-muted">{t('checkout.loyaltyNote')}</p>
           </div>
         )}
 
@@ -171,15 +187,14 @@ export default function CheckoutPage() {
           <p className="mx-auto mt-8 flex max-w-lg items-start gap-2 rounded-xl border border-amber-300 bg-amber-50 px-4 py-3 text-left text-xs leading-relaxed text-amber-900">
             <AlertTriangle className="mt-0.5 h-3.5 w-3.5 shrink-0" aria-hidden="true" />
             <span>
-              <strong>Mejl nije poslat.</strong> RESEND_API_KEY nije podešen, pa porudžbina
-              nije stigla u radnju. Pozovite nas da je potvrdimo.
+              <strong>{t('checkout.mockTitle')}</strong> {t('checkout.mockBody')}
             </span>
           </p>
         )}
 
         <div className="mt-6">
           <Link to="/" className="text-sm text-brand-primary-dark hover:underline">
-            Nazad na početnu
+            {t('common.back')}
           </Link>
         </div>
       </div>
@@ -190,12 +205,10 @@ export default function CheckoutPage() {
   if (items.length === 0) {
     return (
       <div className="container-editorial py-20 text-center lg:py-28">
-        <h1 className="font-serif text-3xl text-brand-dark">Korpa je prazna</h1>
-        <p className="mx-auto mt-3 max-w-md text-gray-600">
-          Dodajte buket ili aranžman pa se vratite na plaćanje.
-        </p>
+        <h1 className="font-serif text-3xl text-brand-dark">{t('checkout.emptyTitle')}</h1>
+        <p className="mx-auto mt-3 max-w-md text-gray-600">{t('checkout.emptyLead')}</p>
         <Link to="/buketi" className="btn-primary mt-8">
-          Pogledaj bukete
+          {t('checkout.emptyCta')}
         </Link>
       </div>
     );
@@ -206,36 +219,43 @@ export default function CheckoutPage() {
 
   return (
     <div className="container-editorial py-10 lg:py-14">
-      <nav aria-label="Putanja" className="mb-8">
+      <nav aria-label={t('common.breadcrumb')} className="mb-8">
         <ol className="flex items-center gap-1.5 text-xs text-brand-muted">
           <li>
             <Link to="/" className="transition-colors hover:text-brand-primary-dark">
-              Početna
+              {t('common.home')}
             </Link>
           </li>
           <ChevronRight className="h-3.5 w-3.5" aria-hidden="true" />
           <li aria-current="page" className="text-brand-dark">
-            Porudžbina
+            {t('checkout.title')}
           </li>
         </ol>
       </nav>
 
-      <h1 className="font-serif text-3xl text-brand-dark sm:text-4xl">Porudžbina</h1>
+      <h1 className="font-serif text-3xl text-brand-dark sm:text-4xl">{t('checkout.title')}</h1>
 
-      <div className="mt-10 grid grid-cols-12 gap-8 lg:gap-12">
+      <div className="mt-10 grid grid-cols-1 gap-8 lg:grid-cols-12 lg:gap-12">
         {/* Form */}
-        <form onSubmit={placeOrder} className="col-span-12 lg:col-span-7">
+        <form onSubmit={placeOrder} className="lg:col-span-7">
           <fieldset disabled={busy !== null} className="space-y-5">
-            <legend className="font-serif text-xl text-brand-dark">Podaci za dostavu</legend>
+            <legend className="font-serif text-xl text-brand-dark">
+              {t('checkout.details')}
+            </legend>
 
-            <Field label="Ime i prezime" value={form.name} onChange={set('name')} required />
             <Field
-              label="Telefon"
+              label={t('checkout.name')}
+              value={form.name}
+              onChange={set('name')}
+              required
+            />
+            <Field
+              label={t('checkout.phone')}
               type="tel"
               value={form.phone}
               onChange={set('phone')}
               required
-              placeholder="06x xxx xxxx"
+              placeholder={t('checkout.phonePlaceholder')}
             />
             {!pickup && (
               <>
@@ -249,44 +269,50 @@ export default function CheckoutPage() {
                   ) : (
                     <MapPin className="h-4 w-4" aria-hidden="true" />
                   )}
-                  Koristi moju lokaciju
+                  {t('checkout.useLocation')}
                 </button>
 
-                {geo.error && <p className="text-xs text-brand-muted">{geo.error}</p>}
+                {geo.errorCode && (
+                  <p className="text-xs text-brand-muted">{t(`errors.${geo.errorCode}`)}</p>
+                )}
                 {geo.status === 'granted' && !lookupFailed && (
                   <p className="text-xs text-brand-primary-dark">
-                    Lokacija je preuzeta — cena dostave će biti preciznija.
+                    {t('checkout.locationOk')}
                   </p>
                 )}
                 {geo.status === 'granted' && lookupFailed && (
                   <p className="text-xs text-brand-muted">
-                    Lokacija je preuzeta i koristimo je za precizniju cenu, ali nismo uspeli
-                    da prepoznamo ulicu — upišite je ručno.
+                    {t('checkout.locationNoStreet')}
                   </p>
                 )}
 
                 <Field
-                  label="Adresa"
+                  label={t('checkout.address')}
                   value={form.street}
                   onChange={set('street')}
                   required
-                  placeholder="Ulica i broj"
+                  placeholder={t('checkout.addressPlaceholder')}
                 />
-                <Field label="Grad" value={form.city} onChange={set('city')} required />
+                <Field
+                  label={t('checkout.city')}
+                  value={form.city}
+                  onChange={set('city')}
+                  required
+                />
               </>
             )}
 
             {pickup && (
               <p className="rounded-xl bg-brand-mist px-4 py-3 text-sm text-brand-dark">
-                Preuzimanje u radnji: {SHOP.street}, {SHOP.city}.
+                {t('checkout.pickupAt', { street: SHOP.street, city: SHOP.city })}
               </p>
             )}
 
             <Field
-              label="Napomena (opciono)"
+              label={t('checkout.note')}
               value={form.comment}
               onChange={set('comment')}
-              placeholder="Sprat, interfon, gde da ostavimo…"
+              placeholder={t('checkout.notePlaceholder')}
             />
 
             <div className="border-t border-brand-border pt-5">
@@ -300,7 +326,7 @@ export default function CheckoutPage() {
 
             {error && (
               <p role="alert" className="rounded-xl bg-red-50 px-4 py-3 text-sm text-red-800">
-                {error}
+                {errorText(error)}
               </p>
             )}
 
@@ -312,7 +338,7 @@ export default function CheckoutPage() {
                 href={SHOP.phoneHref}
                 className={`btn-primary w-full ${scheduled ? '' : 'pointer-events-none opacity-50'}`}
               >
-                Pozovite nas da potvrdimo termin
+                {t('checkout.pickupCall')}
               </a>
             ) : (
               <button
@@ -323,25 +349,25 @@ export default function CheckoutPage() {
                 {busy === 'order' ? (
                   <>
                     <Loader2 className="h-4 w-4 animate-spin" aria-hidden="true" />
-                    Šaljem…
+                    {t('checkout.sending')}
                   </>
                 ) : (
-                  'Potvrdi porudžbinu'
+                  t('checkout.submit')
                 )}
               </button>
             )}
 
             {!scheduled && (
-              <p className="text-xs text-brand-muted">Izaberite datum i vreme.</p>
+              <p className="text-xs text-brand-muted">{t('checkout.pickCombo')}</p>
             )}
 
           </fieldset>
         </form>
 
         {/* Summary */}
-        <aside className="col-span-12 lg:col-span-5">
+        <aside className="lg:col-span-5">
           <div className="rounded-2xl border border-brand-border bg-brand-surface p-6">
-            <h2 className="font-serif text-xl text-brand-dark">Vaša porudžbina</h2>
+            <h2 className="font-serif text-xl text-brand-dark">{t('checkout.yourOrder')}</h2>
 
             <ul className="mt-5 divide-y divide-gray-100">
               {items.map((item) => (
@@ -349,15 +375,15 @@ export default function CheckoutPage() {
                   <div className="h-16 w-14 shrink-0 overflow-hidden rounded-lg bg-gradient-to-b from-brand-mist to-white">
                     <ProductImage
                       src={item.image}
-                      alt={item.name}
+                      alt={tp(item)}
                       category={item.category}
                       className="h-full w-full object-contain p-1"
                     />
                   </div>
                   <div className="min-w-0 flex-1">
-                    <p className="truncate font-serif text-sm text-brand-dark">{item.name}</p>
+                    <p className="truncate font-serif text-sm text-brand-dark">{tp(item)}</p>
                     <p className="text-xs text-brand-muted">
-                      {item.sizeLabel ? `${item.sizeLabel} · ` : ''}
+                      {item.sizeId ? `${t(`sizes.${item.sizeId}`)} · ` : ''}
                       {item.quantity} × {formatPrice(item.price)}
                     </p>
                   </div>
@@ -370,7 +396,7 @@ export default function CheckoutPage() {
 
             <dl className="mt-5 space-y-2 border-t border-brand-border pt-5 text-sm">
               <div className="flex justify-between text-gray-600">
-                <dt>Međuzbir</dt>
+                <dt>{t('common.subtotal')}</dt>
                 <dd className="font-medium text-brand-dark">{formatPrice(subtotal)}</dd>
               </div>
               {voucher && (
@@ -383,13 +409,13 @@ export default function CheckoutPage() {
                 </div>
               )}
               <div className="flex justify-between text-gray-600">
-                <dt>{pickup ? 'Preuzimanje u radnji' : 'Dostava (Wolt)'}</dt>
+                <dt>{pickup ? t('checkout.pickupMode') : t('checkout.deliveryWolt')}</dt>
                 <dd className="font-medium text-brand-dark">
-                  {pickup || delivery === 0 ? 'Besplatno' : formatPrice(delivery)}
+                  {pickup || delivery === 0 ? t('common.free') : formatPrice(delivery)}
                 </dd>
               </div>
               <div className="flex justify-between border-t border-brand-border pt-3 text-base">
-                <dt className="font-medium text-brand-dark">Ukupno</dt>
+                <dt className="font-medium text-brand-dark">{t('common.total')}</dt>
                 <dd className="font-semibold text-brand-dark">
                   {formatPrice(total)}
                 </dd>
@@ -400,15 +426,16 @@ export default function CheckoutPage() {
               <p className="mt-4 flex items-start gap-2 rounded-xl bg-brand-primary/10 px-3 py-2.5 text-xs leading-relaxed text-brand-primary-dark">
                 <Truck className="mt-0.5 h-3.5 w-3.5 shrink-0" aria-hidden="true" />
                 <span>
-                  Dostavu vozi Wolt kurir. Besplatna je iznad{' '}
-                  {formatPrice(SHOP.freeDeliveryThreshold)}.
+                  {t('checkout.woltNote', {
+                    amount: formatPrice(SHOP.freeDeliveryThreshold),
+                  })}
                 </span>
               </p>
             )}
 
             <form onSubmit={applyVoucher} className="mt-5 border-t border-brand-border pt-5">
               <label className="mb-2 block text-sm font-medium text-brand-dark" htmlFor="voucher">
-                Vaučer ili lojalti kod
+                {t('checkout.voucher')}
               </label>
               {voucher ? (
                 <div className="flex items-center justify-between gap-2 rounded-xl bg-brand-mist px-4 py-3">
@@ -422,7 +449,7 @@ export default function CheckoutPage() {
                       setVoucher(null);
                       setVoucherInput('');
                     }}
-                    aria-label="Ukloni kod"
+                    aria-label={t('checkout.removeVoucher')}
                     className="shrink-0 rounded p-1 text-brand-muted transition hover:text-brand-dark"
                   >
                     <X className="h-4 w-4" aria-hidden="true" />
@@ -434,7 +461,7 @@ export default function CheckoutPage() {
                     id="voucher"
                     value={voucherInput}
                     onChange={(e) => setVoucherInput(e.target.value.toUpperCase())}
-                    placeholder="npr. DOBRODOSLI10"
+                    placeholder={t('checkout.voucherPlaceholder')}
                     className="min-w-0 flex-1 rounded-xl border border-brand-border bg-white px-4 py-2.5 text-sm uppercase tracking-wide text-brand-dark placeholder:normal-case placeholder:tracking-normal placeholder:text-gray-400 focus:border-brand-primary-dark"
                   />
                   <button
@@ -442,13 +469,13 @@ export default function CheckoutPage() {
                     disabled={!voucherInput || busy !== null}
                     className="shrink-0 rounded-xl border border-brand-border px-4 text-sm font-medium text-brand-dark transition hover:border-brand-primary disabled:opacity-50"
                   >
-                    {busy === 'voucher' ? '…' : 'Primeni'}
+                    {busy === 'voucher' ? '…' : t('checkout.apply')}
                   </button>
                 </div>
               )}
               {voucherError && (
                 <p role="alert" className="mt-2 text-xs text-red-700">
-                  {voucherError}
+                  {errorText(voucherError)}
                 </p>
               )}
             </form>

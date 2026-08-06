@@ -1,18 +1,17 @@
 import { AnimatePresence, motion } from 'framer-motion';
 import { SearchX } from 'lucide-react';
 import ProductCard from './ProductCard.jsx';
+import { useI18n } from '../i18n/index.jsx';
 
 export default function ProductGrid({ products, onOpen }) {
+  const { t } = useI18n();
+
   if (products.length === 0) {
     return (
       <div className="my-10 flex flex-col items-center rounded-2xl border border-dashed border-brand-border bg-brand-surface px-6 py-16 text-center">
         <SearchX className="h-8 w-8 text-brand-muted" strokeWidth={1.5} aria-hidden="true" />
-        <p className="mt-4 font-serif text-xl text-brand-dark">
-          Trenutno nema artikala u ovoj kategoriji
-        </p>
-        <p className="mt-2 text-sm text-gray-600">
-          Pozovite nas — pravimo i bukete po vašoj želji.
-        </p>
+        <p className="mt-4 font-serif text-xl text-brand-dark">{t('category.empty')}</p>
+        <p className="mt-2 text-sm text-gray-600">{t('category.emptyLead')}</p>
       </div>
     );
   }

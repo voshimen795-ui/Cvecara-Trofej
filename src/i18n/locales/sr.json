@@ -1,29 +1,350 @@
 {
-  "nav": { "buketi": "Buketi", "aranzmani": "Aranžmani", "pokloni": "Pokloni", "onama": "O nama" },
-  "common": {
-    "addToCart": "Dodaj u korpu", "chooseSize": "Izaberi veličinu", "added": "Dodato",
-    "unavailable": "Nije dostupno", "inStock": "Trenutno dostupno", "outOfStock": "Trenutno nije dostupno",
-    "from": "od", "sizes": "veličine", "total": "Ukupno", "subtotal": "Međuzbir",
-    "delivery": "Dostava", "free": "Besplatno", "search": "Pretraga", "cart": "Korpa",
-    "openMenu": "Otvori meni", "closeMenu": "Zatvori meni", "home": "Početna", "back": "Nazad na početnu"
+  "nav": {
+    "buketi": "Buketi",
+    "aranzmani": "Aranžmani",
+    "pokloni": "Pokloni",
+    "onama": "O nama",
+    "main": "Glavna navigacija",
+    "footer": "Podnožje — navigacija",
+    "mobile": "Meni"
   },
-  "hero": { "badge": "Ručno komponovani buketi", "line1": "Cveće koje govori", "line2": "iz srca",
-    "tagline": "Za trenutke koji zaslužuju više od reči.", "cta": "Pogledaj kolekciju", "custom": "Buket po želji" },
-  "featured": { "eyebrow": "Istaknuto", "title": "Naši favoriti", "lead": "Buketi koji najčešće odlaze iz radnje.", "cta": "Pogledaj sve bukete" },
-  "categories": { "eyebrow": "Kolekcija", "title": "Istražite po kategoriji", "lead": "Od buketa do balona — sve što šaljemo, na jednom mestu." },
-  "reviews": { "eyebrow": "Recenzije", "title": "Šta kažu mušterije", "onGoogle": "recenzija na Google-u" },
-  "family": { "eyebrow": "O nama", "title": "Porodično" },
-  "instagram": { "title": "Pratite nas", "lead": "Svaki buket koji izađe iz radnje završi ovde — najbrži način da vidite šta imamo danas." },
-  "map": { "eyebrow": "Lokacija", "title": "Gde smo", "address": "Adresa", "hours": "Radno vreme",
-    "directions": "Navigacija do radnje", "openMaps": "Otvori u Google Mapama" },
-  "cart": { "title": "Vaša Korpa", "empty": "Korpa je prazna", "emptyLead": "Dodajte buket ili aranžman i vratite se ovde.",
-    "continue": "Nastavi kupovinu", "checkout": "Nastavi na plaćanje" },
-  "checkout": { "title": "Porudžbina", "details": "Podaci za dostavu", "name": "Ime i prezime", "phone": "Telefon",
-    "address": "Adresa", "city": "Grad", "note": "Napomena (opciono)", "useLocation": "Koristi moju lokaciju",
-    "schedule": "Zakazivanje", "date": "Datum", "time": "Vreme", "deliveryMode": "Dostava na adresu",
-    "pickupMode": "Preuzimanje u radnji", "personalisation": "Personalizovan buket", "occasion": "Povod",
-    "cardMessage": "Poruka na čestitki", "wishes": "Posebne želje", "voucher": "Vaučer ili lojalti kod",
-    "apply": "Primeni", "submit": "Potvrdi porudžbinu", "yourOrder": "Vaša porudžbina",
-    "confirmed": "Porudžbina je primljena", "print": "Odštampaj porudžbenicu" },
-  "footer": { "offer": "Ponuda", "hours": "Radno vreme", "contact": "Kontakt", "rights": "Sva prava zadržana." }
+  "common": {
+    "addToCart": "Dodaj u korpu",
+    "chooseSize": "Izaberi veličinu",
+    "added": "Dodato",
+    "unavailable": "Nije dostupno",
+    "inStock": "Trenutno dostupno",
+    "outOfStock": "Trenutno nije dostupno",
+    "from": "od",
+    "each": "kom",
+    "total": "Ukupno",
+    "subtotal": "Međuzbir",
+    "discount": "Popust",
+    "delivery": "Dostava",
+    "free": "Besplatno",
+    "search": "Pretraga",
+    "cart": "Korpa",
+    "openMenu": "Otvori meni",
+    "closeMenu": "Zatvori meni",
+    "close": "Zatvori",
+    "home": "Početna",
+    "back": "Nazad na početnu",
+    "breadcrumb": "Putanja",
+    "language": "Jezik",
+    "decrease": "Smanji količinu",
+    "increase": "Povećaj količinu",
+    "deliveryArea": "Dostava na teritoriji Beograda",
+    "cartCount": {
+      "one": "Korpa, {n} artikal",
+      "few": "Korpa, {n} artikla",
+      "other": "Korpa, {n} artikala"
+    },
+    "sizeCount": {
+      "one": "{n} veličina",
+      "few": "{n} veličine",
+      "other": "{n} veličina"
+    },
+    "itemCount": {
+      "one": "{n} artikal",
+      "few": "{n} artikla",
+      "other": "{n} artikala"
+    }
+  },
+  "hero": {
+    "badge": "Ručno komponovani buketi",
+    "line1": "Cveće koje govori",
+    "line2": "iz srca",
+    "tagline": "Za trenutke koji zaslužuju više od reči.",
+    "cta": "Pogledaj kolekciju",
+    "custom": "Buket po želji"
+  },
+  "featured": {
+    "eyebrow": "Istaknuto",
+    "title": "Naši favoriti",
+    "lead": "Buketi koji najčešće odlaze iz radnje.",
+    "cta": "Pogledaj sve bukete"
+  },
+  "categories": {
+    "eyebrow": "Kolekcija",
+    "title": "Istražite po kategoriji",
+    "lead": "Od buketa do balona — sve što šaljemo, na jednom mestu.",
+    "filterTitle": "Izaberite savršen poklon",
+    "filterLead": "Od klasičnih buketa do dekoracija za posebne prilike — sve pravimo po porudžbini, na dan isporuke.",
+    "filterLabel": "Filter kategorija"
+  },
+  "tiles": {
+    "buketi": "Buketi",
+    "aranzmani": "Aranžmani",
+    "pokloni": "Pokloni i Dekoracije",
+    "plisane-igracke": "Plišane Igračke",
+    "baloni": "Baloni",
+    "all": "Svi Buketi"
+  },
+  "tags": {
+    "buketi": "Buketi",
+    "aranzmani": "Aranžmani",
+    "pokloni": "Pokloni",
+    "plisane-igracke": "Plišane igračke",
+    "baloni": "Baloni"
+  },
+  "pages": {
+    "buketi": {
+      "title": "Buketi",
+      "lead": "Ručno komponovani buketi od svežeg cveća — svaki nastaje na dan isporuke.",
+      "intro": "Cveće biramo svakog jutra. Ako ne vidite ono što tražite, pozovite nas i komponovaćemo buket po vašoj želji i budžetu."
+    },
+    "aranzmani": {
+      "title": "Aranžmani",
+      "lead": "Cveće u kutiji, korpi i vazi — traje duže i ne traži vazu kod kuće.",
+      "intro": "Aranžmani su idealni za kancelarije, proslave i poklone koji treba da stoje na stolu. Radimo i po meri prostora."
+    },
+    "pokloni": {
+      "title": "Pokloni i Dekoracije",
+      "lead": "Sitnice koje upotpunjuju buket — sveće, čestitke i keramika.",
+      "intro": "Sve iz ove kategorije možete dodati uz bilo koji buket ili aranžman."
+    },
+    "plisane-igracke": {
+      "title": "Plišane Igračke",
+      "lead": "Meki saputnik uz buket — za rođendane i rodilišta.",
+      "intro": "Igračke slažemo uz cveće ili ih šaljemo samostalno, upakovane po želji."
+    },
+    "baloni": {
+      "title": "Baloni",
+      "lead": "Helijumski i folijski baloni za proslave i iznenađenja.",
+      "intro": "Balone punimo na dan isporuke da izdrže što duže."
+    }
+  },
+  "category": {
+    "notSeeing": "Ne vidite ono što tražite?",
+    "notSeeingLead": "Komponujemo buket po vašoj želji — recite nam priliku i budžet.",
+    "empty": "Trenutno nema artikala u ovoj kategoriji",
+    "emptyLead": "Pozovite nas — pravimo i bukete po vašoj želji."
+  },
+  "sizes": {
+    "label": "Veličina buketa",
+    "mali": "Mali",
+    "srednji": "Srednji",
+    "veliki": "Veliki",
+    "note": {
+      "mali": "Oko 15 stabljika",
+      "srednji": "Oko 25 stabljika",
+      "veliki": "Oko 40 stabljika"
+    }
+  },
+  "badges": {
+    "bestseler": "Bestseler",
+    "novo": "Novo",
+    "sezonski": "Sezonski",
+    "popularno": "Popularno"
+  },
+  "product": {
+    "open": "Otvori {name}",
+    "addNamed": "Dodaj {name} u korpu",
+    "unavailableNamed": "{name} trenutno nije dostupan",
+    "deliveryNote": "Porudžbine do 14h isporučujemo istog dana.",
+    "freeAbove": "Besplatna dostava iznad {amount}.",
+    "freshNote": "Buket se pravi na dan isporuke, od svežeg cveća.",
+    "madeOnDay": "Buket pravimo na dan isporuke.",
+    "related": "Slično iz iste kategorije",
+    "callUs": "Ovaj artikal trenutno nemamo. Pozovite nas na {phone} — često ga možemo napraviti po porudžbini.",
+    "fullPage": "Cela stranica proizvoda"
+  },
+  "reviews": {
+    "eyebrow": "Recenzije",
+    "title": "Šta kažu mušterije",
+    "onGoogle": "{n} recenzija na Google-u",
+    "stars": "{n} od 5 zvezdica",
+    "translated": "Prevedeno sa srpskog",
+    "when": {
+      "month1": "pre mesec dana",
+      "months2": "pre 2 meseca",
+      "months3": "pre 3 meseca"
+    },
+    "items": {
+      "nikolina": "Prelepo cveće i još divniji ljudi! Uvek ljubazni, nasmejani i spremni da pomognu oko izbora. Toplo preporučujem, vidi se da svoj posao rade sa puno ljubavi 💕",
+      "ljubica": "Cvećara Trofej je prava poslastica! Prelepa cvećara sa izuzetno širokim izborom svežeg i kvalitetnog cveća. Sve je pažljivo aranžirano, a osoblje je izuzetno ljubazno i spremno da pomogne. Divno mesto za sve ljubitelje cveća! Toplo preporučujem svima!",
+      "boba": "Oduševljena sam! Cveće je prelepo, aranžmani su još lepši, a usluga je divna. Vidi se da je urađeno sa čistom ljubavlju! Sve preporuke za Cvećaru Trofej! 💐",
+      "natasa": "Izvanredni cvetni aranžmani koje izdaje ova cvećara su zadivljujući. Profesionalni i spremni da udovolje svakoj vašoj želji, odmah će kreirati fantastičan buket za vas 🌸",
+      "ivana": "Veliki izbor, sveže cveće, pristupačne cene, ljubazno osoblje ❣️ prelepi i aktuelni buketi, a jedan sam napravila savršeno po mojim željama. Hvala 💗 svim preporukama 😊",
+      "jelena-2": "Odlična cvećara sa prelepim, svežim cvećem i veoma ljubaznim osobljem. Aranžmani su uvek pažljivo i ukusno napravljeni. Toplo preporučujem! 🌸",
+      "mia": "Buketi su prelepi, cveće je sveže, a domaćica je još divnija, usluga je odlična!!! ❤️",
+      "maja": "Prijatna atmosfera, ljubazno osoblje. Prelepi cvetni aranžmani. Vidimo se uskoro ponovo 😍",
+      "dragana": "Prelepa cvećara sa velikim izborom prelepih buketa i saksijskog cveća 🪴 Veoma preporučljivo 🌹",
+      "luka": "Pristupačne cene, Jelena je super prodavac — svaka preporuka!"
+    }
+  },
+  "family": {
+    "eyebrow": "O nama",
+    "title": "Porodično",
+    "p1": "Cvećara Trofej nije lanac. Iza tezge stoji porodica koja se cvećem bavi godinama — isti ljudi biraju cveće ujutru, vezuju buket popodne i odgovaraju na telefon kad pozovete.",
+    "p2": "Zato svaki buket izgleda kao da je pravljen za nekog konkretnog, a ne po šablonu. Kad nam kažete povod, mi zapravo slušamo: da li je za izvinjenje, za rodilište ili za nekog ko voli samo bele cvetove.",
+    "p3": "Radimo u komšiluku, sa ljudima koji nam se vraćaju godinama. To je jedini razlog zašto nam je stalo do svakog buketa koji izađe iz radnje."
+  },
+  "about": {
+    "eyebrow": "O nama",
+    "title": "Mala cvećara sa velikim standardom",
+    "lead": "Cvećara Trofej radi u {street} već godinama. Ne pravimo bukete unapred — svaki nastaje tek kada znamo kome ide i povodom čega.",
+    "pillar1Title": "Sveže sa pijace",
+    "pillar1Body": "Cveće biramo svakog jutra. Ono što ne prodamo istog dana ne ide u sutrašnji buket.",
+    "pillar2Title": "Buket po želji",
+    "pillar2Body": "Recite nam priliku i budžet — komponujemo aranžman koji odgovara baš toj osobi.",
+    "pillar3Title": "Isporuka istog dana",
+    "pillar3Body": "Porudžbine primljene do 14h isporučujemo isti dan na teritoriji Beograda.",
+    "heroTitle": "Buket po želji",
+    "heroLead": "Recite nam priliku i budžet — ostalo je na nama.",
+    "contactEyebrow": "Kontakt",
+    "contactTitle": "Javite nam se",
+    "contactLead": "Porudžbine primamo telefonom i u radnji. Radimo {weekdays} {weekdayHours}, subotom {saturdayHours}. Nedeljom ne radimo."
+  },
+  "instagram": {
+    "title": "Pratite nas",
+    "lead": "Svaki buket koji izađe iz radnje završi ovde — najbrži način da vidite šta imamo danas."
+  },
+  "map": {
+    "eyebrow": "Lokacija",
+    "title": "Gde smo",
+    "lead": "{street} — u Beogradu, na Zvezdari. Svratite ili poručite dostavu.",
+    "address": "Adresa",
+    "country": "Srbija",
+    "hours": "Radno vreme",
+    "directions": "Navigacija do radnje",
+    "openMaps": "Otvori u Google Mapama",
+    "openInMaps": "Otvori {address} u Google Mapama"
+  },
+  "hours": {
+    "weekdays": "Ponedeljak — Petak",
+    "weekdaysPhrase": "ponedeljak — petak",
+    "saturday": "Subota",
+    "sunday": "Nedelja",
+    "closed": "Ne radimo",
+    "days": {
+      "0": "Nedelja",
+      "1": "Ponedeljak",
+      "2": "Utorak",
+      "3": "Sreda",
+      "4": "Četvrtak",
+      "5": "Petak",
+      "6": "Subota"
+    }
+  },
+  "cart": {
+    "title": "Vaša Korpa",
+    "close": "Zatvori korpu",
+    "empty": "Korpa je prazna",
+    "emptyLead": "Dodajte buket ili aranžman i vratite se ovde.",
+    "continue": "Nastavi kupovinu",
+    "checkout": "Nastavi na plaćanje",
+    "remove": "Ukloni {name} iz korpe",
+    "decreaseNamed": "Smanji količinu za {name}",
+    "increaseNamed": "Povećaj količinu za {name}",
+    "freeDelivery": "Besplatna dostava na teritoriji Beograda. Porudžbine do 14h isporučujemo istog dana.",
+    "addForFree": "Dodajte još {amount} za besplatnu dostavu. Isporuka istog dana za porudžbine do 14h."
+  },
+  "checkout": {
+    "title": "Porudžbina",
+    "details": "Podaci za dostavu",
+    "name": "Ime i prezime",
+    "phone": "Telefon",
+    "phonePlaceholder": "06x xxx xxxx",
+    "address": "Adresa",
+    "addressPlaceholder": "Ulica i broj",
+    "city": "Grad",
+    "note": "Napomena (opciono)",
+    "notePlaceholder": "Sprat, interfon, gde da ostavimo…",
+    "useLocation": "Koristi moju lokaciju",
+    "locationOk": "Lokacija je preuzeta — cena dostave će biti preciznija.",
+    "locationNoStreet": "Lokacija je preuzeta i koristimo je za precizniju cenu, ali nismo uspeli da prepoznamo ulicu — upišite je ručno.",
+    "pickupAt": "Preuzimanje u radnji: {street}, {city}.",
+    "schedule": "Zakazivanje",
+    "date": "Datum",
+    "time": "Vreme",
+    "deliveryMode": "Dostava na adresu",
+    "pickupMode": "Preuzimanje u radnji",
+    "closedOn": "Tog dana ({day}) ne radimo. Izaberite drugi dan.",
+    "noSlots": "Za danas više nema slobodnih termina. Izaberite sutrašnji datum.",
+    "personalisation": "Personalizovan buket",
+    "personalisationLead": "Sve je opciono — ali što više znamo, to je buket bliži onome što ste zamislili.",
+    "occasion": "Povod",
+    "cardMessage": "Poruka na čestitki",
+    "cardPlaceholder": "Sve najbolje! Voli te…",
+    "charsLeft": "{n} preostalo",
+    "wishes": "Posebne želje",
+    "wishesPlaceholder": "Bez ljiljana, više zelenila, papir u roze tonovima…",
+    "voucher": "Vaučer ili lojalti kod",
+    "voucherPlaceholder": "npr. DOBRODOSLI10",
+    "removeVoucher": "Ukloni kod",
+    "apply": "Primeni",
+    "submit": "Potvrdi porudžbinu",
+    "sending": "Šaljem…",
+    "pickupCall": "Pozovite nas da potvrdimo termin",
+    "pickCombo": "Izaberite datum i vreme.",
+    "yourOrder": "Vaša porudžbina",
+    "deliveryWolt": "Dostava (Wolt)",
+    "woltNote": "Dostavu vozi Wolt kurir. Besplatna je iznad {amount}.",
+    "emptyTitle": "Korpa je prazna",
+    "emptyLead": "Dodajte buket ili aranžman pa se vratite na plaćanje.",
+    "emptyCta": "Pogledaj bukete",
+    "confirmed": "Porudžbina je primljena",
+    "confirmedLead": "Broj porudžbine {reference}. Zovemo vas na {phone} da potvrdimo detalje.",
+    "loyaltyLead": "Hvala! Vaš kod za sledeću porudžbinu:",
+    "loyaltyNote": "Donosi 10% popusta.",
+    "mockTitle": "Mejl nije poslat.",
+    "mockBody": "RESEND_API_KEY nije podešen, pa porudžbina nije stigla u radnju. Pozovite nas da je potvrdimo."
+  },
+  "occasions": {
+    "rodjendan": "Rođendan",
+    "godisnjica": "Godišnjica",
+    "izvinjenje": "Izvinjenje",
+    "rodiliste": "Rodilište",
+    "sahrana": "Sahrana",
+    "bez-povoda": "Bez povoda"
+  },
+  "receipt": {
+    "print": "Odštampaj porudžbenicu",
+    "title": "Porudžbenica",
+    "customer": "Kupac",
+    "phone": "Telefon",
+    "address": "Adresa",
+    "mode": "Način",
+    "modeDelivery": "Dostava",
+    "modePickup": "Preuzimanje",
+    "slot": "Termin",
+    "slotValue": "{date} u {time}",
+    "item": "Artikal",
+    "qty": "Kom",
+    "amount": "Iznos",
+    "occasion": "Povod:",
+    "card": "Čestitka:",
+    "legal": "Nije fiskalni račun. Radno vreme: {weekdayHours} radnim danima, subotom {saturdayHours}, nedeljom ne radimo."
+  },
+  "notfound": {
+    "title": "Ova stranica ne postoji",
+    "lead": "Možda je link zastareo. Pogledajte ponudu ili nas pozovite."
+  },
+  "footer": {
+    "about": "Buketi, aranžmani i pokloni od svežeg cveća. Ručno komponovano u Beogradu, isporučeno istog dana.",
+    "offer": "Ponuda",
+    "hours": "Radno vreme",
+    "contact": "Kontakt",
+    "rights": "Sva prava zadržana."
+  },
+  "errors": {
+    "unsupported": "Vaš pregledač ne podržava geolokaciju.",
+    "denied": "Pristup lokaciji je odbijen. Možete uneti adresu ručno.",
+    "unavailable": "Lokacija trenutno nije dostupna. Unesite adresu ručno.",
+    "timeout": "Isteklo je vreme za očitavanje lokacije. Pokušajte ponovo ili unesite adresu.",
+    "location": "Nije uspelo očitavanje lokacije.",
+    "offline": "Servis za dostavu nije dostupan na ovoj adresi. Radi na objavljenom sajtu. Porudžbinu možete poslati i telefonom.",
+    "network": "Greška u komunikaciji sa serverom. Pokušajte ponovo.",
+    "voucherEmpty": "Unesite kod.",
+    "cartEmpty": "Korpa je prazna.",
+    "voucherUnknown": "Kod nije prepoznat. Proverite da li je tačno unet.",
+    "voucherMinimum": "Kod važi za porudžbine preko {min} RSD.",
+    "orderFields": "Ime i telefon su obavezni.",
+    "mailFailed": "Porudžbina nije poslata mejlom. Pozovite nas da je potvrdimo.",
+    "orderFailed": "Greška pri slanju porudžbine.",
+    "geoMissing": "Nedostaju koordinate.",
+    "geoRange": "Koordinate su van opsega.",
+    "geoLookup": "Nije uspelo prepoznavanje adrese."
+  }
 }

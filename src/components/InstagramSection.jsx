@@ -1,6 +1,7 @@
 import { Instagram } from 'lucide-react';
 import { SHOP } from '../data/shop.js';
 import { Bloom, Bud, Eucalyptus, Sprig } from './ui/Botanical.jsx';
+import { useI18n } from '../i18n/index.jsx';
 
 const MARKS = [Sprig, Bloom, Eucalyptus, Bud];
 
@@ -11,6 +12,8 @@ const MARKS = [Sprig, Bloom, Eucalyptus, Bud];
  * breaks. Swap in the Basic Display API here when there's an app to point at.
  */
 export default function InstagramSection() {
+  const { t } = useI18n();
+
   return (
     <section className="container-editorial py-16 lg:py-24">
       <div className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-brand-forest via-brand-primary-darker to-brand-deep px-6 py-14 text-center sm:px-12">
@@ -28,10 +31,11 @@ export default function InstagramSection() {
             <Instagram className="h-7 w-7 text-white" strokeWidth={1.75} aria-hidden="true" />
           </span>
 
-          <h2 className="mt-6 font-serif text-3xl text-white sm:text-4xl">Pratite nas</h2>
+          <h2 className="mt-6 font-serif text-3xl text-white sm:text-4xl">
+            {t('instagram.title')}
+          </h2>
           <p className="mx-auto mt-4 max-w-lg font-serif text-lg italic text-brand-light/80">
-            Svaki buket koji izađe iz radnje završi ovde — najbrži način da vidite šta imamo
-            danas.
+            {t('instagram.lead')}
           </p>
 
           <a

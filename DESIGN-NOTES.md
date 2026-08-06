@@ -18,7 +18,84 @@ Dnevnik odluka po celinama. Svaka stavka: **šta je urađeno**, **zašto tako**,
 | **Nemački jezik** | `src/i18n/locales/` | Beleška nije bila jasna. Radimo SR/EN/RU; DE je jedan JSON fajl kad potvrdite. |
 | **Wolt Drive tokeni** | Vercel env | Preskočeno po dogovoru. Kod stoji spreman. |
 | **Resend API ključ** | Vercel env `RESEND_API_KEY` | Bez njega porudžbina se **ne šalje** i checkout to jasno kaže. |
-| **Prevod naziva proizvoda** | `src/data/products.js` | EN/RU prevode samo interfejs; nazivi i opisi buketa ostaju na srpskom. |
+| **Prevodi naziva buketa** | `src/i18n/locales/{en,ru}.json` → `products` | Preveo sam svih 36 naziva i opisa. Ako neki naziv treba da ostane na srpskom, obrišite taj unos i sajt automatski vraća original. |
+| **Prevodi recenzija** | `src/i18n/locales/{en,ru}.json` → `reviews.items` | Reči mušterija su prevedene, uz vidljivu napomenu „Prevedeno sa srpskog". Ako radije ne prevodimo tuđe reči, javite — vraćam ih na srpski u svim jezicima. |
+
+---
+
+## Celina 11 — Prevod celog sajta, cvetići i pomeranje levo-desno
+
+### 1. Prevod: sada je zaista ceo sajt
+
+**Šta je bilo.** Prevodio se samo header i footer. Sve ostalo — hero, kartice,
+korpa, checkout, mapa, recenzije, porudžbenica — ostajalo je na srpskom.
+
+**Šta je sada.** Svaka komponenta i svaka stranica čita tekst iz `t()`. Po
+jeziku: **~270 stringova interfejsa + 72 za katalog** (36 naziva i 36 opisa).
+Obuhvaćeno je:
+
+- nazive i opise svih 36 proizvoda,
+- naslove i uvode svih pet stranica kategorija,
+- sve recenzije sa Google-a,
+- korpu, checkout, personalizaciju, zakazivanje i porudžbenicu,
+- **poruke o greškama** — i one iz `/api` funkcija i one iz geolokacije.
+
+**Kako je urađeno (da se ne pokvari kasnije).** Podaci više ne nose gotov
+tekst, nego ključ: `badge: 'novo'` umesto `badge: 'Novo'`, `when: 'months3'`
+umesto `'pre 3 meseca'`, `HOURS_DISPLAY[].key`. Novi jezik je i dalje **jedan
+JSON fajl + jedna linija** u `LOCALES` — nijedna komponenta se ne dira.
+
+**Množina se računa, ne pogađa.** `21 artikal`, `3 artikla`, `9 artikala` —
+kroz `Intl.PluralRules`, pa ruski dobija svoja četiri oblika, engleski dva.
+Ručno „ako je 1" bi pogrešilo u oba jezika.
+
+**Šta ostaje na srpskom, namerno:**
+
+- **Ime radnje i imena mušterija u recenzijama** — vlastita imena; Google ih
+  tako i prikazuje.
+- **Mejl koji stiže vama.** Ako neko poruči na ruskom, u radnju i dalje stiže
+  „Povod: Rođendan", ne „Повод". Tu porudžbinu čitate vi, ne kupac.
+
+**Provereno mereno, ne na oko.** Test uzima svaki srpski string iz `sr.json` i
+traži ga u vidljivom tekstu stranice na EN i RU — na 7 ruta, uključujući
+proizvod, checkout i porudžbenicu. Rezultat: **0 propuštenih**.
+
+### 2. Sajt se pomerao levo-desno — popravljeno
+
+Nije bilo do korpe, do nje se samo videlo. Dva odvojena uzroka:
+
+1. **Header.** Red u navbaru nije mogao da se skupi: naziv „CVEĆARA TROFEJ"
+   je bio `whitespace-nowrap`, pa je red tražio više od širine ekrana i gurao
+   dugme korpe preko desne ivice. Izmereno: **+45 px na 390 px, +75 px na
+   360 px**, na svakoj stranici. Naziv sada sme da se skupi, a pretraga
+   (koja ionako još ne pretražuje) se na telefonu skriva.
+2. **Grid od 12 kolona.** `gap-8` puta 11 razmaka = 352 px razmaka pre nego
+   što ijedna kolona dobije širinu — na ekranu od 320 px to je samo po sebi
+   šire od stranice. Grid sada počinje od `lg`, gde 12 kolona i ima smisla;
+   na telefonu je jedna kolona, kao što je i izgledalo.
+
+**Provereno:** 0 px prekoračenja na 320 / 360 / 390 / 414 / 768 / 1024 /
+1440 px, na svim stranicama, na sva tri jezika, i sa otvorenom korpom.
+
+### 3. Cvetići koji padaju
+
+Osam linijskih cvetova (`ui/DoodleFlowers.jsx`) nacrtanih po vašoj slici:
+rada, ruža, aster, petolist sa prašnicima, hrizantema, suncokret, ljiljan i
+lala. Samo linija, bez ispune — isti rukopis kao botanika iz logoa.
+
+Padaju u pozadini **stranica kategorija i stranice proizvoda**
+(`PetalRain.jsx`), u brend bojama (tirkiz → tamnozelena) i tamnoj, na niskoj
+providnosti — ispod su kartica i fotografija buketa, i ne smeju da im smetaju.
+
+**3D, ali čitljivo.** Prva verzija je rotirala pun krug po X i Y osi i
+izgledala je loše: ravan oblik u punoj X-rotaciji najveći deo vremena stoji
+bočno prema vama, pa su cvetovi treperili kao crtice. Sada pun krug ide samo
+po Z osi (ravna rotacija, petlja se zatvara bez trzaja), a X i Y se njišu do
+±60° — utisak dubine ostaje, oblik se uvek prepoznaje.
+
+Broj cvetova prati ekran (9 na telefonu, 18 na desktopu), sve se animira samo
+kroz `transform`/`opacity` (dakle na grafičkoj, bez preračunavanja layouta), a
+uz `prefers-reduced-motion` se **ne renderuje uopšte**.
 
 ---
 

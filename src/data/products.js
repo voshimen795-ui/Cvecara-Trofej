@@ -41,6 +41,11 @@ export const priceFor = (product, sizeId) =>
 
 export const isAvailable = (product) => product?.available !== false;
 
+/**
+ * Ovde ostaju srpski originali. Interfejs ih prevodi preko `t()`, po ključu
+ * koji je izveden iz `id`-a (`tiles.baloni`, `tags.buketi`, `pages.buketi.*`),
+ * pa dodavanje jezika ne dira ovaj fajl.
+ */
 export const CATEGORIES = [
   { id: 'all', label: 'Svi Buketi' },
   { id: 'aranzmani', label: 'Aranžmani' },
@@ -119,7 +124,7 @@ export const PRODUCTS = [
     category: 'buketi',
     price: 4800,
     sizes: sizesFrom(4800),
-    badge: 'Bestseler',
+    badge: 'bestseler',
     description: 'Roze ruže, iris i lila hrizantema u pastelnom papiru.',
     image: photo('prolecna-simfonija'),
   },
@@ -139,7 +144,7 @@ export const PRODUCTS = [
     category: 'buketi',
     price: 3400,
     sizes: sizesFrom(3400),
-    badge: 'Sezonski',
+    badge: 'sezonski',
     description: 'Lale u nijansama roze i lila, vezane satenskom trakom.',
     image: photo('nezne-lale'),
   },
@@ -158,7 +163,7 @@ export const PRODUCTS = [
     category: 'buketi',
     price: 5600,
     sizes: sizesFrom(5600),
-    badge: 'Novo',
+    badge: 'novo',
     description: 'Ljubičaste hrizanteme i zelenilo u kontrastnom papiru.',
     image: photo('ljubicasti-san'),
   },
@@ -205,7 +210,7 @@ export const PRODUCTS = [
     category: 'buketi',
     price: 5900,
     sizes: sizesFrom(5900),
-    badge: 'Novo',
+    badge: 'novo',
     description: 'Ruže, hrizanteme i sitno cveće u tirkiznom papiru — brend u buketu.',
     image: photo('tirkizni-buket'),
   },
@@ -316,7 +321,7 @@ export const PRODUCTS = [
     category: 'aranzmani',
     price: 7400,
     sizes: sizesFrom(7400),
-    badge: 'Bestseler',
+    badge: 'bestseler',
     description: 'Ruže i plišani medvedići u kutiji — poklon za rođendan.',
     image: photo('medveni-zagrljaj'),
   },
@@ -345,7 +350,7 @@ export const PRODUCTS = [
     category: 'aranzmani',
     price: 6500,
     sizes: sizesFrom(6500),
-    badge: 'Novo',
+    badge: 'novo',
     description: 'Ljiljan i sitno cveće u kutiji — jednostavno i upečatljivo.',
     image: photo('strastveni-trenutak'),
   },
@@ -365,7 +370,7 @@ export const PRODUCTS = [
     category: 'aranzmani',
     price: 7200,
     sizes: sizesFrom(7200),
-    badge: 'Novo',
+    badge: 'novo',
     description: 'Aranžman u papirnoj torbi sa ručkama — spreman za nošenje.',
     image: photo('cvetna-torba'),
   },
@@ -441,7 +446,7 @@ export const PRODUCTS = [
     name: 'Balon Srce XXL',
     category: 'baloni',
     price: 1600,
-    badge: 'Popularno',
+    badge: 'popularno',
     description: 'Folijski balon u obliku srca, punjen helijumom.',
   },
 ];

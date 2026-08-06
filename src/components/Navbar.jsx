@@ -10,17 +10,20 @@ import { useI18n } from '../i18n/index.jsx';
 
 export default function Navbar() {
   const { totalItems, openCart } = useCart();
-  const { t } = useI18n();
+  const { t, tn } = useI18n();
   const [mobileOpen, setMobileOpen] = useState(false);
 
   const closeMobile = () => setMobileOpen(false);
 
   return (
     <header className="sticky top-0 z-40 border-b border-gray-100 bg-brand-surface/90 backdrop-blur-md">
-      <nav className="container-editorial" aria-label="Glavna navigacija">
-        <div className="flex h-20 items-center justify-between gap-4 lg:grid lg:grid-cols-3">
+      <nav className="container-editorial" aria-label={t('nav.main')}>
+        {/* min-w-0 + shrink-0 is the whole fix for the row that used to push the
+            cart button off a 390px screen: the wordmark is the only part
+            allowed to give way, and it shrinks instead of widening the page. */}
+        <div className="flex h-20 items-center justify-between gap-2 sm:gap-4 lg:grid lg:grid-cols-3">
           {/* Left — desktop links / mobile menu toggle */}
-          <div className="flex items-center lg:justify-start">
+          <div className="flex shrink-0 items-center lg:justify-start">
             <button
               type="button"
               onClick={() => setMobileOpen((open) => !open)}
@@ -55,28 +58,35 @@ export default function Navbar() {
           </div>
 
           {/* Center — wordmark + logo disc */}
-          <div className="flex justify-center lg:justify-center">
-            <Link to="/" onClick={closeMobile} className="flex items-center gap-2.5 sm:gap-3">
-              <span className="whitespace-nowrap font-serif text-base font-bold tracking-widest text-brand-dark sm:text-lg">
+          <div className="flex min-w-0 flex-1 justify-center lg:flex-none">
+            <Link
+              to="/"
+              onClick={closeMobile}
+              className="flex min-w-0 items-center gap-2 sm:gap-3"
+            >
+              <span className="truncate font-serif text-[0.8125rem] font-bold tracking-[0.06em] text-brand-dark sm:text-base sm:tracking-widest lg:text-lg">
                 CVEĆARA TROFEJ
               </span>
               <img
                 src={logoDisc}
                 alt=""
                 aria-hidden="true"
-                className="h-8 w-8 shrink-0 sm:h-9 sm:w-9"
+                className="h-7 w-7 shrink-0 sm:h-9 sm:w-9"
               />
             </Link>
           </div>
 
           {/* Right — utilities */}
-          <div className="flex items-center justify-end gap-1 sm:gap-2">
+          <div className="flex shrink-0 items-center justify-end gap-0.5 sm:gap-2">
             <LanguageSwitcher />
 
+            {/* Hidden on phones: it is a placeholder with no search behind it
+                yet, and on a 360px screen it was the button that pushed the
+                cart past the right edge. */}
             <button
               type="button"
-              aria-label={t("common.search")}
-              className="rounded-lg p-2.5 text-brand-dark transition hover:bg-gray-100"
+              aria-label={t('common.search')}
+              className="hidden rounded-lg p-2.5 text-brand-dark transition hover:bg-gray-100 sm:block"
             >
               <Search className="h-5 w-5" strokeWidth={1.75} aria-hidden="true" />
             </button>
@@ -84,8 +94,8 @@ export default function Navbar() {
             <button
               type="button"
               onClick={openCart}
-              aria-label={`Korpa, ${totalItems} ${totalItems === 1 ? 'artikal' : 'artikala'}`}
-              className="relative rounded-lg p-2.5 text-brand-dark transition hover:bg-gray-100"
+              aria-label={tn('common.cartCount', totalItems)}
+              className="relative rounded-lg p-2 text-brand-dark transition hover:bg-gray-100 sm:p-2.5"
             >
               <ShoppingBag className="h-5 w-5" strokeWidth={1.75} aria-hidden="true" />
               <AnimatePresence>
@@ -96,7 +106,7 @@ export default function Navbar() {
                     animate={{ scale: 1 }}
                     exit={{ scale: 0 }}
                     transition={{ type: 'spring', stiffness: 500, damping: 25 }}
-                    className="absolute right-1 top-1 flex h-5 min-w-[1.25rem] items-center justify-center rounded-full bg-brand-rose px-1 text-[10px] font-semibold leading-none text-white"
+                    className="absolute right-0.5 top-0.5 flex h-5 min-w-[1.25rem] items-center justify-center rounded-full bg-brand-rose px-1 text-[10px] font-semibold leading-none text-white sm:right-1 sm:top-1"
                   >
                     {totalItems > 99 ? '99+' : totalItems}
                   </motion.span>
