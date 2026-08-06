@@ -81,21 +81,22 @@ export default function ProductQuickView({ product, onClose }) {
               <X className="h-5 w-5" aria-hidden="true" />
             </button>
 
-            <div className="grid grid-cols-1 overflow-y-auto md:grid-cols-2">
+            {/* Block on phones, grid from md. As a grid with a definite height the
+                image track shrank to 180px and the bouquet got clipped — grid
+                auto tracks may compress below max-content, block flow won't. */}
+            <div className="block overflow-y-auto md:grid md:grid-cols-2">
               {/* Visual */}
-              <div className="relative overflow-hidden bg-gradient-to-b from-brand-mist to-white">
-                {/* aspect-auto on md: with a definite height, aspect-square derives the
-                    WIDTH from it and the image spills out of its column. */}
-                <div className="aspect-square md:aspect-auto md:h-full">
-                  <ProductImage
-                    src={product.image}
-                    alt={product.name}
-                    category={product.category}
-                    className={`h-full w-full object-contain p-6 ${
-                      available ? '' : 'opacity-40 saturate-50'
-                    }`}
-                  />
-                </div>
+              {/* aspect-auto from md: with a definite height, aspect-square
+                  derives the WIDTH from it and the bouquet spills sideways. */}
+              <div className="relative aspect-square w-full bg-gradient-to-b from-brand-mist to-white md:aspect-auto md:h-full md:overflow-hidden">
+                <ProductImage
+                  src={product.image}
+                  alt={product.name}
+                  category={product.category}
+                  className={`h-full w-full object-contain p-6 ${
+                    available ? '' : 'opacity-40 saturate-50'
+                  }`}
+                />
 
                 <div className="absolute left-4 top-4 flex flex-col gap-2">
                   {product.badge && available && (

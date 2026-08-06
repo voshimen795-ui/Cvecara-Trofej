@@ -1,24 +1,22 @@
-import { useState } from 'react';
 import { Clock, ExternalLink, MapPin, Navigation, Phone } from 'lucide-react';
 import { HOURS_DISPLAY, SHOP, SHOP_ADDRESS } from '../data/shop.js';
 
 const query = encodeURIComponent(SHOP_ADDRESS);
 
-// `output=embed` needs no API key. The links open the real thing.
-const EMBED_SRC = `https://maps.google.com/maps?q=${query}&z=16&output=embed`;
 const MAPS_LINK = `https://www.google.com/maps/search/?api=1&query=${query}`;
 const DIRECTIONS_LINK = `https://www.google.com/maps/dir/?api=1&destination=${query}`;
 
 /**
- * A drawn locator that always renders, with the live Google map fading in over
- * it once it loads. Relying on the iframe alone left an empty rectangle
- * wherever it's blocked — strict CSP, ad blocker, no network — and a blocked
- * cross-origin frame neither errors nor loads, so there is no event to react
- * to. Drawing our own means the section is never blank.
+ * A drawn locator, deliberately with no Google iframe.
+ *
+ * The embed was tried twice and failed twice. Blocked by a CSP or an ad
+ * blocker it renders Google's own "This content is blocked" error page — and
+ * that page *loads*, so `onLoad` fires and reveals it. There is no signal that
+ * separates a real map from that error, which means an embed can always end up
+ * showing customers a broken-looking box. Drawing our own is the only version
+ * that renders every time; the buttons open the real map.
  */
 export default function MapSection() {
-  const [loaded, setLoaded] = useState(false);
-
   return (
     <section id="mapa" className="container-editorial scroll-mt-24 py-16 lg:py-24">
       <div className="text-center">
@@ -32,24 +30,15 @@ export default function MapSection() {
       <div className="mt-12 grid grid-cols-12 gap-6 lg:gap-8">
         <div className="col-span-12 lg:col-span-8">
           <div className="relative overflow-hidden rounded-3xl border border-brand-border shadow-sm">
-            <div className="relative aspect-[16/11] w-full sm:aspect-[16/9]">
+            <a
+              href={MAPS_LINK}
+              target="_blank"
+              rel="noreferrer"
+              aria-label={`Otvori ${SHOP_ADDRESS} u Google Mapama`}
+              className="relative block aspect-[16/11] w-full transition hover:opacity-95 sm:aspect-[16/9]"
+            >
               <DrawnMap />
-
-              <iframe
-                title={`Mapa — ${SHOP.name}, ${SHOP_ADDRESS}`}
-                src={EMBED_SRC}
-                loading="lazy"
-                referrerPolicy="no-referrer-when-downgrade"
-                onLoad={(e) => {
-                  // A blocked frame can still fire load with an empty document,
-                  // so only reveal it once it has laid-out content.
-                  if (e.currentTarget.clientWidth > 0) setLoaded(true);
-                }}
-                className={`absolute inset-0 h-full w-full border-0 transition-opacity duration-700 ${
-                  loaded ? 'opacity-100' : 'pointer-events-none opacity-0'
-                }`}
-              />
-            </div>
+            </a>
           </div>
         </div>
 
