@@ -144,6 +144,7 @@
     "deliveryNote": "Porudžbine do 14h isporučujemo istog dana.",
     "freeAbove": "Besplatna dostava iznad {amount}.",
     "freshNote": "Buket se pravi na dan isporuke, od svežeg cveća.",
+    "mayDiffer": "Cveće je sezonsko — gotov buket može malo da odstupa od fotografije po nijansi i vrsti cveta, uz istu veličinu i isti utisak.",
     "madeOnDay": "Buket pravimo na dan isporuke.",
     "related": "Slično iz iste kategorije",
     "callUs": "Ovaj artikal trenutno nemamo. Pozovite nas na {phone} — često ga možemo napraviti po porudžbini.",

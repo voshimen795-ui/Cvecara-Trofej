@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
-import { Check, ChevronRight, Minus, Plus, Truck } from 'lucide-react';
+import { Check, ChevronRight, Info, Minus, Plus, Truck } from 'lucide-react';
 import ProductImage from '../components/ui/ProductImage.jsx';
 import ProductGrid from '../components/ProductGrid.jsx';
 import ReviewsSlider from '../components/ReviewsSlider.jsx';
@@ -234,6 +234,15 @@ export default function ProductPage() {
                   aria-hidden="true"
                 />
                 {t('product.freshNote')}
+              </li>
+              {/* Info rather than Check: this one is a caveat, not a promise,
+                  and the icon should not read as another selling point. */}
+              <li className="flex items-start gap-2.5">
+                <Info
+                  className="mt-0.5 h-4 w-4 shrink-0 text-brand-muted"
+                  aria-hidden="true"
+                />
+                {t('product.mayDiffer')}
               </li>
             </ul>
           </div>

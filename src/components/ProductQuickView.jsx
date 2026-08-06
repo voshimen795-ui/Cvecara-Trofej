@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
-import { ArrowRight, Check, Minus, Plus, Truck, X } from 'lucide-react';
+import { ArrowRight, Check, Info, Minus, Plus, Truck, X } from 'lucide-react';
 import ProductImage from './ui/ProductImage.jsx';
 import { defaultSize, isAvailable, priceFor } from '../data/products.js';
 import { formatPrice } from '../utils/format.js';
@@ -219,6 +219,13 @@ export default function ProductQuickView({ product, onClose }) {
                 <p className="mt-5 flex items-start gap-2 text-xs leading-relaxed text-brand-muted">
                   <Truck className="mt-0.5 h-3.5 w-3.5 shrink-0" aria-hidden="true" />
                   {t('common.deliveryArea')}. {t('product.madeOnDay')}
+                </p>
+
+                {/* Repeated from the product page on purpose: most customers
+                    add to the cart from here and never open the full page. */}
+                <p className="mt-2 flex items-start gap-2 text-xs leading-relaxed text-brand-muted">
+                  <Info className="mt-0.5 h-3.5 w-3.5 shrink-0" aria-hidden="true" />
+                  {t('product.mayDiffer')}
                 </p>
 
                 <Link

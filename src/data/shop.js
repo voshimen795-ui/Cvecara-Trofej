@@ -8,7 +8,7 @@ export const SHOP = {
   city: 'Beograd',
   phone: '069/279-0074',
   phoneHref: 'tel:+381692790074',
-  email: 'cvecaratrofej@gmail.com',
+  email: 'cvecara.trofej@gmail.com',
   // Serbian original. The UI reads `t('common.deliveryArea')`; this stays for
   // the order email and the structured data, which are always Serbian.
   deliveryArea: 'Dostava na teritoriji Beograda',

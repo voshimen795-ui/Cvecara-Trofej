@@ -16,10 +16,53 @@ Dnevnik odluka po celinama. Svaka stavka: **šta je urađeno**, **zašto tako**,
 | **Tekst za „Porodično"** | `src/components/FamilySection.jsx` → `PARAGRAPHS` | Tri pasusa su placeholder. Zamenite ih i ništa drugo se ne dira. |
 | **Instagram handle** | `src/data/shop.js` → `instagram` | `@cvecara_trofej` je pretpostavka. |
 | **Nemački jezik** | `src/i18n/locales/` | Beleška nije bila jasna. Radimo SR/EN/RU; DE je jedan JSON fajl kad potvrdite. |
+| **`ORDER_EMAIL_TO` na Vercel-u** | Vercel env | Mejl je u kodu ispravljen na `cvecara.trofej@gmail.com`, ali env varijabla ima prednost. Dok je ne promenite, porudžbine idu na staru adresu. |
+| **Značenje „Odstupanja"** | `src/i18n/locales/*.json` → `product.mayDiffer` | Pretpostavio sam odstupanje od fotografije. Ako je reč o ceni ili veličini, menja se taj jedan ključ. |
 | **Wolt Drive tokeni** | Vercel env | Preskočeno po dogovoru. Kod stoji spreman. |
 | **Resend API ključ** | Vercel env `RESEND_API_KEY` | Bez njega porudžbina se **ne šalje** i checkout to jasno kaže. |
 | **Prevodi naziva buketa** | `src/i18n/locales/{en,ru}.json` → `products` | Preveo sam svih 36 naziva i opisa. Ako neki naziv treba da ostane na srpskom, obrišite taj unos i sajt automatski vraća original. |
 | **Prevodi recenzija** | `src/i18n/locales/{en,ru}.json` → `reviews.items` | Reči mušterija su prevedene, uz vidljivu napomenu „Prevedeno sa srpskog". Ako radije ne prevodimo tuđe reči, javite — vraćam ih na srpski u svim jezicima. |
+
+---
+
+## Celina 12 — Prolaz kroz listu iz sveske
+
+Prošli smo originalnu rukom pisanu listu stavku po stavku. **17 od 21** je bilo
+urađeno; jedna („prva stavka") otpada po vašoj reči; ostale dve su ovde.
+
+### Mejl je bio pogrešan — ispravljen
+
+U uokvirenom delu sveske piše `cvecara.trofej@gmail.com`, **sa tačkom**. Na
+sajtu je svuda bila verzija bez tačke. Ispravljeno na šest mesta: `shop.js`,
+JSON-LD u `index.html`, dva fallback-a u `/api`, i dva podrazumevana u
+`.env.example`.
+
+> **Vi morate još jedno:** promeniti `ORDER_EMAIL_TO` u Vercel env
+> varijablama. Dok se to ne uradi, produkcija čita staru vrednost iz env-a, a
+> ne novu iz koda — pa porudžbine i dalje idu na staru adresu.
+
+Telefon je proveren i ostaje `069/279-0074`.
+
+### „Odstupanje" — napomena uz proizvod
+
+Nova rečenica na stranici proizvoda i u brzom pregledu: cveće je sezonsko, pa
+gotov buket može malo da odstupa od fotografije po nijansi i vrsti cveta, uz
+istu veličinu i isti utisak.
+
+Stoji na **oba** mesta namerno — većina kupaca dodaje u korpu iz modala i nikad
+ne otvori celu stranicu, pa bi je inače propustili. Ikonica je `Info`, ne
+`Check`, jer to nije još jedna prednost nego ograda.
+
+**Pretpostavka koju treba da potvrdite.** Na pitanje šta „Odstupanje" znači
+rekli ste da nemate preferencu, pa sam uzeo najčešće značenje kod cvećara —
+odstupanje od fotografije. Ako ste mislili na odstupanje u **ceni ili
+veličini**, menja se jedan ključ (`product.mayDiffer`) i ništa drugo.
+
+### Nepročitano
+
+Poslednja linija u svesci — „Javite nam se / ...?" — druga reč mi nije čitka.
+Sekcija „Javite nam se" već postoji na `/o-nama`. Ako je druga reč „cenovnik",
+to je zaseban posao i nije urađen.
 
 ---
 
@@ -133,7 +176,7 @@ hook, kako radnja radi, obećanje. Vaš finalni tekst ide u `PARAGRAPHS`.
 ## Celina 8 — Dostava
 
 **Urađeno.** Wolt Drive u **web app** režimu: sajt prima porudžbinu, šalje je
-mejlom na `cvecaratrofej@gmail.com`, vi je ručno unosite u Wolt dashboard.
+mejlom na `cvecara.trofej@gmail.com`, vi je ručno unosite u Wolt dashboard.
 
 - `api/orders/notify.js` — šalje mejl preko Resend-a. Bez `RESEND_API_KEY`
   vraća `mock: true` i checkout **jasno piše da mejl nije poslat**.

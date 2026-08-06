@@ -91,7 +91,7 @@ export default async function handler(req, res) {
 
   const reference = `CT-${Date.now().toString(36).toUpperCase()}`;
   const key = process.env.RESEND_API_KEY;
-  const to = process.env.ORDER_EMAIL_TO || 'cvecaratrofej@gmail.com';
+  const to = process.env.ORDER_EMAIL_TO || 'cvecara.trofej@gmail.com';
   const from = process.env.ORDER_EMAIL_FROM || 'Cvecara Trofej <onboarding@resend.dev>';
 
   if (!key) {
