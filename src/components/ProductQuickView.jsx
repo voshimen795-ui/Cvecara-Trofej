@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
-import { ArrowRight, Check, Info, Minus, Plus, Truck, X } from 'lucide-react';
+import { ArrowRight, Check, Minus, Plus, Truck, X } from 'lucide-react';
 import ProductImage from './ui/ProductImage.jsx';
 import { defaultSize, isAvailable, priceFor } from '../data/products.js';
 import { formatPrice } from '../utils/format.js';
@@ -131,6 +131,13 @@ export default function ProductQuickView({ product, onClose }) {
                   {tp(product, 'description')}
                 </p>
 
+                {/* Same placement as the product page: below the description,
+                    bold, so it is read before a size is picked. */}
+                <p className="mt-3 rounded-xl border border-brand-border bg-brand-mist/60 px-3 py-2.5 text-xs leading-relaxed text-brand-dark">
+                  <span className="font-bold">{t('product.noteLabel')}</span>{' '}
+                  {t('product.mayDiffer')}
+                </p>
+
                 {product.sizes && (
                   <fieldset className="mt-6">
                     <legend className="mb-2.5 text-sm font-medium text-brand-dark">
@@ -153,9 +160,6 @@ export default function ProductQuickView({ product, onClose }) {
                           >
                             <span className="block text-sm font-semibold text-brand-dark">
                               {t(`sizes.${size.id}`)}
-                            </span>
-                            <span className="mt-0.5 block text-[11px] leading-tight text-brand-muted">
-                              {t(`sizes.note.${size.id}`)}
                             </span>
                             <span className="mt-1 block text-sm font-bold text-brand-dark">
                               {formatPrice(size.price)}
@@ -219,13 +223,6 @@ export default function ProductQuickView({ product, onClose }) {
                 <p className="mt-5 flex items-start gap-2 text-xs leading-relaxed text-brand-muted">
                   <Truck className="mt-0.5 h-3.5 w-3.5 shrink-0" aria-hidden="true" />
                   {t('common.deliveryArea')}. {t('product.madeOnDay')}
-                </p>
-
-                {/* Repeated from the product page on purpose: most customers
-                    add to the cart from here and never open the full page. */}
-                <p className="mt-2 flex items-start gap-2 text-xs leading-relaxed text-brand-muted">
-                  <Info className="mt-0.5 h-3.5 w-3.5 shrink-0" aria-hidden="true" />
-                  {t('product.mayDiffer')}
                 </p>
 
                 <Link

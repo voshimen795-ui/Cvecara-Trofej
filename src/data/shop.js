@@ -12,14 +12,36 @@ export const SHOP = {
   // Serbian original. The UI reads `t('common.deliveryArea')`; this stays for
   // the order email and the structured data, which are always Serbian.
   deliveryArea: 'Dostava na teritoriji Beograda',
-  // TODO: potvrdite tačan handle — pretpostavka na osnovu imena radnje.
-  instagramHandle: '@cvecara_trofej',
-  instagram: 'https://www.instagram.com/cvecara_trofej/',
+  instagramHandle: '@cvecaratrofej',
+  instagram: 'https://www.instagram.com/cvecaratrofej/',
   /** Free delivery above this amount, in RSD. */
   freeDeliveryThreshold: 4000,
-  /** Flat delivery fee below the threshold, in RSD. */
+  /** Fee for the nearest zone, in RSD. Farther zones cost more — see DELIVERY_TIERS. */
   deliveryFee: 350,
 };
+
+/**
+ * Delivery price by straight-line distance from the shop.
+ *
+ * ⚠️ PLACEHOLDER PRICES — the owner has to confirm these. The distances and
+ * the arithmetic are ours; the numbers are a guess at what a Belgrade
+ * courier run is worth. Change the `rsd` values here and nothing else moves.
+ *
+ * `km` is the upper bound of the zone. The last entry is the catch-all.
+ */
+export const DELIVERY_TIERS = [
+  { km: 3, rsd: 350 },
+  { km: 6, rsd: 500 },
+  { km: 10, rsd: 700 },
+  { km: 15, rsd: 900 },
+  { km: Infinity, rsd: 1200 },
+];
+
+/** Straight-line distance in km -> delivery fee in RSD. */
+export function deliveryFeeForKm(km) {
+  if (!Number.isFinite(km)) return SHOP.deliveryFee;
+  return (DELIVERY_TIERS.find((tier) => km <= tier.km) ?? DELIVERY_TIERS.at(-1)).rsd;
+}
 
 /** Full address, for maps and for the Wolt dropoff. */
 export const SHOP_ADDRESS = `${SHOP.street}, ${SHOP.city}, Srbija`;

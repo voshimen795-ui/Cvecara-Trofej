@@ -1,49 +1,18 @@
-import { useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
-import {
-  AlertTriangle,
-  Check,
-  ChevronRight,
-  Loader2,
-  MapPin,
-  Tag,
-  Truck,
-  X,
-} from 'lucide-react';
+import { AlertTriangle, Check, ChevronRight, Loader2, MapPin, Truck } from 'lucide-react';
 import ProductImage from '../components/ui/ProductImage.jsx';
-import { SHOP } from '../data/shop.js';
+import { SHOP, deliveryFeeForKm } from '../data/shop.js';
 import { formatPrice } from '../utils/format.js';
 import { useCart } from '../context/CartContext.jsx';
 import OrderReceipt from '../components/OrderReceipt.jsx';
-import { reverseGeocode, sendOrder, validateVoucher } from '../services/wolt.js';
+import { fetchDistance, reverseGeocode, sendOrder } from '../services/wolt.js';
 import ScheduleFields from '../components/checkout/ScheduleFields.jsx';
-import PersonalisationFields, {
-  OCCASION_SR,
-} from '../components/checkout/PersonalisationFields.jsx';
 import { useGeolocation } from '../hooks/useGeolocation.js';
 import { useI18n } from '../i18n/index.jsx';
 
 const EMPTY_FORM = { name: '', phone: '', street: '', city: SHOP.city, comment: '' };
 const EMPTY_SCHEDULE = { mode: 'dostava', date: '', time: '' };
-const EMPTY_PERSONALISATION = { occasion: '', cardMessage: '', wishes: '' };
-
-/**
- * Folds the optional fields into one note for the florist and the courier.
- * Deliberately always Serbian: this is read in the shop, not by the customer,
- * so an order placed in Russian must still arrive readable behind the counter.
- */
-function buildComment(form, personalisation, schedule) {
-  return [
-    form.comment,
-    personalisation.occasion &&
-      `Povod: ${OCCASION_SR[personalisation.occasion] ?? personalisation.occasion}`,
-    personalisation.cardMessage && `Čestitka: „${personalisation.cardMessage}"`,
-    personalisation.wishes && `Želje: ${personalisation.wishes}`,
-    schedule.date && `Termin: ${schedule.date} u ${schedule.time} (${schedule.mode})`,
-  ]
-    .filter(Boolean)
-    .join(' | ');
-}
 
 export default function CheckoutPage() {
   const { items, subtotal, delivery, clearCart } = useCart();
@@ -52,14 +21,12 @@ export default function CheckoutPage() {
   const [form, setForm] = useState(EMPTY_FORM);
   const [confirmed, setConfirmed] = useState(null);
   const [schedule, setSchedule] = useState(EMPTY_SCHEDULE);
-  const [personalisation, setPersonalisation] = useState(EMPTY_PERSONALISATION);
-  const [busy, setBusy] = useState(null); // 'order' | 'locate' | 'voucher'
+  const [busy, setBusy] = useState(null); // 'order' | 'locate' | 'distance'
   const [error, setError] = useState(null);
   const geo = useGeolocation();
   const [lookupFailed, setLookupFailed] = useState(false);
-  const [voucherInput, setVoucherInput] = useState('');
-  const [voucher, setVoucher] = useState(null);
-  const [voucherError, setVoucherError] = useState(null);
+  // { km, approximate } once we know how far away the customer is.
+  const [distance, setDistance] = useState(null);
 
   /**
    * Errors travel as a code plus the server's Serbian text. Translate the
@@ -69,19 +36,31 @@ export default function CheckoutPage() {
   const errorText = (err) =>
     err?.code ? t(`errors.${err.code}`, err.vars) : err?.message ?? '';
 
-  const applyVoucher = async (event) => {
-    event.preventDefault();
-    setVoucherError(null);
-    setBusy('voucher');
+  /**
+   * Measure the distance from the shop and re-price the delivery.
+   * Called from the location button and, debounced, when the address settles —
+   * every call is a Nominatim lookup, and their policy is 1 request/second.
+   */
+  const measure = useCallback(async (where) => {
+    setBusy('distance');
     try {
-      setVoucher(await validateVoucher({ code: voucherInput, subtotal }));
-    } catch (err) {
-      setVoucher(null);
-      setVoucherError(err);
+      setDistance(await fetchDistance(where));
+    } catch {
+      // A failed lookup must not block the order: fall back to the base fee
+      // and say the price is provisional rather than showing nothing.
+      setDistance(null);
     } finally {
       setBusy(null);
     }
-  };
+  }, []);
+
+  // Re-price when the typed address settles. Debounced hard: every call is a
+  // Nominatim lookup and their policy allows one request per second.
+  useEffect(() => {
+    if (schedule.mode === 'preuzimanje' || !form.street.trim()) return undefined;
+    const id = setTimeout(() => measure({ street: form.street, city: form.city }), 1200);
+    return () => clearTimeout(id);
+  }, [form.street, form.city, schedule.mode, measure]);
 
   const pickup = schedule.mode === 'preuzimanje';
   const scheduled = Boolean(schedule.date && schedule.time);
@@ -104,12 +83,14 @@ export default function CheckoutPage() {
       setForm((f) => ({ ...f, street: place.street, city: place.city || f.city }));
     } catch {
       // Address lookup is only a convenience — the coordinates alone already
-      // sharpen Wolt's price. Say so plainly instead of leaving the field
+      // price the delivery. Say so plainly instead of leaving the field
       // mysteriously empty.
       setLookupFailed(true);
     } finally {
       setBusy(null);
     }
+    // Coordinates beat a typed address, so measure straight from them.
+    measure(coords);
   };
 
   const placeOrder = async (event) => {
@@ -126,7 +107,7 @@ export default function CheckoutPage() {
           comment: form.comment,
         },
         schedule,
-        personalisation,
+        distanceKm: distance?.km ?? null,
         items: items.map((i) => ({
           id: i.id,
           name: i.name,
@@ -134,16 +115,10 @@ export default function CheckoutPage() {
           price: i.price,
           quantity: i.quantity,
         })),
-        totals: {
-          subtotal,
-          discount,
-          delivery: pickup ? 0 : delivery,
-          total,
-          voucherCode: voucher?.code ?? null,
-        },
+        totals: { subtotal, delivery: deliveryFee, total },
       });
       // Snapshot the cart before clearing — the receipt renders from it.
-      setConfirmed({ ...result, loyaltyCode: `TROFEJ-${result.reference.slice(-6)}`, items, totals: { subtotal, discount, delivery: pickup ? 0 : delivery, total } });
+      setConfirmed({ ...result, items, totals: { subtotal, delivery: deliveryFee, total } });
       clearCart();
     } catch (err) {
       setError(err);
@@ -168,20 +143,9 @@ export default function CheckoutPage() {
           reference={confirmed.reference}
           customer={form}
           schedule={schedule}
-          personalisation={personalisation}
           items={confirmed.items}
           totals={confirmed.totals}
         />
-
-        {confirmed.loyaltyCode && (
-          <div className="mx-auto mt-8 max-w-md rounded-2xl border border-brand-border bg-brand-mist px-6 py-5">
-            <p className="text-sm text-brand-dark">{t('checkout.loyaltyLead')}</p>
-            <p className="mt-2 font-mono text-xl font-bold tracking-wider text-brand-dark">
-              {confirmed.loyaltyCode}
-            </p>
-            <p className="mt-2 text-xs text-brand-muted">{t('checkout.loyaltyNote')}</p>
-          </div>
-        )}
 
         {confirmed.mock && (
           <p className="mx-auto mt-8 flex max-w-lg items-start gap-2 rounded-xl border border-amber-300 bg-amber-50 px-4 py-3 text-left text-xs leading-relaxed text-amber-900">
@@ -214,8 +178,11 @@ export default function CheckoutPage() {
     );
   }
 
-  const discount = voucher?.discount ?? 0;
-  const total = Math.max(0, subtotal - discount) + (pickup ? 0 : delivery);
+  // `delivery` from the cart is the near-zone fee; once we know the distance we
+  // price the actual zone. Free-above-threshold still wins over both.
+  const zoneFee = distance ? deliveryFeeForKm(distance.km) : SHOP.deliveryFee;
+  const deliveryFee = pickup || delivery === 0 ? 0 : zoneFee;
+  const total = subtotal + deliveryFee;
 
   return (
     <div className="container-editorial py-10 lg:py-14">
@@ -319,10 +286,6 @@ export default function CheckoutPage() {
               <ScheduleFields value={schedule} onChange={setSchedule} />
             </div>
 
-            <div className="border-t border-brand-border pt-5">
-              <PersonalisationFields value={personalisation} onChange={setPersonalisation} />
-            </div>
-
 
             {error && (
               <p role="alert" className="rounded-xl bg-red-50 px-4 py-3 text-sm text-red-800">
@@ -399,19 +362,23 @@ export default function CheckoutPage() {
                 <dt>{t('common.subtotal')}</dt>
                 <dd className="font-medium text-brand-dark">{formatPrice(subtotal)}</dd>
               </div>
-              {voucher && (
-                <div className="flex justify-between text-brand-primary-dark">
-                  <dt className="flex items-center gap-1.5">
-                    <Tag className="h-3.5 w-3.5" aria-hidden="true" />
-                    {voucher.label}
-                  </dt>
-                  <dd className="font-medium">−{formatPrice(discount)}</dd>
-                </div>
-              )}
               <div className="flex justify-between text-gray-600">
-                <dt>{pickup ? t('checkout.pickupMode') : t('checkout.deliveryWolt')}</dt>
+                <dt>
+                  {pickup ? t('checkout.pickupMode') : t('common.delivery')}
+                  {!pickup && distance && (
+                    <span className="ml-1 text-xs text-brand-muted">
+                      {t('checkout.distanceKm', { km: distance.km })}
+                    </span>
+                  )}
+                </dt>
                 <dd className="font-medium text-brand-dark">
-                  {pickup || delivery === 0 ? t('common.free') : formatPrice(delivery)}
+                  {busy === 'distance' ? (
+                    <Loader2 className="h-4 w-4 animate-spin" aria-hidden="true" />
+                  ) : deliveryFee === 0 ? (
+                    t('common.free')
+                  ) : (
+                    formatPrice(deliveryFee)
+                  )}
                 </dd>
               </div>
               <div className="flex justify-between border-t border-brand-border pt-3 text-base">
@@ -426,59 +393,19 @@ export default function CheckoutPage() {
               <p className="mt-4 flex items-start gap-2 rounded-xl bg-brand-primary/10 px-3 py-2.5 text-xs leading-relaxed text-brand-primary-dark">
                 <Truck className="mt-0.5 h-3.5 w-3.5 shrink-0" aria-hidden="true" />
                 <span>
-                  {t('checkout.woltNote', {
-                    amount: formatPrice(SHOP.freeDeliveryThreshold),
-                  })}
+                  {distance
+                    ? t('checkout.distanceNote', {
+                        km: distance.km,
+                        amount: formatPrice(SHOP.freeDeliveryThreshold),
+                      })
+                    : t('checkout.distanceUnknown', {
+                        amount: formatPrice(SHOP.freeDeliveryThreshold),
+                      })}
+                  {distance?.approximate ? ` ${t('checkout.distanceApprox')}` : ''}
                 </span>
               </p>
             )}
 
-            <form onSubmit={applyVoucher} className="mt-5 border-t border-brand-border pt-5">
-              <label className="mb-2 block text-sm font-medium text-brand-dark" htmlFor="voucher">
-                {t('checkout.voucher')}
-              </label>
-              {voucher ? (
-                <div className="flex items-center justify-between gap-2 rounded-xl bg-brand-mist px-4 py-3">
-                  <span className="flex min-w-0 items-center gap-2 text-sm text-brand-dark">
-                    <Check className="h-4 w-4 shrink-0 text-brand-primary-dark" aria-hidden="true" />
-                    <span className="truncate font-medium">{voucher.code}</span>
-                  </span>
-                  <button
-                    type="button"
-                    onClick={() => {
-                      setVoucher(null);
-                      setVoucherInput('');
-                    }}
-                    aria-label={t('checkout.removeVoucher')}
-                    className="shrink-0 rounded p-1 text-brand-muted transition hover:text-brand-dark"
-                  >
-                    <X className="h-4 w-4" aria-hidden="true" />
-                  </button>
-                </div>
-              ) : (
-                <div className="flex gap-2">
-                  <input
-                    id="voucher"
-                    value={voucherInput}
-                    onChange={(e) => setVoucherInput(e.target.value.toUpperCase())}
-                    placeholder={t('checkout.voucherPlaceholder')}
-                    className="min-w-0 flex-1 rounded-xl border border-brand-border bg-white px-4 py-2.5 text-sm uppercase tracking-wide text-brand-dark placeholder:normal-case placeholder:tracking-normal placeholder:text-gray-400 focus:border-brand-primary-dark"
-                  />
-                  <button
-                    type="submit"
-                    disabled={!voucherInput || busy !== null}
-                    className="shrink-0 rounded-xl border border-brand-border px-4 text-sm font-medium text-brand-dark transition hover:border-brand-primary disabled:opacity-50"
-                  >
-                    {busy === 'voucher' ? '…' : t('checkout.apply')}
-                  </button>
-                </div>
-              )}
-              {voucherError && (
-                <p role="alert" className="mt-2 text-xs text-red-700">
-                  {errorText(voucherError)}
-                </p>
-              )}
-            </form>
 
           </div>
         </aside>

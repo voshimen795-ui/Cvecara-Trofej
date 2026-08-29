@@ -121,12 +121,7 @@
     "label": "Bouquet size",
     "mali": "Small",
     "srednji": "Medium",
-    "veliki": "Large",
-    "note": {
-      "mali": "About 15 stems",
-      "srednji": "About 25 stems",
-      "veliki": "About 40 stems"
-    }
+    "veliki": "Large"
   },
   "badges": {
     "bestseler": "Bestseller",
@@ -142,6 +137,7 @@
     "freeAbove": "Free delivery over {amount}.",
     "freshNote": "The bouquet is made on the day of delivery, from fresh flowers.",
     "mayDiffer": "Flowers are seasonal — the finished bouquet may differ a little from the photograph in shade and in the exact blooms, at the same size and the same effect.",
+    "noteLabel": "Please note:",
     "madeOnDay": "We make the bouquet on the day of delivery.",
     "related": "More from the same category",
     "callUs": "We don't have this item right now. Call us on {phone} — we can often make it to order.",
@@ -174,9 +170,9 @@
   "family": {
     "eyebrow": "About us",
     "title": "A family shop",
-    "p1": "Cvećara Trofej is not a chain. Behind the counter is a family that has worked with flowers for years — the same people choose the flowers in the morning, tie the bouquet in the afternoon and answer the phone when you call.",
+    "p1": "Cvećara Trofej is not a chain. Behind the counter is a family that works with flowers out of love.",
     "p2": "That is why every bouquet looks like it was made for one particular person, not off a template. When you tell us the occasion, we actually listen: whether it is an apology, a new baby, or someone who only likes white blooms.",
-    "p3": "We work in our own neighbourhood, with people who have been coming back for years. That is the only reason we care about every bouquet that leaves the shop."
+    "p3": "We work in a neighbourhood where delighted neighbours gladly come back for what we make. That is the only reason we care about every bouquet that leaves the shop."
   },
   "about": {
     "eyebrow": "About us",
@@ -260,42 +256,22 @@
     "pickupMode": "Pick up in store",
     "closedOn": "We are closed on {day}. Please choose another day.",
     "noSlots": "There are no slots left for today. Please choose tomorrow's date.",
-    "personalisation": "Personalise the bouquet",
-    "personalisationLead": "All of this is optional — but the more we know, the closer the bouquet is to what you pictured.",
-    "occasion": "Occasion",
-    "cardMessage": "Card message",
-    "cardPlaceholder": "All the best! Love…",
-    "charsLeft": "{n} left",
-    "wishes": "Special wishes",
-    "wishesPlaceholder": "No lilies, more greenery, paper in pink tones…",
-    "voucher": "Voucher or loyalty code",
-    "voucherPlaceholder": "e.g. DOBRODOSLI10",
-    "removeVoucher": "Remove the code",
-    "apply": "Apply",
     "submit": "Place order",
     "sending": "Sending…",
     "pickupCall": "Call us to confirm the time",
     "pickCombo": "Please choose a date and a time.",
     "yourOrder": "Your order",
-    "deliveryWolt": "Delivery (Wolt)",
-    "woltNote": "A Wolt courier drives the delivery. It is free over {amount}.",
     "emptyTitle": "Your cart is empty",
     "emptyLead": "Add a bouquet or an arrangement, then come back to checkout.",
     "emptyCta": "See the bouquets",
     "confirmed": "Order received",
     "confirmedLead": "Order number {reference}. We will call you on {phone} to confirm the details.",
-    "loyaltyLead": "Thank you! Your code for the next order:",
-    "loyaltyNote": "It is worth 10% off.",
     "mockTitle": "The email was not sent.",
-    "mockBody": "RESEND_API_KEY is not configured, so the order did not reach the shop. Please call us to confirm it."
-  },
-  "occasions": {
-    "rodjendan": "Birthday",
-    "godisnjica": "Anniversary",
-    "izvinjenje": "An apology",
-    "rodiliste": "New baby",
-    "sahrana": "Funeral",
-    "bez-povoda": "No occasion"
+    "mockBody": "RESEND_API_KEY is not configured, so the order did not reach the shop. Please call us to confirm it.",
+    "distanceKm": "(~{km} km)",
+    "distanceNote": "The delivery price follows the distance — your address is about {km} km from the shop. It is free over {amount}.",
+    "distanceUnknown": "The delivery price is calculated from the distance to the shop. Enter an address to see the exact amount. It is free over {amount}.",
+    "distanceApprox": "This is an estimate until we confirm the address."
   },
   "receipt": {
     "print": "Print the order",
@@ -311,8 +287,6 @@
     "item": "Item",
     "qty": "Qty",
     "amount": "Amount",
-    "occasion": "Occasion:",
-    "card": "Card:",
     "legal": "This is not a fiscal receipt. Opening hours: {weekdayHours} on weekdays, {saturdayHours} on Saturdays, closed on Sundays."
   },
   "notfound": {
@@ -334,10 +308,7 @@
     "location": "We couldn't read your location.",
     "offline": "The delivery service isn't available at this address. It works on the published site. You can also place the order by phone.",
     "network": "Something went wrong talking to the server. Please try again.",
-    "voucherEmpty": "Please enter a code.",
     "cartEmpty": "Your cart is empty.",
-    "voucherUnknown": "We don't recognise that code. Please check it is typed correctly.",
-    "voucherMinimum": "The code applies to orders over {min} RSD.",
     "orderFields": "A name and a phone number are required.",
     "mailFailed": "The order wasn't sent by email. Please call us to confirm it.",
     "orderFailed": "Something went wrong sending the order.",

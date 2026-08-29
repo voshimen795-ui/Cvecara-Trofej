@@ -16,12 +16,67 @@ Dnevnik odluka po celinama. Svaka stavka: **šta je urađeno**, **zašto tako**,
 | **Tekst za „Porodično"** | `src/components/FamilySection.jsx` → `PARAGRAPHS` | Tri pasusa su placeholder. Zamenite ih i ništa drugo se ne dira. |
 | **Instagram handle** | `src/data/shop.js` → `instagram` | `@cvecara_trofej` je pretpostavka. |
 | **Nemački jezik** | `src/i18n/locales/` | Beleška nije bila jasna. Radimo SR/EN/RU; DE je jedan JSON fajl kad potvrdite. |
+| **Cene zona za dostavu** | `src/data/shop.js` → `DELIVERY_TIERS` | 350 / 500 / 700 / 900 / 1.200 RSD po zonama do 3, 6, 10, 15 i preko 15 km. Brojevi su moja pretpostavka — recite prave. |
+| **Novi logo** | `src/assets/` | Dunja ga je poslala na WhatsApp; nemam pristup. Pošaljite fajl ovde. |
 | **`ORDER_EMAIL_TO` na Vercel-u** | Vercel env | Mejl je u kodu ispravljen na `cvecara.trofej@gmail.com`, ali env varijabla ima prednost. Dok je ne promenite, porudžbine idu na staru adresu. |
 | **Značenje „Odstupanja"** | `src/i18n/locales/*.json` → `product.mayDiffer` | Pretpostavio sam odstupanje od fotografije. Ako je reč o ceni ili veličini, menja se taj jedan ključ. |
 | **Wolt Drive tokeni** | Vercel env | Preskočeno po dogovoru. Kod stoji spreman. |
 | **Resend API ključ** | Vercel env `RESEND_API_KEY` | Bez njega porudžbina se **ne šalje** i checkout to jasno kaže. |
 | **Prevodi naziva buketa** | `src/i18n/locales/{en,ru}.json` → `products` | Preveo sam svih 36 naziva i opisa. Ako neki naziv treba da ostane na srpskom, obrišite taj unos i sajt automatski vraća original. |
 | **Prevodi recenzija** | `src/i18n/locales/{en,ru}.json` → `reviews.items` | Reči mušterija su prevedene, uz vidljivu napomenu „Prevedeno sa srpskog". Ako radije ne prevodimo tuđe reči, javite — vraćam ih na srpski u svim jezicima. |
+
+---
+
+## Celina 13 — Izmene po vašoj listi
+
+**Urađeno redom po tačkama:**
+
+1. **Instagram** vodi na `instagram.com/cvecaratrofej/`, handle `@cvecaratrofej`.
+2. **Veličine buketa** su samo Mali / Srednji / Veliki + cena. Broj stabljika
+   izbačen svuda (i iz sva tri jezika).
+3. **Izbačeno:** cela sekcija „Personalizovan buket" (povod, čestitka, posebne
+   želje), vaučer i lojalti program, **Baloni** sa početne strane, i stub
+   „Sveže sa pijace". Uz to je otišlo i sve što je iza njih stajalo:
+   `PersonalisationFields.jsx`, `api/vouchers/validate.js`, lojalti kod u
+   `api/wolt/delivery.js`, `VOUCHER_*` iz `.env.example` i ~20 prevodnih
+   ključeva po jeziku. Mrtav kod ne ostaje da zbunjuje sledeću izmenu.
+   - Početna sad ima 4 pločice umesto 5, a „O nama" 2 stuba umesto 3 —
+     mreže su prepravljene da ne ostane rupa.
+4. **Tekst „Porodično"** — novi prvi pasus, i „radimo u komšiluku" zamenjeno
+   sa „radimo u kraju gde se oduševljene komšije rado vraćaju po naše
+   proizvode". Prevedeno i na EN i RU.
+5. **Napomena** je podignuta odmah **ispod opisa buketa**, uokvirena i sa
+   **boldovanim „Napomena:"** — i na stranici proizvoda i u brzom pregledu.
+   Ranije je stajala sitno pri dnu, gde se nije čitala.
+
+### Dostava po udaljenosti
+
+Novo: `api/geo/distance.js` računa koliko je kupac daleko i checkout po tome
+naplaćuje zonu umesto jedne fiksne cene. Cena se osvežava kad se adresa unese
+(sa pauzom od 1,2 s, jer Nominatim dozvoljava jedan upit u sekundi) ili odmah
+kad kupac da lokaciju.
+
+**Vazdušna linija, ne kilometraža puta.** Ruter bi tražio plaćen API, a kod
+zona od 3/6/10/15 km razlika skoro nikad ne menja zonu. Odgovor to i kaže
+(`method: "straight-line"`), da se ne pomeša sa stvarnom rutom.
+
+**Koordinate radnje se geokodiraju, ne kucaju.** Da sam ih upisao napamet i
+pogrešio, svaka porudžbina bi bila pogrešno naplaćena. Ako Nominatim ne odgovori,
+pada na približne koordinate i tada checkout **jasno piše da je iznos procena**.
+
+> ⚠️ **Cene zona su moja pretpostavka — potvrdite ih.**
+> `src/data/shop.js` → `DELIVERY_TIERS`: do 3 km 350, do 6 km 500, do 10 km 700,
+> do 15 km 900, preko toga 1.200 RSD. Menjate samo brojeve, ništa drugo se ne
+> dira. Besplatna dostava iznad 4.000 RSD i dalje važi i ima prednost nad zonom.
+
+**Provereno:** zone na granicama (3,0 → 350; 3,1 → 500; 15,2 → 1.200),
+udaljenost na poznatim tačkama (Zvezdara → centar 4 km, → Novi Beograd 8,1 km),
+i ceo checkout u pregledaču: 350 RSD pre adrese → **500 RSD i „(~4 km)"** posle.
+
+### Nije urađeno
+
+- **Logo** — Dunja ga je poslala na WhatsApp, do kojeg odavde nemam pristup.
+  Pošaljite fajl ovde i menjam ga.
 
 ---
 

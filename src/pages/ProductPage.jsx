@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
-import { Check, ChevronRight, Info, Minus, Plus, Truck } from 'lucide-react';
+import { Check, ChevronRight, Minus, Plus, Truck } from 'lucide-react';
 import ProductImage from '../components/ui/ProductImage.jsx';
 import ProductGrid from '../components/ProductGrid.jsx';
 import ReviewsSlider from '../components/ReviewsSlider.jsx';
@@ -122,6 +122,13 @@ export default function ProductPage() {
               {tp(product, 'description')}
             </p>
 
+            {/* Right under the description and in bold, by request: it is the
+                one thing a customer must read before choosing a size. */}
+            <p className="mt-4 rounded-xl border border-brand-border bg-brand-mist/60 px-4 py-3 text-sm leading-relaxed text-brand-dark">
+              <span className="font-bold">{t('product.noteLabel')}</span>{' '}
+              {t('product.mayDiffer')}
+            </p>
+
             {product.sizes && (
               <fieldset className="mt-8">
                 <legend className="mb-2.5 text-sm font-medium text-brand-dark">
@@ -144,9 +151,6 @@ export default function ProductPage() {
                       >
                         <span className="block text-sm font-semibold text-brand-dark">
                           {t(`sizes.${size.id}`)}
-                        </span>
-                        <span className="mt-0.5 block text-xs text-brand-muted">
-                          {t(`sizes.note.${size.id}`)}
                         </span>
                         <span className="mt-1 block text-sm font-bold text-brand-dark">
                           {formatPrice(size.price)}
@@ -234,15 +238,6 @@ export default function ProductPage() {
                   aria-hidden="true"
                 />
                 {t('product.freshNote')}
-              </li>
-              {/* Info rather than Check: this one is a caveat, not a promise,
-                  and the icon should not read as another selling point. */}
-              <li className="flex items-start gap-2.5">
-                <Info
-                  className="mt-0.5 h-4 w-4 shrink-0 text-brand-muted"
-                  aria-hidden="true"
-                />
-                {t('product.mayDiffer')}
               </li>
             </ul>
           </div>

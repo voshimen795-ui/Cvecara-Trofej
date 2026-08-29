@@ -9,7 +9,7 @@ import { useI18n } from '../i18n/index.jsx';
  * and it keeps the bundle from growing by ~300 KB. Print rules in index.css
  * hide the rest of the page.
  */
-export default function OrderReceipt({ reference, customer, schedule, personalisation, items, totals }) {
+export default function OrderReceipt({ reference, customer, schedule, items, totals }) {
   const { t, tp } = useI18n();
 
   return (
@@ -99,12 +99,6 @@ export default function OrderReceipt({ reference, customer, schedule, personalis
             <dt className="text-brand-muted">{t('common.subtotal')}</dt>
             <dd className="tabular-nums text-brand-dark">{formatPrice(totals.subtotal)}</dd>
           </div>
-          {totals.discount > 0 && (
-            <div className="flex justify-between">
-              <dt className="text-brand-muted">{t('common.discount')}</dt>
-              <dd className="tabular-nums text-brand-dark">−{formatPrice(totals.discount)}</dd>
-            </div>
-          )}
           <div className="flex justify-between">
             <dt className="text-brand-muted">{t('common.delivery')}</dt>
             <dd className="tabular-nums text-brand-dark">
@@ -116,23 +110,6 @@ export default function OrderReceipt({ reference, customer, schedule, personalis
             <dd className="tabular-nums text-brand-dark">{formatPrice(totals.total)}</dd>
           </div>
         </dl>
-
-        {(personalisation?.occasion || personalisation?.cardMessage) && (
-          <div className="mt-5 border-t border-brand-border pt-4 text-sm">
-            {personalisation.occasion && (
-              <p className="text-brand-dark">
-                <span className="text-brand-muted">{t('receipt.occasion')} </span>
-                {t(`occasions.${personalisation.occasion}`)}
-              </p>
-            )}
-            {personalisation.cardMessage && (
-              <p className="mt-1 text-brand-dark">
-                <span className="text-brand-muted">{t('receipt.card')} </span>„
-                {personalisation.cardMessage}"
-              </p>
-            )}
-          </div>
-        )}
 
         <p className="mt-5 border-t border-brand-border pt-4 text-xs leading-relaxed text-brand-muted">
           {t('receipt.legal', {
