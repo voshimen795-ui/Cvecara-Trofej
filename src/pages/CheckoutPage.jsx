@@ -1,32 +1,30 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { AlertTriangle, Check, ChevronRight, Loader2, MapPin, Truck } from 'lucide-react';
 import ProductImage from '../components/ui/ProductImage.jsx';
-import { SHOP, deliveryFeeForKm } from '../data/shop.js';
+import { DELIVERY_ZONES, SHOP, deliveryZone } from '../data/shop.js';
 import { formatPrice } from '../utils/format.js';
 import { useCart } from '../context/CartContext.jsx';
 import OrderReceipt from '../components/OrderReceipt.jsx';
-import { fetchDistance, reverseGeocode, sendOrder } from '../services/wolt.js';
+import { reverseGeocode, sendOrder } from '../services/wolt.js';
 import ScheduleFields from '../components/checkout/ScheduleFields.jsx';
 import { useGeolocation } from '../hooks/useGeolocation.js';
 import { useI18n } from '../i18n/index.jsx';
 
-const EMPTY_FORM = { name: '', phone: '', street: '', city: SHOP.city, comment: '' };
+const EMPTY_FORM = { name: '', phone: '', zone: '', street: '', city: SHOP.city, comment: '' };
 const EMPTY_SCHEDULE = { mode: 'dostava', date: '', time: '' };
 
 export default function CheckoutPage() {
-  const { items, subtotal, delivery, clearCart } = useCart();
+  const { items, subtotal, clearCart } = useCart();
   const { t, tp } = useI18n();
 
   const [form, setForm] = useState(EMPTY_FORM);
   const [confirmed, setConfirmed] = useState(null);
   const [schedule, setSchedule] = useState(EMPTY_SCHEDULE);
-  const [busy, setBusy] = useState(null); // 'order' | 'locate' | 'distance'
+  const [busy, setBusy] = useState(null); // 'order' | 'locate'
   const [error, setError] = useState(null);
   const geo = useGeolocation();
   const [lookupFailed, setLookupFailed] = useState(false);
-  // { km, approximate } once we know how far away the customer is.
-  const [distance, setDistance] = useState(null);
 
   /**
    * Errors travel as a code plus the server's Serbian text. Translate the
@@ -36,33 +34,12 @@ export default function CheckoutPage() {
   const errorText = (err) =>
     err?.code ? t(`errors.${err.code}`, err.vars) : err?.message ?? '';
 
-  /**
-   * Measure the distance from the shop and re-price the delivery.
-   * Called from the location button and, debounced, when the address settles —
-   * every call is a Nominatim lookup, and their policy is 1 request/second.
-   */
-  const measure = useCallback(async (where) => {
-    setBusy('distance');
-    try {
-      setDistance(await fetchDistance(where));
-    } catch {
-      // A failed lookup must not block the order: fall back to the base fee
-      // and say the price is provisional rather than showing nothing.
-      setDistance(null);
-    } finally {
-      setBusy(null);
-    }
-  }, []);
-
-  // Re-price when the typed address settles. Debounced hard: every call is a
-  // Nominatim lookup and their policy allows one request per second.
-  useEffect(() => {
-    if (schedule.mode === 'preuzimanje' || !form.street.trim()) return undefined;
-    const id = setTimeout(() => measure({ street: form.street, city: form.city }), 1200);
-    return () => clearTimeout(id);
-  }, [form.street, form.city, schedule.mode, measure]);
-
   const pickup = schedule.mode === 'preuzimanje';
+  // Delivery is priced by part of town, from the owner's price list. Until an
+  // area is picked there is no fee to show, and the order can't be sent.
+  const zone = pickup ? null : deliveryZone(form.zone);
+  const deliveryFee = zone?.rsd ?? 0;
+  const total = subtotal + deliveryFee;
   const scheduled = Boolean(schedule.date && schedule.time);
 
   const set = (field) => (event) => {
@@ -82,15 +59,12 @@ export default function CheckoutPage() {
       if (!place.street) throw new Error('no street');
       setForm((f) => ({ ...f, street: place.street, city: place.city || f.city }));
     } catch {
-      // Address lookup is only a convenience — the coordinates alone already
-      // price the delivery. Say so plainly instead of leaving the field
-      // mysteriously empty.
+      // Address lookup is only a convenience. Say so plainly instead of
+      // leaving the field mysteriously empty.
       setLookupFailed(true);
     } finally {
       setBusy(null);
     }
-    // Coordinates beat a typed address, so measure straight from them.
-    measure(coords);
   };
 
   const placeOrder = async (event) => {
@@ -102,16 +76,15 @@ export default function CheckoutPage() {
         customer: {
           name: form.name,
           phone: form.phone,
+          zone: zone?.name ?? '',
           street: form.street,
           city: form.city,
           comment: form.comment,
         },
         schedule,
-        distanceKm: distance?.km ?? null,
         items: items.map((i) => ({
           id: i.id,
           name: i.name,
-          size: i.sizeLabel,
           price: i.price,
           quantity: i.quantity,
         })),
@@ -177,12 +150,6 @@ export default function CheckoutPage() {
       </div>
     );
   }
-
-  // `delivery` from the cart is the near-zone fee; once we know the distance we
-  // price the actual zone. Free-above-threshold still wins over both.
-  const zoneFee = distance ? deliveryFeeForKm(distance.km) : SHOP.deliveryFee;
-  const deliveryFee = pickup || delivery === 0 ? 0 : zoneFee;
-  const total = subtotal + deliveryFee;
 
   return (
     <div className="container-editorial py-10 lg:py-14">
@@ -252,6 +219,27 @@ export default function CheckoutPage() {
                     {t('checkout.locationNoStreet')}
                   </p>
                 )}
+
+                <label className="block">
+                  <span className="mb-1.5 block text-sm font-medium text-brand-dark">
+                    {t('checkout.zone')}
+                  </span>
+                  <select
+                    value={form.zone}
+                    onChange={set('zone')}
+                    required
+                    className="w-full rounded-xl border border-brand-border bg-white px-4 py-3 text-brand-dark transition focus:border-brand-primary-dark"
+                  >
+                    <option value="" disabled>
+                      {t('checkout.zonePlaceholder')}
+                    </option>
+                    {DELIVERY_ZONES.map((z) => (
+                      <option key={z.id} value={z.id}>
+                        {z.name} — {formatPrice(z.rsd)}
+                      </option>
+                    ))}
+                  </select>
+                </label>
 
                 <Field
                   label={t('checkout.address')}
@@ -346,7 +334,6 @@ export default function CheckoutPage() {
                   <div className="min-w-0 flex-1">
                     <p className="truncate font-serif text-sm text-brand-dark">{tp(item)}</p>
                     <p className="text-xs text-brand-muted">
-                      {item.sizeId ? `${t(`sizes.${item.sizeId}`)} · ` : ''}
                       {item.quantity} × {formatPrice(item.price)}
                     </p>
                   </div>
@@ -365,20 +352,10 @@ export default function CheckoutPage() {
               <div className="flex justify-between text-gray-600">
                 <dt>
                   {pickup ? t('checkout.pickupMode') : t('common.delivery')}
-                  {!pickup && distance && (
-                    <span className="ml-1 text-xs text-brand-muted">
-                      {t('checkout.distanceKm', { km: distance.km })}
-                    </span>
-                  )}
+                  {zone && <span className="ml-1 text-xs text-brand-muted">({zone.name})</span>}
                 </dt>
                 <dd className="font-medium text-brand-dark">
-                  {busy === 'distance' ? (
-                    <Loader2 className="h-4 w-4 animate-spin" aria-hidden="true" />
-                  ) : deliveryFee === 0 ? (
-                    t('common.free')
-                  ) : (
-                    formatPrice(deliveryFee)
-                  )}
+                  {pickup ? t('common.free') : zone ? formatPrice(deliveryFee) : '—'}
                 </dd>
               </div>
               <div className="flex justify-between border-t border-brand-border pt-3 text-base">
@@ -392,17 +369,7 @@ export default function CheckoutPage() {
             {!pickup && (
               <p className="mt-4 flex items-start gap-2 rounded-xl bg-brand-primary/10 px-3 py-2.5 text-xs leading-relaxed text-brand-primary-dark">
                 <Truck className="mt-0.5 h-3.5 w-3.5 shrink-0" aria-hidden="true" />
-                <span>
-                  {distance
-                    ? t('checkout.distanceNote', {
-                        km: distance.km,
-                        amount: formatPrice(SHOP.freeDeliveryThreshold),
-                      })
-                    : t('checkout.distanceUnknown', {
-                        amount: formatPrice(SHOP.freeDeliveryThreshold),
-                      })}
-                  {distance?.approximate ? ` ${t('checkout.distanceApprox')}` : ''}
-                </span>
+                <span>{zone ? t('checkout.zoneNote') : t('checkout.zoneUnknown')}</span>
               </p>
             )}
 

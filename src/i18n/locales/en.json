@@ -10,12 +10,10 @@
   },
   "common": {
     "addToCart": "Add to cart",
-    "chooseSize": "Choose a size",
     "added": "Added",
     "unavailable": "Unavailable",
     "inStock": "In stock",
     "outOfStock": "Out of stock",
-    "from": "from",
     "each": "each",
     "total": "Total",
     "subtotal": "Subtotal",
@@ -37,10 +35,6 @@
     "cartCount": {
       "one": "Cart, {n} item",
       "other": "Cart, {n} items"
-    },
-    "sizeCount": {
-      "one": "{n} size",
-      "other": "{n} sizes"
     },
     "itemCount": {
       "one": "{n} item",
@@ -117,12 +111,6 @@
     "empty": "There are no items in this category right now",
     "emptyLead": "Call us — we also make bouquets to order."
   },
-  "sizes": {
-    "label": "Bouquet size",
-    "mali": "Small",
-    "srednji": "Medium",
-    "veliki": "Large"
-  },
   "badges": {
     "bestseler": "Bestseller",
     "novo": "New",
@@ -134,7 +122,7 @@
     "addNamed": "Add {name} to the cart",
     "unavailableNamed": "{name} is currently unavailable",
     "deliveryNote": "Orders placed by 2 pm are delivered the same day.",
-    "freeAbove": "Free delivery over {amount}.",
+    "deliveryByZone": "The delivery price depends on the part of town — from {amount}.",
     "freshNote": "The bouquet is made on the day of delivery, from fresh flowers.",
     "mayDiffer": "Flowers are seasonal — the finished bouquet may differ a little from the photograph in shade and in the exact blooms, at the same size and the same effect.",
     "noteLabel": "Please note:",
@@ -231,8 +219,7 @@
     "remove": "Remove {name} from the cart",
     "decreaseNamed": "Decrease the quantity of {name}",
     "increaseNamed": "Increase the quantity of {name}",
-    "freeDelivery": "Free delivery across Belgrade. Orders placed by 2 pm are delivered the same day.",
-    "addForFree": "Add {amount} more for free delivery. Same-day delivery for orders placed by 2 pm."
+    "deliveryByZone": "The delivery price depends on the part of town (from {amount}) and is added at checkout. Orders placed by 2 pm are delivered the same day."
   },
   "checkout": {
     "title": "Checkout",
@@ -240,14 +227,16 @@
     "name": "Full name",
     "phone": "Phone",
     "phonePlaceholder": "06x xxx xxxx",
+    "zone": "Part of town",
+    "zonePlaceholder": "Choose your part of town",
     "address": "Address",
     "addressPlaceholder": "Street and number",
     "city": "City",
     "note": "Note (optional)",
     "notePlaceholder": "Floor, intercom, where to leave it…",
     "useLocation": "Use my location",
-    "locationOk": "Location received — the delivery price will be more precise.",
-    "locationNoStreet": "We have your location and use it for a more precise price, but we couldn't work out the street — please type it in.",
+    "locationOk": "Location received and the address filled in.",
+    "locationNoStreet": "We have your location, but we couldn't work out the street — please type it in.",
     "pickupAt": "Pick up in store: {street}, {city}.",
     "schedule": "Scheduling",
     "date": "Date",
@@ -268,10 +257,8 @@
     "confirmedLead": "Order number {reference}. We will call you on {phone} to confirm the details.",
     "mockTitle": "The email was not sent.",
     "mockBody": "RESEND_API_KEY is not configured, so the order did not reach the shop. Please call us to confirm it.",
-    "distanceKm": "(~{km} km)",
-    "distanceNote": "The delivery price follows the distance — your address is about {km} km from the shop. It is free over {amount}.",
-    "distanceUnknown": "The delivery price is calculated from the distance to the shop. Enter an address to see the exact amount. It is free over {amount}.",
-    "distanceApprox": "This is an estimate until we confirm the address."
+    "zoneNote": "Delivery is charged from our price list for the part of town you chose.",
+    "zoneUnknown": "Choose your part of town to see the delivery price."
   },
   "receipt": {
     "print": "Print the order",
@@ -460,6 +447,14 @@
     "baloni-srce": {
       "name": "XXL Heart Balloon",
       "description": "A heart-shaped foil balloon, filled with helium."
+    },
+    "xxl-buket": {
+      "name": "XXL Bouquet",
+      "description": "A lavish bouquet of lilies, gladioli, roses and seasonal flowers, in kraft and two-tone paper."
+    },
+    "torta-od-pelena": {
+      "name": "Nappy Cake",
+      "description": "A three-tier cake made of nappies, with a teddy bear and ribbons — a gift for a new baby."
     }
   }
 }

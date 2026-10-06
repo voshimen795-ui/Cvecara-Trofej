@@ -1,5 +1,5 @@
 import { Printer } from 'lucide-react';
-import { HOURS_DISPLAY, SHOP } from '../data/shop.js';
+import { HOURS_DISPLAY, SHOP, deliveryZone } from '../data/shop.js';
 import { formatPrice } from '../utils/format.js';
 import { useI18n } from '../i18n/index.jsx';
 
@@ -81,9 +81,6 @@ export default function OrderReceipt({ reference, customer, schedule, items, tot
               <tr key={item.key} className="border-b border-brand-border/60">
                 <td className="py-2 text-brand-dark">
                   {tp(item)}
-                  {item.sizeId && (
-                    <span className="text-brand-muted"> ({t(`sizes.${item.sizeId}`)})</span>
-                  )}
                 </td>
                 <td className="py-2 text-center tabular-nums text-brand-dark">{item.quantity}</td>
                 <td className="py-2 text-right tabular-nums text-brand-dark">
@@ -100,7 +97,12 @@ export default function OrderReceipt({ reference, customer, schedule, items, tot
             <dd className="tabular-nums text-brand-dark">{formatPrice(totals.subtotal)}</dd>
           </div>
           <div className="flex justify-between">
-            <dt className="text-brand-muted">{t('common.delivery')}</dt>
+            <dt className="text-brand-muted">
+              {t('common.delivery')}
+              {schedule?.mode === 'dostava' && customer.zone
+                ? ` (${deliveryZone(customer.zone)?.name ?? ''})`
+                : ''}
+            </dt>
             <dd className="tabular-nums text-brand-dark">
               {totals.delivery ? formatPrice(totals.delivery) : t('common.free')}
             </dd>

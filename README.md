@@ -62,20 +62,17 @@ run both together.
 
 ## Catalogue
 
-- **Sizes.** Bouquets and arrangements carry `sizes` (mali / srednji / veliki), generated
-  by `sizesFrom(base)` in `src/data/products.js` and rounded to 50 RSD. Override any one
-  by editing its `price`. Cards quick-add the medium; the product page has the selector.
-  A cart line is keyed by product **and** size, so one bouquet in two sizes is two lines.
+- **One price per product.** Each product has a single `price` in `src/data/products.js`,
+  taken from the owner's price list. There are no bouquet sizes; a cart line is keyed by
+  product id.
 - **Availability.** Set `available: false` on a product to grey out its card, swap the
   badge for "Trenutno nije dostupno" and disable add-to-cart on both card and product page.
 
 ## Quick view
 
-Tapping a card opens `ProductQuickView` — image, description, size, quantity,
-add to cart. It exists because sizes used to live only on the product page, so
-the grid silently added a medium. Cards for products with sizes now say
-"Izaberi veličinu" and route through the modal; sizeless products still
-quick-add. One modal for the whole app, mounted in `QuickViewProvider`.
+Tapping a card opens `ProductQuickView` — image, description, quantity, add
+to cart. The card's own button quick-adds one. One modal for the whole app,
+mounted in `QuickViewProvider`.
 
 ## Social proof
 
@@ -272,13 +269,13 @@ api/                            # Vercel serverless functions
 ## Cart
 
 `CartContext` holds line items in a reducer and persists them to `localStorage`. Adding an
-item opens the drawer; decrementing to zero removes the line. Delivery is free above
-`SHOP.freeDeliveryThreshold` (4.000 RSD), otherwise `SHOP.deliveryFee` (350 RSD) — both in
-`src/data/shop.js`.
+item opens the drawer; decrementing to zero removes the line. The drawer shows the
+subtotal only.
 
-The drawer's own delivery estimate (free above `SHOP.freeDeliveryThreshold`) is a
-shop-side rule for the cart summary. The binding price comes from Wolt at
-checkout — see **Wolt Drive** above.
+Delivery is priced by part of Belgrade, from the owner's price list: `DELIVERY_ZONES` in
+`src/data/shop.js` (600–2.700 RSD). The customer picks their area at checkout, its price
+is added to the total, and the area goes into the order email and the receipt. There is
+no free-delivery threshold.
 
 ## Content
 

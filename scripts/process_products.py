@@ -97,6 +97,8 @@ MANIFEST: list[Item] = [
     Item("bae9b2c9-10073.jpg", "cvetna-torba", "aranzmani", trim_top=0.10),
     Item("8386acac-10082.jpg", "cvetna-kesa", "aranzmani"),
     Item("527286cb-10091.jpg", "korpa-sunca", "aranzmani"),
+    Item("d05ff2fe-xxl-buket.jpg", "xxl-buket", "buketi"),
+    Item("aa804d03-torta-od-pelena.jpg", "torta-od-pelena", "pokloni"),
     # Ove dve su zadržane radi kompletnosti, ali nisu upotrebljive kao
     # product kartice — vidi --review i README napomenu.
     Item("a53f013c-10386.png", "prolecna-simfonija-screenshot", "skip",

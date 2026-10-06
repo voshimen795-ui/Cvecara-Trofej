@@ -27,9 +27,7 @@ function buildHtml({ reference, customer, items, schedule, personalisation, tota
   const rows = items
     .map(
       (i) => `<tr>
-        <td style="padding:8px 0;border-bottom:1px solid #E5E7EB">${esc(i.name)}${
-          i.size ? ` <span style="color:#6B7280">(${esc(i.size)})</span>` : ''
-        }</td>
+        <td style="padding:8px 0;border-bottom:1px solid #E5E7EB">${esc(i.name)}</td>
         <td style="padding:8px 0;border-bottom:1px solid #E5E7EB;text-align:center">${Number(i.quantity)}</td>
         <td style="padding:8px 0;border-bottom:1px solid #E5E7EB;text-align:right">${rsd(i.price * i.quantity)}</td>
       </tr>`
@@ -46,6 +44,7 @@ function buildHtml({ reference, customer, items, schedule, personalisation, tota
     <h3 style="margin:20px 0 6px">Kupac</h3>
     ${line('Ime', customer.name)}
     ${line('Telefon', customer.phone)}
+    ${line('Deo grada', customer.zone)}
     ${line('Adresa', customer.street && `${customer.street}, ${customer.city}`)}
 
     <h3 style="margin:20px 0 6px">Termin</h3>
@@ -58,7 +57,7 @@ function buildHtml({ reference, customer, items, schedule, personalisation, tota
 
     <p style="margin:14px 0 2px"><strong>Međuzbir:</strong> ${rsd(totals.subtotal)}</p>
     ${totals.discount ? `<p style="margin:2px 0"><strong>Popust:</strong> −${rsd(totals.discount)}</p>` : ''}
-    <p style="margin:2px 0"><strong>Dostava:</strong> ${totals.delivery ? rsd(totals.delivery) : 'Besplatno'}</p>
+    <p style="margin:2px 0"><strong>Dostava${customer.zone ? ` (${esc(customer.zone)})` : ''}:</strong> ${totals.delivery ? rsd(totals.delivery) : 'Preuzimanje u radnji'}</p>
     <p style="margin:2px 0;font-size:16px"><strong>Ukupno: ${rsd(totals.total)}</strong></p>
 
     ${
