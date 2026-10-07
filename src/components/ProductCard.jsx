@@ -9,7 +9,7 @@ import { useI18n } from '../i18n/index.jsx';
 
 export default function ProductCard({ product, onOpen }) {
   const { addItem } = useCart();
-  const { t, tn, tp } = useI18n();
+  const { t, tp } = useI18n();
   const name = tp(product);
   const available = isAvailable(product);
   const [justAdded, setJustAdded] = useState(false);
@@ -21,9 +21,6 @@ export default function ProductCard({ product, onOpen }) {
   const handleAdd = (event) => {
     event.stopPropagation();
     if (!available) return;
-    // Anything with sizes goes through the quick view, so the customer picks
-    // one instead of the grid silently choosing a medium for them.
-    if (product.sizes) return onOpen?.(product);
     addItem(product);
     setJustAdded(true);
     clearTimeout(timeoutRef.current);
@@ -90,15 +87,8 @@ export default function ProductCard({ product, onOpen }) {
 
         {/* mt-auto keeps prices and buttons aligned across uneven descriptions. */}
         <p className="mt-auto pt-2 text-lg font-bold text-brand-dark">
-          {product.sizes
-            ? `${t('common.from')} ${formatPrice(product.sizes[0].price)}`
-            : formatPrice(product.price)}
+          {formatPrice(product.price)}
         </p>
-        {product.sizes && (
-          <p className="mt-0.5 text-xs text-brand-muted">
-            {tn('common.sizeCount', product.sizes.length)}
-          </p>
-        )}
 
         <button
           type="button"
@@ -119,8 +109,6 @@ export default function ProductCard({ product, onOpen }) {
         >
           {!available ? (
             t('common.unavailable')
-          ) : product.sizes ? (
-            t('common.chooseSize')
           ) : justAdded ? (
             <>
               <Check className="h-4 w-4" aria-hidden="true" />

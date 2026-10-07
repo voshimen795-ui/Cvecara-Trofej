@@ -1,25 +1,16 @@
 import { createContext, useContext, useEffect, useMemo, useReducer, useState } from 'react';
-import { SHOP } from '../data/shop.js';
-import { defaultSize, priceFor } from '../data/products.js';
-
-// Bumped when the stored shape changes — v1 carts had no size, so their lines
-// have no key and would break the reducer.
-const STORAGE_KEY = 'cvecara-trofej:cart:v2';
+// Bumped when the stored shape changes. v3 dropped bouquet sizes and changed
+// every price, so older lines would carry a stale price into checkout.
+const STORAGE_KEY = 'cvecara-trofej:cart:v3';
 const MAX_QTY = 99;
 
 const CartContext = createContext(null);
 
-/** Same bouquet in two sizes is two lines, so the key carries the size. */
-const lineKey = (id, sizeId) => `${id}::${sizeId ?? 'std'}`;
-
 function reducer(items, action) {
   switch (action.type) {
     case 'add': {
-      const { product, quantity = 1, sizeId } = action;
-      const size = sizeId
-        ? product.sizes?.find((s) => s.id === sizeId)
-        : defaultSize(product);
-      const key = lineKey(product.id, size?.id);
+      const { product, quantity = 1 } = action;
+      const key = product.id;
 
       const existing = items.find((item) => item.key === key);
       if (existing) {
@@ -36,11 +27,9 @@ function reducer(items, action) {
           key,
           id: product.id,
           name: product.name,
-          price: priceFor(product, size?.id),
+          price: product.price,
           image: product.image,
           category: product.category,
-          sizeId: size?.id ?? null,
-          sizeLabel: size?.label ?? null,
           quantity: Math.min(quantity, MAX_QTY),
         },
       ];
@@ -97,23 +86,16 @@ export function CartProvider({ children }) {
   const value = useMemo(() => {
     const totalItems = items.reduce((sum, item) => sum + item.quantity, 0);
     const subtotal = items.reduce((sum, item) => sum + item.price * item.quantity, 0);
-    const qualifiesForFreeDelivery = subtotal >= SHOP.freeDeliveryThreshold;
-    const delivery = items.length === 0 || qualifiesForFreeDelivery ? 0 : SHOP.deliveryFee;
-
     return {
       items,
       isOpen,
       totalItems,
       subtotal,
-      delivery,
-      total: subtotal + delivery,
-      qualifiesForFreeDelivery,
-      amountToFreeDelivery: Math.max(SHOP.freeDeliveryThreshold - subtotal, 0),
       openCart: () => setIsOpen(true),
       closeCart: () => setIsOpen(false),
       toggleCart: () => setIsOpen((open) => !open),
-      addItem: (product, quantity, sizeId) => {
-        dispatch({ type: 'add', product, quantity, sizeId });
+      addItem: (product, quantity) => {
+        dispatch({ type: 'add', product, quantity });
         setIsOpen(true);
       },
       increment: (key, current) => dispatch({ type: 'setQuantity', key, quantity: current + 1 }),

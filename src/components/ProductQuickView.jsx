@@ -3,7 +3,7 @@ import { AnimatePresence, motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
 import { ArrowRight, Check, Minus, Plus, Truck, X } from 'lucide-react';
 import ProductImage from './ui/ProductImage.jsx';
-import { defaultSize, isAvailable, priceFor } from '../data/products.js';
+import { isAvailable } from '../data/products.js';
 import { formatPrice } from '../utils/format.js';
 import { useCart } from '../context/CartContext.jsx';
 import { useBodyScrollLock } from '../hooks/useBodyScrollLock.js';
@@ -11,14 +11,12 @@ import { useEscapeKey } from '../hooks/useEscapeKey.js';
 import { useI18n } from '../i18n/index.jsx';
 
 /**
- * Quick view: tap a card and the product opens here, with the size choice in
- * front of you. Sizes used to be reachable only from the product page, which
- * meant the grid silently added a medium.
+ * Quick view: tap a card and the product opens here — photo, description,
+ * the note about seasonal flowers, and quantity — without leaving the grid.
  */
 export default function ProductQuickView({ product, onClose }) {
   const { addItem } = useCart();
   const { t, tp } = useI18n();
-  const [sizeId, setSizeId] = useState(null);
   const [quantity, setQuantity] = useState(1);
   const [added, setAdded] = useState(false);
   const closeRef = useRef(null);
@@ -27,20 +25,19 @@ export default function ProductQuickView({ product, onClose }) {
   useBodyScrollLock(open);
   useEscapeKey(open, onClose);
 
-  // Reset per product, so reopening never carries the last one's size over.
+  // Reset per product, so reopening never carries the last one's quantity over.
   useEffect(() => {
     if (!product) return;
-    setSizeId(defaultSize(product)?.id ?? null);
     setQuantity(1);
     setAdded(false);
     closeRef.current?.focus();
   }, [product]);
 
   const available = product ? isAvailable(product) : false;
-  const price = product ? priceFor(product, sizeId) : 0;
+  const price = product?.price ?? 0;
 
   const handleAdd = () => {
-    addItem(product, quantity, sizeId);
+    addItem(product, quantity);
     setAdded(true);
     onClose();
   };
@@ -132,44 +129,11 @@ export default function ProductQuickView({ product, onClose }) {
                 </p>
 
                 {/* Same placement as the product page: below the description,
-                    bold, so it is read before a size is picked. */}
+                    bold, so it is read before adding to the cart. */}
                 <p className="mt-3 rounded-xl border border-brand-border bg-brand-mist/60 px-3 py-2.5 text-xs leading-relaxed text-brand-dark">
                   <span className="font-bold">{t('product.noteLabel')}</span>{' '}
                   {t('product.mayDiffer')}
                 </p>
-
-                {product.sizes && (
-                  <fieldset className="mt-6">
-                    <legend className="mb-2.5 text-sm font-medium text-brand-dark">
-                      {t('sizes.label')}
-                    </legend>
-                    <div className="grid grid-cols-3 gap-2">
-                      {product.sizes.map((size) => {
-                        const active = size.id === sizeId;
-                        return (
-                          <button
-                            key={size.id}
-                            type="button"
-                            onClick={() => setSizeId(size.id)}
-                            aria-pressed={active}
-                            className={`rounded-xl border px-2 py-3 text-center transition ${
-                              active
-                                ? 'border-brand-primary-dark bg-brand-mist ring-1 ring-brand-primary-dark'
-                                : 'border-brand-border hover:border-brand-primary'
-                            }`}
-                          >
-                            <span className="block text-sm font-semibold text-brand-dark">
-                              {t(`sizes.${size.id}`)}
-                            </span>
-                            <span className="mt-1 block text-sm font-bold text-brand-dark">
-                              {formatPrice(size.price)}
-                            </span>
-                          </button>
-                        );
-                      })}
-                    </div>
-                  </fieldset>
-                )}
 
                 <div className="mt-6 flex items-baseline justify-between">
                   <span className="text-sm text-brand-muted">{t('common.total')}</span>
