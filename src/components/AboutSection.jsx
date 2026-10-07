@@ -1,9 +1,8 @@
-import { Clock, Flower2, HeartHandshake } from 'lucide-react';
+import { Clock, HeartHandshake } from 'lucide-react';
 import { SHOP } from '../data/shop.js';
 import { useI18n } from '../i18n/index.jsx';
 
 const PILLARS = [
-  { icon: Flower2, key: 'pillar1' },
   { icon: HeartHandshake, key: 'pillar2' },
   { icon: Clock, key: 'pillar3' },
 ];
@@ -26,7 +25,7 @@ export default function AboutSection() {
           </div>
 
           <div className="lg:col-span-7">
-            <ul className="grid grid-cols-1 gap-6 sm:grid-cols-3">
+            <ul className="grid grid-cols-1 gap-6 sm:grid-cols-2">
               {PILLARS.map(({ icon: Icon, key }) => (
                 <li key={key} className="rounded-2xl border border-gray-100 bg-brand-bg p-6">
                   <span className="flex h-10 w-10 items-center justify-center rounded-full bg-brand-primary/10">

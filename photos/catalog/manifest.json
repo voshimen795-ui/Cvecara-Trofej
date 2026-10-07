@@ -22,5 +22,22 @@
     "alpha_matting": false,
     "model": "birefnet-general",
     "coverage": 0.3959
+  },
+  {
+    "slug": "xxl-buket",
+    "category": "buketi",
+    "source": "d05ff2fe-xxl-buket.jpg",
+    "alpha_matting": false,
+    "model": "birefnet-general",
+    "coverage": null,
+    "note": "ruka i rukav uklonjeni ručno posle rembg"
+  },
+  {
+    "slug": "torta-od-pelena",
+    "category": "pokloni",
+    "source": "aa804d03-torta-od-pelena.jpg",
+    "alpha_matting": false,
+    "model": "birefnet-general",
+    "coverage": 0.2905
   }
 ]

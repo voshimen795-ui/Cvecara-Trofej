@@ -1,7 +1,6 @@
 import { motion, useReducedMotion } from 'framer-motion';
 import { Link } from 'react-router-dom';
 import {
-  BalloonMark,
   BouquetMark,
   GiftMark,
   TeddyMark,
@@ -44,12 +43,6 @@ const TILES = [
     Mark: TeddyMark,
     gradient: 'bg-[linear-gradient(200deg,#39746D_0%,#2A574F_50%,#143430_100%)]',
   },
-  {
-    to: '/baloni',
-    i18n: 'tiles.baloni',
-    Mark: BalloonMark,
-    gradient: 'bg-[linear-gradient(145deg,#3E7D76_0%,#276059_50%,#0F2726_100%)]',
-  },
 ];
 
 export default function CategoryLinks() {
@@ -67,7 +60,7 @@ export default function CategoryLinks() {
       </div>
 
       {/* Grid on desktop, a snapping scroll rail on phones. */}
-      <ul className="no-scrollbar -mx-4 mt-12 flex snap-x gap-4 overflow-x-auto px-4 sm:mx-0 sm:grid sm:grid-cols-3 sm:overflow-visible sm:px-0 lg:grid-cols-5 lg:gap-6">
+      <ul className="no-scrollbar -mx-4 mt-12 flex snap-x gap-4 overflow-x-auto px-4 sm:mx-0 sm:grid sm:grid-cols-3 sm:overflow-visible sm:px-0 lg:grid-cols-4 lg:gap-6">
         {TILES.map(({ to, i18n, Mark, gradient }) => (
           <li key={to} className="w-40 shrink-0 snap-start sm:w-auto">
             <motion.div

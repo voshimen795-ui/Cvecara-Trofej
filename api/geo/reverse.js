@@ -9,7 +9,7 @@
  * most 1 request/second — fine for a checkout form, not for bulk lookups.
  */
 const ENDPOINT = 'https://nominatim.openstreetmap.org/reverse';
-const UA = process.env.GEOCODER_USER_AGENT || 'CvecaraTrofej/1.0 (cvecaratrofej@gmail.com)';
+const UA = process.env.GEOCODER_USER_AGENT || 'CvecaraTrofej/1.0 (cvecara.trofej@gmail.com)';
 
 export default async function handler(req, res) {
   if (req.method !== 'POST') {

@@ -10,12 +10,10 @@
   },
   "common": {
     "addToCart": "Dodaj u korpu",
-    "chooseSize": "Izaberi veličinu",
     "added": "Dodato",
     "unavailable": "Nije dostupno",
     "inStock": "Trenutno dostupno",
     "outOfStock": "Trenutno nije dostupno",
-    "from": "od",
     "each": "kom",
     "total": "Ukupno",
     "subtotal": "Međuzbir",
@@ -38,11 +36,6 @@
       "one": "Korpa, {n} artikal",
       "few": "Korpa, {n} artikla",
       "other": "Korpa, {n} artikala"
-    },
-    "sizeCount": {
-      "one": "{n} veličina",
-      "few": "{n} veličine",
-      "other": "{n} veličina"
     },
     "itemCount": {
       "one": "{n} artikal",
@@ -120,17 +113,6 @@
     "empty": "Trenutno nema artikala u ovoj kategoriji",
     "emptyLead": "Pozovite nas — pravimo i bukete po vašoj želji."
   },
-  "sizes": {
-    "label": "Veličina buketa",
-    "mali": "Mali",
-    "srednji": "Srednji",
-    "veliki": "Veliki",
-    "note": {
-      "mali": "Oko 15 stabljika",
-      "srednji": "Oko 25 stabljika",
-      "veliki": "Oko 40 stabljika"
-    }
-  },
   "badges": {
     "bestseler": "Bestseler",
     "novo": "Novo",
@@ -142,8 +124,10 @@
     "addNamed": "Dodaj {name} u korpu",
     "unavailableNamed": "{name} trenutno nije dostupan",
     "deliveryNote": "Porudžbine do 14h isporučujemo istog dana.",
-    "freeAbove": "Besplatna dostava iznad {amount}.",
+    "deliveryByZone": "Cena dostave zavisi od dela grada — od {amount}.",
     "freshNote": "Buket se pravi na dan isporuke, od svežeg cveća.",
+    "mayDiffer": "Cveće je sezonsko — gotov buket može malo da odstupa od fotografije po nijansi i vrsti cveta, uz istu veličinu i isti utisak.",
+    "noteLabel": "Napomena:",
     "madeOnDay": "Buket pravimo na dan isporuke.",
     "related": "Slično iz iste kategorije",
     "callUs": "Ovaj artikal trenutno nemamo. Pozovite nas na {phone} — često ga možemo napraviti po porudžbini.",
@@ -176,9 +160,9 @@
   "family": {
     "eyebrow": "O nama",
     "title": "Porodično",
-    "p1": "Cvećara Trofej nije lanac. Iza tezge stoji porodica koja se cvećem bavi godinama — isti ljudi biraju cveće ujutru, vezuju buket popodne i odgovaraju na telefon kad pozovete.",
+    "p1": "Cvećara Trofej nije lanac. Iza tezge stoji porodica koja se cvećem bavi iz ljubavi.",
     "p2": "Zato svaki buket izgleda kao da je pravljen za nekog konkretnog, a ne po šablonu. Kad nam kažete povod, mi zapravo slušamo: da li je za izvinjenje, za rodilište ili za nekog ko voli samo bele cvetove.",
-    "p3": "Radimo u komšiluku, sa ljudima koji nam se vraćaju godinama. To je jedini razlog zašto nam je stalo do svakog buketa koji izađe iz radnje."
+    "p3": "Radimo u kraju gde se oduševljene komšije rado vraćaju po naše proizvode. To je jedini razlog zašto nam je stalo do svakog buketa koji izađe iz radnje."
   },
   "about": {
     "eyebrow": "O nama",
@@ -237,8 +221,7 @@
     "remove": "Ukloni {name} iz korpe",
     "decreaseNamed": "Smanji količinu za {name}",
     "increaseNamed": "Povećaj količinu za {name}",
-    "freeDelivery": "Besplatna dostava na teritoriji Beograda. Porudžbine do 14h isporučujemo istog dana.",
-    "addForFree": "Dodajte još {amount} za besplatnu dostavu. Isporuka istog dana za porudžbine do 14h."
+    "deliveryByZone": "Cena dostave zavisi od dela grada (od {amount}) i dodaje se pri poručivanju. Porudžbine do 14h isporučujemo istog dana."
   },
   "checkout": {
     "title": "Porudžbina",
@@ -246,14 +229,16 @@
     "name": "Ime i prezime",
     "phone": "Telefon",
     "phonePlaceholder": "06x xxx xxxx",
+    "zone": "Deo grada",
+    "zonePlaceholder": "Izaberite deo grada",
     "address": "Adresa",
     "addressPlaceholder": "Ulica i broj",
     "city": "Grad",
     "note": "Napomena (opciono)",
     "notePlaceholder": "Sprat, interfon, gde da ostavimo…",
     "useLocation": "Koristi moju lokaciju",
-    "locationOk": "Lokacija je preuzeta — cena dostave će biti preciznija.",
-    "locationNoStreet": "Lokacija je preuzeta i koristimo je za precizniju cenu, ali nismo uspeli da prepoznamo ulicu — upišite je ručno.",
+    "locationOk": "Lokacija je preuzeta i adresa je popunjena.",
+    "locationNoStreet": "Lokacija je preuzeta, ali nismo uspeli da prepoznamo ulicu — upišite je ručno.",
     "pickupAt": "Preuzimanje u radnji: {street}, {city}.",
     "schedule": "Zakazivanje",
     "date": "Datum",
@@ -262,42 +247,20 @@
     "pickupMode": "Preuzimanje u radnji",
     "closedOn": "Tog dana ({day}) ne radimo. Izaberite drugi dan.",
     "noSlots": "Za danas više nema slobodnih termina. Izaberite sutrašnji datum.",
-    "personalisation": "Personalizovan buket",
-    "personalisationLead": "Sve je opciono — ali što više znamo, to je buket bliži onome što ste zamislili.",
-    "occasion": "Povod",
-    "cardMessage": "Poruka na čestitki",
-    "cardPlaceholder": "Sve najbolje! Voli te…",
-    "charsLeft": "{n} preostalo",
-    "wishes": "Posebne želje",
-    "wishesPlaceholder": "Bez ljiljana, više zelenila, papir u roze tonovima…",
-    "voucher": "Vaučer ili lojalti kod",
-    "voucherPlaceholder": "npr. DOBRODOSLI10",
-    "removeVoucher": "Ukloni kod",
-    "apply": "Primeni",
     "submit": "Potvrdi porudžbinu",
     "sending": "Šaljem…",
     "pickupCall": "Pozovite nas da potvrdimo termin",
     "pickCombo": "Izaberite datum i vreme.",
     "yourOrder": "Vaša porudžbina",
-    "deliveryWolt": "Dostava (Wolt)",
-    "woltNote": "Dostavu vozi Wolt kurir. Besplatna je iznad {amount}.",
     "emptyTitle": "Korpa je prazna",
     "emptyLead": "Dodajte buket ili aranžman pa se vratite na plaćanje.",
     "emptyCta": "Pogledaj bukete",
     "confirmed": "Porudžbina je primljena",
     "confirmedLead": "Broj porudžbine {reference}. Zovemo vas na {phone} da potvrdimo detalje.",
-    "loyaltyLead": "Hvala! Vaš kod za sledeću porudžbinu:",
-    "loyaltyNote": "Donosi 10% popusta.",
     "mockTitle": "Mejl nije poslat.",
-    "mockBody": "RESEND_API_KEY nije podešen, pa porudžbina nije stigla u radnju. Pozovite nas da je potvrdimo."
-  },
-  "occasions": {
-    "rodjendan": "Rođendan",
-    "godisnjica": "Godišnjica",
-    "izvinjenje": "Izvinjenje",
-    "rodiliste": "Rodilište",
-    "sahrana": "Sahrana",
-    "bez-povoda": "Bez povoda"
+    "mockBody": "RESEND_API_KEY nije podešen, pa porudžbina nije stigla u radnju. Pozovite nas da je potvrdimo.",
+    "zoneNote": "Cena dostave je po našem cenovniku za izabrani deo grada.",
+    "zoneUnknown": "Izaberite deo grada da vidite cenu dostave."
   },
   "receipt": {
     "print": "Odštampaj porudžbenicu",
@@ -313,8 +276,6 @@
     "item": "Artikal",
     "qty": "Kom",
     "amount": "Iznos",
-    "occasion": "Povod:",
-    "card": "Čestitka:",
     "legal": "Nije fiskalni račun. Radno vreme: {weekdayHours} radnim danima, subotom {saturdayHours}, nedeljom ne radimo."
   },
   "notfound": {
@@ -336,10 +297,7 @@
     "location": "Nije uspelo očitavanje lokacije.",
     "offline": "Servis za dostavu nije dostupan na ovoj adresi. Radi na objavljenom sajtu. Porudžbinu možete poslati i telefonom.",
     "network": "Greška u komunikaciji sa serverom. Pokušajte ponovo.",
-    "voucherEmpty": "Unesite kod.",
     "cartEmpty": "Korpa je prazna.",
-    "voucherUnknown": "Kod nije prepoznat. Proverite da li je tačno unet.",
-    "voucherMinimum": "Kod važi za porudžbine preko {min} RSD.",
     "orderFields": "Ime i telefon su obavezni.",
     "mailFailed": "Porudžbina nije poslata mejlom. Pozovite nas da je potvrdimo.",
     "orderFailed": "Greška pri slanju porudžbine.",

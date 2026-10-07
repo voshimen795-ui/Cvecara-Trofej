@@ -10,12 +10,10 @@
   },
   "common": {
     "addToCart": "Add to cart",
-    "chooseSize": "Choose a size",
     "added": "Added",
     "unavailable": "Unavailable",
     "inStock": "In stock",
     "outOfStock": "Out of stock",
-    "from": "from",
     "each": "each",
     "total": "Total",
     "subtotal": "Subtotal",
@@ -37,10 +35,6 @@
     "cartCount": {
       "one": "Cart, {n} item",
       "other": "Cart, {n} items"
-    },
-    "sizeCount": {
-      "one": "{n} size",
-      "other": "{n} sizes"
     },
     "itemCount": {
       "one": "{n} item",
@@ -117,17 +111,6 @@
     "empty": "There are no items in this category right now",
     "emptyLead": "Call us — we also make bouquets to order."
   },
-  "sizes": {
-    "label": "Bouquet size",
-    "mali": "Small",
-    "srednji": "Medium",
-    "veliki": "Large",
-    "note": {
-      "mali": "About 15 stems",
-      "srednji": "About 25 stems",
-      "veliki": "About 40 stems"
-    }
-  },
   "badges": {
     "bestseler": "Bestseller",
     "novo": "New",
@@ -139,8 +122,10 @@
     "addNamed": "Add {name} to the cart",
     "unavailableNamed": "{name} is currently unavailable",
     "deliveryNote": "Orders placed by 2 pm are delivered the same day.",
-    "freeAbove": "Free delivery over {amount}.",
+    "deliveryByZone": "The delivery price depends on the part of town — from {amount}.",
     "freshNote": "The bouquet is made on the day of delivery, from fresh flowers.",
+    "mayDiffer": "Flowers are seasonal — the finished bouquet may differ a little from the photograph in shade and in the exact blooms, at the same size and the same effect.",
+    "noteLabel": "Please note:",
     "madeOnDay": "We make the bouquet on the day of delivery.",
     "related": "More from the same category",
     "callUs": "We don't have this item right now. Call us on {phone} — we can often make it to order.",
@@ -173,9 +158,9 @@
   "family": {
     "eyebrow": "About us",
     "title": "A family shop",
-    "p1": "Cvećara Trofej is not a chain. Behind the counter is a family that has worked with flowers for years — the same people choose the flowers in the morning, tie the bouquet in the afternoon and answer the phone when you call.",
+    "p1": "Cvećara Trofej is not a chain. Behind the counter is a family that works with flowers out of love.",
     "p2": "That is why every bouquet looks like it was made for one particular person, not off a template. When you tell us the occasion, we actually listen: whether it is an apology, a new baby, or someone who only likes white blooms.",
-    "p3": "We work in our own neighbourhood, with people who have been coming back for years. That is the only reason we care about every bouquet that leaves the shop."
+    "p3": "We work in a neighbourhood where delighted neighbours gladly come back for what we make. That is the only reason we care about every bouquet that leaves the shop."
   },
   "about": {
     "eyebrow": "About us",
@@ -234,8 +219,7 @@
     "remove": "Remove {name} from the cart",
     "decreaseNamed": "Decrease the quantity of {name}",
     "increaseNamed": "Increase the quantity of {name}",
-    "freeDelivery": "Free delivery across Belgrade. Orders placed by 2 pm are delivered the same day.",
-    "addForFree": "Add {amount} more for free delivery. Same-day delivery for orders placed by 2 pm."
+    "deliveryByZone": "The delivery price depends on the part of town (from {amount}) and is added at checkout. Orders placed by 2 pm are delivered the same day."
   },
   "checkout": {
     "title": "Checkout",
@@ -243,14 +227,16 @@
     "name": "Full name",
     "phone": "Phone",
     "phonePlaceholder": "06x xxx xxxx",
+    "zone": "Part of town",
+    "zonePlaceholder": "Choose your part of town",
     "address": "Address",
     "addressPlaceholder": "Street and number",
     "city": "City",
     "note": "Note (optional)",
     "notePlaceholder": "Floor, intercom, where to leave it…",
     "useLocation": "Use my location",
-    "locationOk": "Location received — the delivery price will be more precise.",
-    "locationNoStreet": "We have your location and use it for a more precise price, but we couldn't work out the street — please type it in.",
+    "locationOk": "Location received and the address filled in.",
+    "locationNoStreet": "We have your location, but we couldn't work out the street — please type it in.",
     "pickupAt": "Pick up in store: {street}, {city}.",
     "schedule": "Scheduling",
     "date": "Date",
@@ -259,42 +245,20 @@
     "pickupMode": "Pick up in store",
     "closedOn": "We are closed on {day}. Please choose another day.",
     "noSlots": "There are no slots left for today. Please choose tomorrow's date.",
-    "personalisation": "Personalise the bouquet",
-    "personalisationLead": "All of this is optional — but the more we know, the closer the bouquet is to what you pictured.",
-    "occasion": "Occasion",
-    "cardMessage": "Card message",
-    "cardPlaceholder": "All the best! Love…",
-    "charsLeft": "{n} left",
-    "wishes": "Special wishes",
-    "wishesPlaceholder": "No lilies, more greenery, paper in pink tones…",
-    "voucher": "Voucher or loyalty code",
-    "voucherPlaceholder": "e.g. DOBRODOSLI10",
-    "removeVoucher": "Remove the code",
-    "apply": "Apply",
     "submit": "Place order",
     "sending": "Sending…",
     "pickupCall": "Call us to confirm the time",
     "pickCombo": "Please choose a date and a time.",
     "yourOrder": "Your order",
-    "deliveryWolt": "Delivery (Wolt)",
-    "woltNote": "A Wolt courier drives the delivery. It is free over {amount}.",
     "emptyTitle": "Your cart is empty",
     "emptyLead": "Add a bouquet or an arrangement, then come back to checkout.",
     "emptyCta": "See the bouquets",
     "confirmed": "Order received",
     "confirmedLead": "Order number {reference}. We will call you on {phone} to confirm the details.",
-    "loyaltyLead": "Thank you! Your code for the next order:",
-    "loyaltyNote": "It is worth 10% off.",
     "mockTitle": "The email was not sent.",
-    "mockBody": "RESEND_API_KEY is not configured, so the order did not reach the shop. Please call us to confirm it."
-  },
-  "occasions": {
-    "rodjendan": "Birthday",
-    "godisnjica": "Anniversary",
-    "izvinjenje": "An apology",
-    "rodiliste": "New baby",
-    "sahrana": "Funeral",
-    "bez-povoda": "No occasion"
+    "mockBody": "RESEND_API_KEY is not configured, so the order did not reach the shop. Please call us to confirm it.",
+    "zoneNote": "Delivery is charged from our price list for the part of town you chose.",
+    "zoneUnknown": "Choose your part of town to see the delivery price."
   },
   "receipt": {
     "print": "Print the order",
@@ -310,8 +274,6 @@
     "item": "Item",
     "qty": "Qty",
     "amount": "Amount",
-    "occasion": "Occasion:",
-    "card": "Card:",
     "legal": "This is not a fiscal receipt. Opening hours: {weekdayHours} on weekdays, {saturdayHours} on Saturdays, closed on Sundays."
   },
   "notfound": {
@@ -333,10 +295,7 @@
     "location": "We couldn't read your location.",
     "offline": "The delivery service isn't available at this address. It works on the published site. You can also place the order by phone.",
     "network": "Something went wrong talking to the server. Please try again.",
-    "voucherEmpty": "Please enter a code.",
     "cartEmpty": "Your cart is empty.",
-    "voucherUnknown": "We don't recognise that code. Please check it is typed correctly.",
-    "voucherMinimum": "The code applies to orders over {min} RSD.",
     "orderFields": "A name and a phone number are required.",
     "mailFailed": "The order wasn't sent by email. Please call us to confirm it.",
     "orderFailed": "Something went wrong sending the order.",
@@ -488,6 +447,14 @@
     "baloni-srce": {
       "name": "XXL Heart Balloon",
       "description": "A heart-shaped foil balloon, filled with helium."
+    },
+    "xxl-buket": {
+      "name": "XXL Bouquet",
+      "description": "A lavish bouquet of lilies, gladioli, roses and seasonal flowers, in kraft and two-tone paper."
+    },
+    "torta-od-pelena": {
+      "name": "Nappy Cake",
+      "description": "A three-tier cake made of nappies, with a teddy bear and ribbons — a gift for a new baby."
     }
   }
 }

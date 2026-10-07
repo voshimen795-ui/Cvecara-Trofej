@@ -16,10 +16,94 @@ Dnevnik odluka po celinama. Svaka stavka: **šta je urađeno**, **zašto tako**,
 | **Tekst za „Porodično"** | `src/components/FamilySection.jsx` → `PARAGRAPHS` | Tri pasusa su placeholder. Zamenite ih i ništa drugo se ne dira. |
 | **Instagram handle** | `src/data/shop.js` → `instagram` | `@cvecara_trofej` je pretpostavka. |
 | **Nemački jezik** | `src/i18n/locales/` | Beleška nije bila jasna. Radimo SR/EN/RU; DE je jedan JSON fajl kad potvrdite. |
+| **Novi logo** | `src/assets/` | Dunja ga je poslala na WhatsApp; nemam pristup. Pošaljite fajl ovde. |
+| **`ORDER_EMAIL_TO` na Vercel-u** | Vercel env | Mejl je u kodu ispravljen na `cvecara.trofej@gmail.com`, ali env varijabla ima prednost. Dok je ne promenite, porudžbine idu na staru adresu. |
+| **Značenje „Odstupanja"** | `src/i18n/locales/*.json` → `product.mayDiffer` | Pretpostavio sam odstupanje od fotografije. Ako je reč o ceni ili veličini, menja se taj jedan ključ. |
 | **Wolt Drive tokeni** | Vercel env | Preskočeno po dogovoru. Kod stoji spreman. |
 | **Resend API ključ** | Vercel env `RESEND_API_KEY` | Bez njega porudžbina se **ne šalje** i checkout to jasno kaže. |
 | **Prevodi naziva buketa** | `src/i18n/locales/{en,ru}.json` → `products` | Preveo sam svih 36 naziva i opisa. Ako neki naziv treba da ostane na srpskom, obrišite taj unos i sajt automatski vraća original. |
 | **Prevodi recenzija** | `src/i18n/locales/{en,ru}.json` → `reviews.items` | Reči mušterija su prevedene, uz vidljivu napomenu „Prevedeno sa srpskog". Ako radije ne prevodimo tuđe reči, javite — vraćam ih na srpski u svim jezicima. |
+
+---
+
+## Celina 13 — Izmene po vašoj listi
+
+**Urađeno redom po tačkama:**
+
+1. **Instagram** vodi na `instagram.com/cvecaratrofej/`, handle `@cvecaratrofej`.
+2. **Veličine buketa** su samo Mali / Srednji / Veliki + cena. Broj stabljika
+   izbačen svuda (i iz sva tri jezika).
+3. **Izbačeno:** cela sekcija „Personalizovan buket" (povod, čestitka, posebne
+   želje), vaučer i lojalti program, **Baloni** sa početne strane, i stub
+   „Sveže sa pijace". Uz to je otišlo i sve što je iza njih stajalo:
+   `PersonalisationFields.jsx`, `api/vouchers/validate.js`, lojalti kod u
+   `api/wolt/delivery.js`, `VOUCHER_*` iz `.env.example` i ~20 prevodnih
+   ključeva po jeziku. Mrtav kod ne ostaje da zbunjuje sledeću izmenu.
+   - Početna sad ima 4 pločice umesto 5, a „O nama" 2 stuba umesto 3 —
+     mreže su prepravljene da ne ostane rupa.
+4. **Tekst „Porodično"** — novi prvi pasus, i „radimo u komšiluku" zamenjeno
+   sa „radimo u kraju gde se oduševljene komšije rado vraćaju po naše
+   proizvode". Prevedeno i na EN i RU.
+5. **Napomena** je podignuta odmah **ispod opisa buketa**, uokvirena i sa
+   **boldovanim „Napomena:"** — i na stranici proizvoda i u brzom pregledu.
+   Ranije je stajala sitno pri dnu, gde se nije čitala.
+
+### Dostava po delu grada
+
+Cena dostave dolazi iz vašeg cenovnika („Stari Grad - Vračar - za cvećare.pdf"):
+`src/data/shop.js` → `DELIVERY_ZONES`, 32 dela grada od 600 do 2.700 RSD. Kupac
+na checkout-u bira deo grada, cena se dodaje na porudžbinu i upisuje u mejl i
+porudžbenicu. Besplatne dostave više nema — svaka porudžbina plaća svoj deo grada.
+Menjate samo broj `rsd` pored dela grada, ništa drugo se ne dira.
+
+Ranije se dostava računala po vazdušnoj udaljenosti (`api/geo/distance.js`);
+to je izbačeno jer cenovnik ide po delu grada.
+
+### Nije urađeno
+
+- **Logo** — Dunja ga je poslala na WhatsApp, do kojeg odavde nemam pristup.
+  Pošaljite fajl ovde i menjam ga.
+
+---
+
+## Celina 12 — Prolaz kroz listu iz sveske
+
+Prošli smo originalnu rukom pisanu listu stavku po stavku. **17 od 21** je bilo
+urađeno; jedna („prva stavka") otpada po vašoj reči; ostale dve su ovde.
+
+### Mejl je bio pogrešan — ispravljen
+
+U uokvirenom delu sveske piše `cvecara.trofej@gmail.com`, **sa tačkom**. Na
+sajtu je svuda bila verzija bez tačke. Ispravljeno na šest mesta: `shop.js`,
+JSON-LD u `index.html`, dva fallback-a u `/api`, i dva podrazumevana u
+`.env.example`.
+
+> **Vi morate još jedno:** promeniti `ORDER_EMAIL_TO` u Vercel env
+> varijablama. Dok se to ne uradi, produkcija čita staru vrednost iz env-a, a
+> ne novu iz koda — pa porudžbine i dalje idu na staru adresu.
+
+Telefon je proveren i ostaje `069/279-0074`.
+
+### „Odstupanje" — napomena uz proizvod
+
+Nova rečenica na stranici proizvoda i u brzom pregledu: cveće je sezonsko, pa
+gotov buket može malo da odstupa od fotografije po nijansi i vrsti cveta, uz
+istu veličinu i isti utisak.
+
+Stoji na **oba** mesta namerno — većina kupaca dodaje u korpu iz modala i nikad
+ne otvori celu stranicu, pa bi je inače propustili. Ikonica je `Info`, ne
+`Check`, jer to nije još jedna prednost nego ograda.
+
+**Pretpostavka koju treba da potvrdite.** Na pitanje šta „Odstupanje" znači
+rekli ste da nemate preferencu, pa sam uzeo najčešće značenje kod cvećara —
+odstupanje od fotografije. Ako ste mislili na odstupanje u **ceni ili
+veličini**, menja se jedan ključ (`product.mayDiffer`) i ništa drugo.
+
+### Nepročitano
+
+Poslednja linija u svesci — „Javite nam se / ...?" — druga reč mi nije čitka.
+Sekcija „Javite nam se" već postoji na `/o-nama`. Ako je druga reč „cenovnik",
+to je zaseban posao i nije urađen.
 
 ---
 
@@ -133,12 +217,12 @@ hook, kako radnja radi, obećanje. Vaš finalni tekst ide u `PARAGRAPHS`.
 ## Celina 8 — Dostava
 
 **Urađeno.** Wolt Drive u **web app** režimu: sajt prima porudžbinu, šalje je
-mejlom na `cvecaratrofej@gmail.com`, vi je ručno unosite u Wolt dashboard.
+mejlom na `cvecara.trofej@gmail.com`, vi je ručno unosite u Wolt dashboard.
 
 - `api/orders/notify.js` — šalje mejl preko Resend-a. Bez `RESEND_API_KEY`
   vraća `mock: true` i checkout **jasno piše da mejl nije poslat**.
-- Cena dostave je vaše pravilo (besplatno iznad 4.000 RSD, inače 350 RSD), ne
-  Wolt-ova procena — jer bez API-ja Wolt ne daje cenu.
+- Cena dostave je vaš cenovnik po delu grada (`DELIVERY_ZONES`), ne Wolt-ova
+  procena — jer bez API-ja Wolt ne daje cenu.
 - Kod za Wolt Drive API (`api/wolt/`) ostaje u repo-u, u test režimu.
 
 **Kurirko — izbačen.** Istražio sam: javni API ne postoji. `kurirko.rs` vraća

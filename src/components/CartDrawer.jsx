@@ -3,6 +3,7 @@ import { AnimatePresence, motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
 import { Minus, Plus, ShoppingBag, Trash2, Truck, X } from 'lucide-react';
 import ProductImage from './ui/ProductImage.jsx';
+import { MIN_DELIVERY_FEE } from '../data/shop.js';
 import { formatPrice } from '../utils/format.js';
 import { useCart } from '../context/CartContext.jsx';
 import { useBodyScrollLock } from '../hooks/useBodyScrollLock.js';
@@ -16,11 +17,7 @@ export default function CartDrawer() {
     isOpen,
     closeCart,
     subtotal,
-    delivery,
-    total,
     totalItems,
-    qualifiesForFreeDelivery,
-    amountToFreeDelivery,
     increment,
     decrement,
     removeItem,
@@ -127,7 +124,6 @@ export default function CartDrawer() {
                         </div>
 
                         <p className="mt-0.5 text-xs text-brand-muted">
-                          {item.sizeId ? `${t(`sizes.${item.sizeId}`)} · ` : ''}
                           {formatPrice(item.price)} / {t('common.each')}
                         </p>
 
@@ -176,24 +172,12 @@ export default function CartDrawer() {
                     <dt>{t('common.subtotal')}</dt>
                     <dd className="font-medium text-brand-dark">{formatPrice(subtotal)}</dd>
                   </div>
-                  <div className="flex justify-between text-gray-600">
-                    <dt>{t('common.delivery')}</dt>
-                    <dd className="font-medium text-brand-dark">
-                      {delivery === 0 ? t('common.free') : formatPrice(delivery)}
-                    </dd>
-                  </div>
-                  <div className="flex justify-between border-t border-brand-border pt-3 text-base">
-                    <dt className="font-medium text-brand-dark">{t('common.total')}</dt>
-                    <dd className="font-semibold text-brand-dark">{formatPrice(total)}</dd>
-                  </div>
                 </dl>
 
                 <p className="mt-4 flex items-start gap-2 rounded-xl bg-brand-primary/10 px-3 py-2.5 text-xs leading-relaxed text-brand-primary-dark">
                   <Truck className="mt-0.5 h-3.5 w-3.5 shrink-0" aria-hidden="true" />
                   <span>
-                    {qualifiesForFreeDelivery
-                      ? t('cart.freeDelivery')
-                      : t('cart.addForFree', { amount: formatPrice(amountToFreeDelivery) })}
+                    {t('cart.deliveryByZone', { amount: formatPrice(MIN_DELIVERY_FEE) })}
                   </span>
                 </p>
 

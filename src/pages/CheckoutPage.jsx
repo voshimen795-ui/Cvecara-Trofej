@@ -1,65 +1,30 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
-import {
-  AlertTriangle,
-  Check,
-  ChevronRight,
-  Loader2,
-  MapPin,
-  Tag,
-  Truck,
-  X,
-} from 'lucide-react';
+import { AlertTriangle, Check, ChevronRight, Loader2, MapPin, Truck } from 'lucide-react';
 import ProductImage from '../components/ui/ProductImage.jsx';
-import { SHOP } from '../data/shop.js';
+import { DELIVERY_ZONES, SHOP, deliveryZone } from '../data/shop.js';
 import { formatPrice } from '../utils/format.js';
 import { useCart } from '../context/CartContext.jsx';
 import OrderReceipt from '../components/OrderReceipt.jsx';
-import { reverseGeocode, sendOrder, validateVoucher } from '../services/wolt.js';
+import { reverseGeocode, sendOrder } from '../services/wolt.js';
 import ScheduleFields from '../components/checkout/ScheduleFields.jsx';
-import PersonalisationFields, {
-  OCCASION_SR,
-} from '../components/checkout/PersonalisationFields.jsx';
 import { useGeolocation } from '../hooks/useGeolocation.js';
 import { useI18n } from '../i18n/index.jsx';
 
-const EMPTY_FORM = { name: '', phone: '', street: '', city: SHOP.city, comment: '' };
+const EMPTY_FORM = { name: '', phone: '', zone: '', street: '', city: SHOP.city, comment: '' };
 const EMPTY_SCHEDULE = { mode: 'dostava', date: '', time: '' };
-const EMPTY_PERSONALISATION = { occasion: '', cardMessage: '', wishes: '' };
-
-/**
- * Folds the optional fields into one note for the florist and the courier.
- * Deliberately always Serbian: this is read in the shop, not by the customer,
- * so an order placed in Russian must still arrive readable behind the counter.
- */
-function buildComment(form, personalisation, schedule) {
-  return [
-    form.comment,
-    personalisation.occasion &&
-      `Povod: ${OCCASION_SR[personalisation.occasion] ?? personalisation.occasion}`,
-    personalisation.cardMessage && `Čestitka: „${personalisation.cardMessage}"`,
-    personalisation.wishes && `Želje: ${personalisation.wishes}`,
-    schedule.date && `Termin: ${schedule.date} u ${schedule.time} (${schedule.mode})`,
-  ]
-    .filter(Boolean)
-    .join(' | ');
-}
 
 export default function CheckoutPage() {
-  const { items, subtotal, delivery, clearCart } = useCart();
+  const { items, subtotal, clearCart } = useCart();
   const { t, tp } = useI18n();
 
   const [form, setForm] = useState(EMPTY_FORM);
   const [confirmed, setConfirmed] = useState(null);
   const [schedule, setSchedule] = useState(EMPTY_SCHEDULE);
-  const [personalisation, setPersonalisation] = useState(EMPTY_PERSONALISATION);
-  const [busy, setBusy] = useState(null); // 'order' | 'locate' | 'voucher'
+  const [busy, setBusy] = useState(null); // 'order' | 'locate'
   const [error, setError] = useState(null);
   const geo = useGeolocation();
   const [lookupFailed, setLookupFailed] = useState(false);
-  const [voucherInput, setVoucherInput] = useState('');
-  const [voucher, setVoucher] = useState(null);
-  const [voucherError, setVoucherError] = useState(null);
 
   /**
    * Errors travel as a code plus the server's Serbian text. Translate the
@@ -69,21 +34,12 @@ export default function CheckoutPage() {
   const errorText = (err) =>
     err?.code ? t(`errors.${err.code}`, err.vars) : err?.message ?? '';
 
-  const applyVoucher = async (event) => {
-    event.preventDefault();
-    setVoucherError(null);
-    setBusy('voucher');
-    try {
-      setVoucher(await validateVoucher({ code: voucherInput, subtotal }));
-    } catch (err) {
-      setVoucher(null);
-      setVoucherError(err);
-    } finally {
-      setBusy(null);
-    }
-  };
-
   const pickup = schedule.mode === 'preuzimanje';
+  // Delivery is priced by part of town, from the owner's price list. Until an
+  // area is picked there is no fee to show, and the order can't be sent.
+  const zone = pickup ? null : deliveryZone(form.zone);
+  const deliveryFee = zone?.rsd ?? 0;
+  const total = subtotal + deliveryFee;
   const scheduled = Boolean(schedule.date && schedule.time);
 
   const set = (field) => (event) => {
@@ -103,9 +59,8 @@ export default function CheckoutPage() {
       if (!place.street) throw new Error('no street');
       setForm((f) => ({ ...f, street: place.street, city: place.city || f.city }));
     } catch {
-      // Address lookup is only a convenience — the coordinates alone already
-      // sharpen Wolt's price. Say so plainly instead of leaving the field
-      // mysteriously empty.
+      // Address lookup is only a convenience. Say so plainly instead of
+      // leaving the field mysteriously empty.
       setLookupFailed(true);
     } finally {
       setBusy(null);
@@ -121,29 +76,22 @@ export default function CheckoutPage() {
         customer: {
           name: form.name,
           phone: form.phone,
+          zone: zone?.name ?? '',
           street: form.street,
           city: form.city,
           comment: form.comment,
         },
         schedule,
-        personalisation,
         items: items.map((i) => ({
           id: i.id,
           name: i.name,
-          size: i.sizeLabel,
           price: i.price,
           quantity: i.quantity,
         })),
-        totals: {
-          subtotal,
-          discount,
-          delivery: pickup ? 0 : delivery,
-          total,
-          voucherCode: voucher?.code ?? null,
-        },
+        totals: { subtotal, delivery: deliveryFee, total },
       });
       // Snapshot the cart before clearing — the receipt renders from it.
-      setConfirmed({ ...result, loyaltyCode: `TROFEJ-${result.reference.slice(-6)}`, items, totals: { subtotal, discount, delivery: pickup ? 0 : delivery, total } });
+      setConfirmed({ ...result, items, totals: { subtotal, delivery: deliveryFee, total } });
       clearCart();
     } catch (err) {
       setError(err);
@@ -168,20 +116,9 @@ export default function CheckoutPage() {
           reference={confirmed.reference}
           customer={form}
           schedule={schedule}
-          personalisation={personalisation}
           items={confirmed.items}
           totals={confirmed.totals}
         />
-
-        {confirmed.loyaltyCode && (
-          <div className="mx-auto mt-8 max-w-md rounded-2xl border border-brand-border bg-brand-mist px-6 py-5">
-            <p className="text-sm text-brand-dark">{t('checkout.loyaltyLead')}</p>
-            <p className="mt-2 font-mono text-xl font-bold tracking-wider text-brand-dark">
-              {confirmed.loyaltyCode}
-            </p>
-            <p className="mt-2 text-xs text-brand-muted">{t('checkout.loyaltyNote')}</p>
-          </div>
-        )}
 
         {confirmed.mock && (
           <p className="mx-auto mt-8 flex max-w-lg items-start gap-2 rounded-xl border border-amber-300 bg-amber-50 px-4 py-3 text-left text-xs leading-relaxed text-amber-900">
@@ -213,9 +150,6 @@ export default function CheckoutPage() {
       </div>
     );
   }
-
-  const discount = voucher?.discount ?? 0;
-  const total = Math.max(0, subtotal - discount) + (pickup ? 0 : delivery);
 
   return (
     <div className="container-editorial py-10 lg:py-14">
@@ -286,6 +220,27 @@ export default function CheckoutPage() {
                   </p>
                 )}
 
+                <label className="block">
+                  <span className="mb-1.5 block text-sm font-medium text-brand-dark">
+                    {t('checkout.zone')}
+                  </span>
+                  <select
+                    value={form.zone}
+                    onChange={set('zone')}
+                    required
+                    className="w-full rounded-xl border border-brand-border bg-white px-4 py-3 text-brand-dark transition focus:border-brand-primary-dark"
+                  >
+                    <option value="" disabled>
+                      {t('checkout.zonePlaceholder')}
+                    </option>
+                    {DELIVERY_ZONES.map((z) => (
+                      <option key={z.id} value={z.id}>
+                        {z.name} — {formatPrice(z.rsd)}
+                      </option>
+                    ))}
+                  </select>
+                </label>
+
                 <Field
                   label={t('checkout.address')}
                   value={form.street}
@@ -317,10 +272,6 @@ export default function CheckoutPage() {
 
             <div className="border-t border-brand-border pt-5">
               <ScheduleFields value={schedule} onChange={setSchedule} />
-            </div>
-
-            <div className="border-t border-brand-border pt-5">
-              <PersonalisationFields value={personalisation} onChange={setPersonalisation} />
             </div>
 
 
@@ -383,7 +334,6 @@ export default function CheckoutPage() {
                   <div className="min-w-0 flex-1">
                     <p className="truncate font-serif text-sm text-brand-dark">{tp(item)}</p>
                     <p className="text-xs text-brand-muted">
-                      {item.sizeId ? `${t(`sizes.${item.sizeId}`)} · ` : ''}
                       {item.quantity} × {formatPrice(item.price)}
                     </p>
                   </div>
@@ -399,19 +349,13 @@ export default function CheckoutPage() {
                 <dt>{t('common.subtotal')}</dt>
                 <dd className="font-medium text-brand-dark">{formatPrice(subtotal)}</dd>
               </div>
-              {voucher && (
-                <div className="flex justify-between text-brand-primary-dark">
-                  <dt className="flex items-center gap-1.5">
-                    <Tag className="h-3.5 w-3.5" aria-hidden="true" />
-                    {voucher.label}
-                  </dt>
-                  <dd className="font-medium">−{formatPrice(discount)}</dd>
-                </div>
-              )}
               <div className="flex justify-between text-gray-600">
-                <dt>{pickup ? t('checkout.pickupMode') : t('checkout.deliveryWolt')}</dt>
+                <dt>
+                  {pickup ? t('checkout.pickupMode') : t('common.delivery')}
+                  {zone && <span className="ml-1 text-xs text-brand-muted">({zone.name})</span>}
+                </dt>
                 <dd className="font-medium text-brand-dark">
-                  {pickup || delivery === 0 ? t('common.free') : formatPrice(delivery)}
+                  {pickup ? t('common.free') : zone ? formatPrice(deliveryFee) : '—'}
                 </dd>
               </div>
               <div className="flex justify-between border-t border-brand-border pt-3 text-base">
@@ -425,60 +369,10 @@ export default function CheckoutPage() {
             {!pickup && (
               <p className="mt-4 flex items-start gap-2 rounded-xl bg-brand-primary/10 px-3 py-2.5 text-xs leading-relaxed text-brand-primary-dark">
                 <Truck className="mt-0.5 h-3.5 w-3.5 shrink-0" aria-hidden="true" />
-                <span>
-                  {t('checkout.woltNote', {
-                    amount: formatPrice(SHOP.freeDeliveryThreshold),
-                  })}
-                </span>
+                <span>{zone ? t('checkout.zoneNote') : t('checkout.zoneUnknown')}</span>
               </p>
             )}
 
-            <form onSubmit={applyVoucher} className="mt-5 border-t border-brand-border pt-5">
-              <label className="mb-2 block text-sm font-medium text-brand-dark" htmlFor="voucher">
-                {t('checkout.voucher')}
-              </label>
-              {voucher ? (
-                <div className="flex items-center justify-between gap-2 rounded-xl bg-brand-mist px-4 py-3">
-                  <span className="flex min-w-0 items-center gap-2 text-sm text-brand-dark">
-                    <Check className="h-4 w-4 shrink-0 text-brand-primary-dark" aria-hidden="true" />
-                    <span className="truncate font-medium">{voucher.code}</span>
-                  </span>
-                  <button
-                    type="button"
-                    onClick={() => {
-                      setVoucher(null);
-                      setVoucherInput('');
-                    }}
-                    aria-label={t('checkout.removeVoucher')}
-                    className="shrink-0 rounded p-1 text-brand-muted transition hover:text-brand-dark"
-                  >
-                    <X className="h-4 w-4" aria-hidden="true" />
-                  </button>
-                </div>
-              ) : (
-                <div className="flex gap-2">
-                  <input
-                    id="voucher"
-                    value={voucherInput}
-                    onChange={(e) => setVoucherInput(e.target.value.toUpperCase())}
-                    placeholder={t('checkout.voucherPlaceholder')}
-                    className="min-w-0 flex-1 rounded-xl border border-brand-border bg-white px-4 py-2.5 text-sm uppercase tracking-wide text-brand-dark placeholder:normal-case placeholder:tracking-normal placeholder:text-gray-400 focus:border-brand-primary-dark"
-                  />
-                  <button
-                    type="submit"
-                    disabled={!voucherInput || busy !== null}
-                    className="shrink-0 rounded-xl border border-brand-border px-4 text-sm font-medium text-brand-dark transition hover:border-brand-primary disabled:opacity-50"
-                  >
-                    {busy === 'voucher' ? '…' : t('checkout.apply')}
-                  </button>
-                </div>
-              )}
-              {voucherError && (
-                <p role="alert" className="mt-2 text-xs text-red-700">
-                  {errorText(voucherError)}
-                </p>
-              )}
-            </form>
 
           </div>
         </aside>

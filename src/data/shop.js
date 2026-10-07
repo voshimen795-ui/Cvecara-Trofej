@@ -8,18 +8,59 @@ export const SHOP = {
   city: 'Beograd',
   phone: '069/279-0074',
   phoneHref: 'tel:+381692790074',
-  email: 'cvecaratrofej@gmail.com',
+  email: 'cvecara.trofej@gmail.com',
   // Serbian original. The UI reads `t('common.deliveryArea')`; this stays for
   // the order email and the structured data, which are always Serbian.
   deliveryArea: 'Dostava na teritoriji Beograda',
-  // TODO: potvrdite tačan handle — pretpostavka na osnovu imena radnje.
-  instagramHandle: '@cvecara_trofej',
-  instagram: 'https://www.instagram.com/cvecara_trofej/',
-  /** Free delivery above this amount, in RSD. */
-  freeDeliveryThreshold: 4000,
-  /** Flat delivery fee below the threshold, in RSD. */
-  deliveryFee: 350,
+  instagramHandle: '@cvecaratrofej',
+  instagram: 'https://www.instagram.com/cvecaratrofej/',
 };
+
+/**
+ * Delivery price by part of Belgrade, straight from the owner's price list
+ * ("Stari Grad - Vračar - za cvećare.pdf"). The customer picks their area at
+ * checkout and its price is added to the order. To change a price, change the
+ * `rsd` here and nothing else moves. Same order and names as the list.
+ */
+export const DELIVERY_ZONES = [
+  { id: 'altina', name: 'Altina', rsd: 1800 },
+  { id: 'banjica', name: 'Banjica', rsd: 1200 },
+  { id: 'banovo-brdo', name: 'Banovo Brdo', rsd: 1000 },
+  { id: 'batajnica', name: 'Batajnica', rsd: 2500 },
+  { id: 'bezanijska-kosa', name: 'Bežanijska Kosa', rsd: 1200 },
+  { id: 'borca', name: 'Borča', rsd: 2000 },
+  { id: 'brace-jerkovic', name: 'Braće Jerković', rsd: 1000 },
+  { id: 'cerak', name: 'Cerak', rsd: 1300 },
+  { id: 'dedinje', name: 'Dedinje', rsd: 1000 },
+  { id: 'jajinci', name: 'Jajinci', rsd: 1700 },
+  { id: 'kaludjerica', name: 'Kaluđerica', rsd: 1700 },
+  { id: 'karaburma', name: 'Karaburma', rsd: 1000 },
+  { id: 'kumodraz', name: 'Kumodraž', rsd: 1700 },
+  { id: 'ledine', name: 'Ledine', rsd: 1700 },
+  { id: 'mali-mokri-lug', name: 'Mali Mokri Lug', rsd: 1200 },
+  { id: 'mirijevo', name: 'Mirijevo', rsd: 1100 },
+  { id: 'novi-beograd', name: 'Novi Beograd', rsd: 1000 },
+  { id: 'petlovo-brdo', name: 'Petlovo Brdo', rsd: 1500 },
+  { id: 'rakovica', name: 'Rakovica', rsd: 1300 },
+  { id: 'senjak', name: 'Senjak', rsd: 1000 },
+  { id: 'stari-grad', name: 'Stari Grad', rsd: 600 },
+  { id: 'stepa-vlahovic', name: 'Stepa / Vlahović', rsd: 1100 },
+  { id: 'sremcica', name: 'Sremčica', rsd: 2700 },
+  { id: 'surcin', name: 'Surčin', rsd: 2000 },
+  { id: 'visnjica', name: 'Višnjica', rsd: 1200 },
+  { id: 'vozdovac', name: 'Voždovac', rsd: 1000 },
+  { id: 'vracar', name: 'Vračar', rsd: 600 },
+  { id: 'zarkovo', name: 'Žarkovo', rsd: 1300 },
+  { id: 'zeleznik', name: 'Železnik', rsd: 1700 },
+  { id: 'zemun', name: 'Zemun', rsd: 1100 },
+  { id: 'zvezdara', name: 'Zvezdara', rsd: 600 },
+  { id: 'uska-zona', name: 'Uska zona', rsd: 600 },
+];
+
+export const deliveryZone = (id) => DELIVERY_ZONES.find((zone) => zone.id === id) ?? null;
+
+/** Cheapest delivery anywhere — what the cart quotes before an area is picked. */
+export const MIN_DELIVERY_FEE = Math.min(...DELIVERY_ZONES.map((zone) => zone.rsd));
 
 /** Full address, for maps and for the Wolt dropoff. */
 export const SHOP_ADDRESS = `${SHOP.street}, ${SHOP.city}, Srbija`;

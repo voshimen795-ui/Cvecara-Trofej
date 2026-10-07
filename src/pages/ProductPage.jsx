@@ -10,12 +10,10 @@ import NotFoundPage from './NotFoundPage.jsx';
 import {
   CATEGORY_PAGES,
   PRODUCTS,
-  defaultSize,
   getProduct,
   isAvailable,
-  priceFor,
 } from '../data/products.js';
-import { SHOP } from '../data/shop.js';
+import { MIN_DELIVERY_FEE, SHOP } from '../data/shop.js';
 import { formatPrice } from '../utils/format.js';
 import { useCart } from '../context/CartContext.jsx';
 import { useI18n } from '../i18n/index.jsx';
@@ -27,12 +25,10 @@ export default function ProductPage() {
   const { t, tp } = useI18n();
   const [quantity, setQuantity] = useState(1);
   const quickView = useQuickView();
-  const [sizeId, setSizeId] = useState(() => defaultSize(product)?.id ?? null);
 
   if (!product) return <NotFoundPage />;
 
   const available = isAvailable(product);
-  const price = priceFor(product, sizeId);
 
   const page = CATEGORY_PAGES[product.category];
   const related = PRODUCTS.filter(
@@ -122,43 +118,14 @@ export default function ProductPage() {
               {tp(product, 'description')}
             </p>
 
-            {product.sizes && (
-              <fieldset className="mt-8">
-                <legend className="mb-2.5 text-sm font-medium text-brand-dark">
-                  {t('sizes.label')}
-                </legend>
-                <div className="grid grid-cols-3 gap-2">
-                  {product.sizes.map((size) => {
-                    const active = size.id === sizeId;
-                    return (
-                      <button
-                        key={size.id}
-                        type="button"
-                        onClick={() => setSizeId(size.id)}
-                        aria-pressed={active}
-                        className={`rounded-xl border px-3 py-3 text-center transition ${
-                          active
-                            ? 'border-brand-primary-dark bg-brand-mist'
-                            : 'border-brand-border bg-brand-bg hover:border-brand-primary'
-                        }`}
-                      >
-                        <span className="block text-sm font-semibold text-brand-dark">
-                          {t(`sizes.${size.id}`)}
-                        </span>
-                        <span className="mt-0.5 block text-xs text-brand-muted">
-                          {t(`sizes.note.${size.id}`)}
-                        </span>
-                        <span className="mt-1 block text-sm font-bold text-brand-dark">
-                          {formatPrice(size.price)}
-                        </span>
-                      </button>
-                    );
-                  })}
-                </div>
-              </fieldset>
-            )}
+            {/* Right under the description and in bold, by request: it is the
+                one thing a customer must read before ordering. */}
+            <p className="mt-4 rounded-xl border border-brand-border bg-brand-mist/60 px-4 py-3 text-sm leading-relaxed text-brand-dark">
+              <span className="font-bold">{t('product.noteLabel')}</span>{' '}
+              {t('product.mayDiffer')}
+            </p>
 
-            <p className="mt-8 text-3xl font-bold text-brand-dark">{formatPrice(price)}</p>
+            <p className="mt-8 text-3xl font-bold text-brand-dark">{formatPrice(product.price)}</p>
 
             <div className="mt-8 flex flex-col gap-3 sm:flex-row sm:items-center sm:gap-4">
               <div className="flex w-fit items-center rounded-xl border border-brand-border">
@@ -185,7 +152,7 @@ export default function ProductPage() {
 
               <button
                 type="button"
-                onClick={() => addItem(product, quantity, sizeId)}
+                onClick={() => addItem(product, quantity)}
                 disabled={!available}
                 className="btn-primary flex-1 disabled:cursor-not-allowed disabled:bg-gray-100 disabled:text-brand-muted sm:flex-none"
               >
@@ -226,7 +193,7 @@ export default function ProductPage() {
                   className="mt-0.5 h-4 w-4 shrink-0 text-brand-primary-dark"
                   aria-hidden="true"
                 />
-                {t('product.freeAbove', { amount: formatPrice(SHOP.freeDeliveryThreshold) })}
+                {t('product.deliveryByZone', { amount: formatPrice(MIN_DELIVERY_FEE) })}
               </li>
               <li className="flex items-start gap-2.5">
                 <Check
